@@ -1,0 +1,19 @@
+:host {
+  --yellow-1: #fcc463;
+  --yellow-2: #fbb344;
+  --red: #fb4444;
+  --black: #2d2d2d;
+  --light-gray: #fafafa;
+  --medium-gray: #bbbbbb;
+  --disabled-gray: #eeeeee;
+  --white: #fff;
+
+  --transition: all 0.25s ease-in-out;
+  --border-1: 1px solid var(--yellow-2);
+  --border-2: 2px solid var(--yellow-2);
+  --box-shadow: 0 0 1px 1px var(--yellow-2);
+  --border-medium-gray-1: 1px solid var(--medium-gray);
+  --border-medium-gray-2: 2px solid var(--medium-gray);
+  --box-shadow-medium-gray: 0 0 1px 1px var(--medium-gray);
+  --filter: brightness(0) saturate(100%) invert(84%) sepia(18%) saturate(1882%) hue-rotate(329deg) brightness(99%) contrast(98%);
+}
