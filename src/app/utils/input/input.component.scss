@@ -1,0 +1,33 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+
+  &__label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--yellow-2);
+    text-transform: uppercase;
+  }
+
+  &__input {
+    width: 25rem;
+    height: 3rem;
+    padding: 0 1rem;
+    background: var(--light-gray);
+    border: var(--border);
+    outline: none;
+    transition: var(--transition);
+    font-size: 1rem;
+    border-radius: 5px;
+
+    &::placeholder {
+      color: var(--medium-gray);
+    }
+
+    &:focus, &:hover {
+      box-shadow: var(--box-shadow);
+      background: white;
+    }
+  }
+}

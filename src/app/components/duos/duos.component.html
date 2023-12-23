@@ -1,0 +1,33 @@
+<div class="duos">
+  <app-logo class="duos__header"></app-logo>
+  <app-table
+    class="duos__body"
+    [ths]="ths"
+    [trs]="trs"
+  ></app-table>
+  <form class="duos__footer" [formGroup]="form" (submit)="createDuo()">
+    <div class="duos__footer__inputs">
+      <app-select
+        [form]="form"
+        control="a"
+        placeholder="Escolha o debatedor"
+        label="Primeiro debatedor"
+        width="15rem"
+        [options]="debatersOptions"
+      ></app-select>
+      <app-select
+        [form]="form"
+        control="b"
+        placeholder="Escolha o debatedor"
+        label="Segundo debatedor"
+        width="15rem"
+        [options]="debatersOptions"
+      ></app-select>
+    </div>
+    <app-button
+      text="Adicionar"
+      type="submit"
+    ></app-button>
+  </form>
+</div>
+<app-sidebar></app-sidebar>

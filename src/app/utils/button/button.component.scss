@@ -1,0 +1,17 @@
+.button {
+  border-radius: 5px;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+  border: none;
+  font-size: 0.8rem;
+  cursor: pointer;
+  background: white;
+  color: var(--yellow-2);
+  border: var(--border);
+  font-weight: 500;
+  text-transform: uppercase;
+
+  &:hover {
+    box-shadow: var(--box-shadow);
+  }
+}

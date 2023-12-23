@@ -1,5 +1,5 @@
 export type DashboardItem = {
   src: string;
   title: string;
-  callback: () => void;
+  route: string;
 };

@@ -1,0 +1,16 @@
+<table class="table">
+  <thead class="table__thead">
+    <tr class="table__thead__tr">
+      <th class="table__thead__tr__th" *ngFor="let th of ths">
+        {{ th }}
+      </th>
+    </tr>
+  </thead>
+  <tbody class="table__tbody">
+    <tr class="table__tbody__tr" *ngFor="let tr of trs; index as index" (click)="output(index)">
+      <td class="table__tbody__tr__td" *ngFor="let td of tr">
+        {{ td }}
+      </td>
+    </tr>
+  </tbody>
+</table>

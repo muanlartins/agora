@@ -5,7 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { FormField } from 'src/app/models/form-field';
 import { Token } from 'src/app/models/token';
 import { User } from 'src/app/models/user';
-import { TabdebService } from 'src/app/services/tabdeb/tabdeb.service';
+import { TabdebService } from 'src/app/services/tabdeb.service';
 
 @Component({
   selector: 'app-profile',
@@ -69,10 +69,10 @@ export class ProfileComponent implements OnInit {
   }
 
   public getUser() {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token')!;
     this.spinner.show();
 
-    if (token) this.tabdebService.getUser(token).subscribe((user: User) => {
+    this.tabdebService.getUser(token).subscribe((user: User) => {
       this.form.controls['login'].patchValue(user.login);
       this.form.controls['nickname'].patchValue(user.nickname);
       this.form.controls['fullName'].patchValue(user.fullName);
@@ -82,7 +82,6 @@ export class ProfileComponent implements OnInit {
       this.spinner.hide();
       this.loading = false;
     });
-    else this.router.navigate(["/login"]);
   }
 
   public edit(targetField: FormField) {
@@ -101,21 +100,17 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token')!;
     this.spinner.show();
 
-    if (token) {
-      const nickname = this.form.controls['nickname'].value;
-      const fullName = this.form.controls['fullName'].value;
+    const nickname = this.form.controls['nickname'].value;
+    const fullName = this.form.controls['fullName'].value;
 
-      this.tabdebService.updateUser(token, nickname, fullName).subscribe((updated: boolean) => {
-        if (updated) this.tabdebService.refresh(token).subscribe((token: Token) => {
-          localStorage.setItem('token', token);
-
-          this.getUser();
-        })
-      });
-    }
+    this.tabdebService.updateUser(token, nickname, fullName).subscribe((updated: boolean) => {
+      if (updated) this.tabdebService.refresh(token).subscribe((token: Token) => {
+        localStorage.setItem('token', token);
+      })
+    });
   }
 
   public onSubmit() {}

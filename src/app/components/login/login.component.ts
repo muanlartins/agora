@@ -5,7 +5,7 @@ import { sha256 } from 'js-sha256';
 import { FormMode } from 'src/app/models/form-mode';
 import { FormModeText } from 'src/app/models/form-mode-text';
 import { Token } from 'src/app/models/token';
-import { TabdebService } from 'src/app/services/tabdeb/tabdeb.service';
+import { TabdebService } from 'src/app/services/tabdeb.service';
 
 @Component({
   selector: 'app-login',

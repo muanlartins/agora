@@ -1,11 +1,5 @@
 <div class="profile">
-  <div class="profile__header">
-    <button class="profile__header__back" (click)="goToDashboard()">
-      <img class="profile__header__back__icon" src="assets/back.png" />
-      <span class="profile__header__back__text">Back</span>
-    </button>
-    <app-logo class="profile__header__logo"></app-logo>
-  </div>
+  <app-logo class="profile__header"></app-logo>
   <div class="profile__body">
     <form [formGroup]="form" class="profile__body__form" (submit)="onSubmit()">
       <div class="profile__body__form__field" *ngFor="let field of fields">
@@ -46,3 +40,4 @@
     </form>
   </div>
 </div>
+<app-sidebar></app-sidebar>

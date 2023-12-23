@@ -1,0 +1,29 @@
+<div class="field" [formGroup]="form">
+  <label class="field__label">{{ label }}</label>
+  <div class="field__select">
+    <input
+      class="field__select__input"
+      type="select"
+      [placeholder]="placeholder"
+      [formControlName]="control"
+      [style.width]="width"
+      [readOnly]="true"
+      (click)="openDropdown()"
+      [ngClass]="{ 'field__select__input--focus': showDropdown }"
+    />
+    <div *ngIf="hasValue" class="field__select__value" (click)="openDropdown()">{{ value }}</div>
+    <img
+      class="field__select__close" src="assets/close.png"
+      (click)="removeValue()"
+      *ngIf="hasValue"
+    >
+    <img class="field__select__icon" src="assets/back.png" />
+    <ul class="field__select__dropdown" *ngIf="showDropdown">
+      <li
+        class="field__select__dropdown__item"
+        *ngFor="let option of options"
+        (click)="select(option)"
+      >{{ option.value }}</li>
+    </ul>
+  </div>
+</div>

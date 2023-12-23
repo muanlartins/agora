@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { DashboardItem } from 'src/app/models/dashboard-item';
+import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,24 +10,9 @@ import { DashboardItem } from 'src/app/models/dashboard-item';
 export class DashboardComponent implements OnInit {
   public items: DashboardItem[];
 
-  constructor(private router: Router) { }
+  constructor(private utilsService: UtilsService) { }
 
   ngOnInit(): void {
-    this.initItems();
-  }
-
-  public initItems() {
-    this.items = [
-      {
-        src: 'assets/profile.png',
-        title: 'Perfil',
-        callback: () => { this.router.navigate(["/profile"]) }
-      },
-      {
-        src: 'assets/pulpit.png',
-        title: 'Debates',
-        callback: () => { this.router.navigate(["/debates"]) }
-      }
-    ];
+    this.items = this.utilsService.getDashboardItems();
   }
 }

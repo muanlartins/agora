@@ -19,11 +19,12 @@
 
       &__ufrj {
         width: 18rem;
+        position: relative;
+        top: 0.75rem;
       }
     }
 
     &__title {
-      font-family: Aldine;
       font-size: 2rem;
       text-transform: uppercase;
       font-weight: 500;
@@ -59,7 +60,7 @@
           height: 3rem;
           padding: 0 1rem;
           background: var(--light-gray);
-          border: var(--border-1);
+          border: var(--border);
           outline: none;
           transition: var(--transition);
           font-size: 1rem;
@@ -119,7 +120,7 @@
       cursor: pointer;
       background: white;
       color: var(--yellow-2);
-      border: var(--border-medium-gray-1);
+      border: var(--border-medium-gray);
       font-weight: 500;
       text-transform: uppercase;
 

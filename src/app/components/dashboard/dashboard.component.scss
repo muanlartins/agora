@@ -8,10 +8,6 @@
   align-items: center;
   gap: 10rem;
 
-  &__logo {
-    margin-top: 8rem;
-  }
-
   &__items {
     display: flex;
     flex-direction: row;
@@ -20,7 +16,7 @@
     &__item {
       width: 10rem;
       height: 10rem;
-      border: var(--border-medium-gray-2);
+      border: 2px solid var(--medium-gray);
       border-radius: 5px;
       cursor: pointer;
 

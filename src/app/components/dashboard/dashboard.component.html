@@ -1,7 +1,7 @@
 <div class="dashboard">
   <app-logo class="dashboard__logo"></app-logo>
   <div class="dashboard__items">
-    <div class="dashboard__items__item" *ngFor="let item of items" (click)="item.callback()">
+    <div class="dashboard__items__item" *ngFor="let item of items" [routerLink]="item.route">
       <img class="dashboard__items__item__icon" [src]="item.src" />
       <span class="dashboard__items__item__title">{{ item.title }}</span>
     </div>
