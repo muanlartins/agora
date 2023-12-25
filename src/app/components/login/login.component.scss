@@ -42,91 +42,19 @@
       flex-direction: column;
       align-items: center;
       gap: 2rem;
+      width: 25rem;
 
       &__field {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-
-        &__label {
-          font-size: 0.9rem;
-          font-weight: 500;
-          color: var(--yellow-2);
-          text-transform: uppercase;
-        }
-
-        &__input {
-          width: 25rem;
-          height: 3rem;
-          padding: 0 1rem;
-          background: var(--light-gray);
-          border: var(--border);
-          outline: none;
-          transition: var(--transition);
-          font-size: 1rem;
-          border-radius: 5px;
-
-          &::placeholder {
-            color: var(--medium-gray);
-          }
-
-          &:focus, &:hover {
-            box-shadow: var(--box-shadow);
-            background: white;
-          }
-
-          &--warning {
-            border: 1px solid var(--red);
-
-            &:focus, &:hover {
-              box-shadow: 0 0 1px 1px var(--red);
-            }
-          }
-        }
-
-        &__warning {
-          color: var(--red);
-          font-size: 0.8rem;
-        }
+        width: 100%;
       }
 
       &__button {
         width: 100%;
-        border-radius: 5px;
-        padding: 1rem 0.5rem;
-        margin-top: 2rem;
-        outline: none;
-        border: none;
-        font-size: 1rem;
-        cursor: pointer;
-        background: var(--yellow-2);
-        color: white;
-        font-weight: 500;
-        text-transform: uppercase;
-
-        &:hover {
-          background: var(--yellow-1);
-        }
-      }
-    }
-
-    &__signup {
-      border-radius: 5px;
-      padding: 0.5rem 0.75rem;
-      margin-top: 5rem;
-      outline: none;
-      border: none;
-      font-size: 0.8rem;
-      cursor: pointer;
-      background: white;
-      color: var(--yellow-2);
-      border: var(--border-medium-gray);
-      font-weight: 500;
-      text-transform: uppercase;
-
-      &:hover {
-        box-shadow: var(--box-shadow-medium-gray);
       }
     }
   }
+}
+
+.spinner {
+  filter: var(--filter);
 }

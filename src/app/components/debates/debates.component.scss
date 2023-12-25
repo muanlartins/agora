@@ -6,61 +6,8 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  gap: 5rem;
 
-  &__header {
-    padding-left: var(--sidebar-width);
-  }
-
-  &__body {
-    width: 72rem;
-    padding-left: var(--sidebar-width);
-  }
-
-  &__footer {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    margin-top: -2rem;
-    gap: 2rem;
-    padding-bottom: 3rem;
-    padding-left: var(--sidebar-width);
-
-    &__inputs {
-      display: grid;
-      gap: 1rem;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-
-      &__input {
-        &--first-half {
-          grid-column: 1 / 3;
-        }
-
-        &--last-half {
-          grid-column: 3 / 5;
-        }
-
-        &--exchange {
-          position: relative;
-        }
-
-        &--radio {
-          display: flex;
-          flex-direction: row;
-          gap: 1rem;
-          margin: auto;
-        }
-
-        &__icon {
-          width: 2rem;
-          height: 2rem;
-          filter: var(--filter);
-          cursor: pointer;
-          position: absolute;
-          left: 8rem;
-        }
-      }
-    }
+  &__navbar {
+    width: 100%;
   }
 }

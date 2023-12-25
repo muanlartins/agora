@@ -6,43 +6,8 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  gap: 10rem;
 
-  &__items {
-    display: flex;
-    flex-direction: row;
-    gap: 2rem;
-
-    &__item {
-      width: 10rem;
-      height: 10rem;
-      border: 2px solid var(--medium-gray);
-      border-radius: 5px;
-      cursor: pointer;
-
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 2rem;
-
-
-      &__icon {
-        width: 4rem;
-        height: 4rem;
-        filter: var(--filter);
-      }
-
-      &__title {
-        font-size: 1.2rem;
-        text-transform: uppercase;
-        font-weight: 500;
-        color: var(--yellow-2);
-      }
-
-      &:hover {
-        box-shadow: var(--box-shadow-medium-gray);
-      }
-    }
+  &__navbar {
+    width: 100%;
   }
 }

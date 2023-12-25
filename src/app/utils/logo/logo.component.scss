@@ -4,7 +4,6 @@
   justify-content: center;
   align-items: center;
   gap: 1.4rem;
-  margin-top: 5rem;
 
   &__upper {
     display: flex;
@@ -19,13 +18,13 @@
     &__text {
       font-size: 4rem;
       font-weight: 400;
-      color: var(--yellow-2);
+      color: var(--yellow);
       line-height: 80%;
       display: flex;
       align-items: center;
 
       &__detail {
-        width: 3.5rem;
+        width: 4rem;
       }
     }
   }
@@ -33,5 +32,30 @@
   &__lower {
     font-size: 1.45rem;
     color: var(--black);
+  }
+
+  &--small {
+    gap: 0.25rem;
+
+    &__upper {
+      gap: 1rem;
+
+      &__image {
+        width: 8rem;
+      }
+
+      &__text {
+        font-size: 3rem;
+
+        &__detail {
+          width: 3rem;
+        }
+      }
+    }
+
+    &__lower {
+      font-size: 1.05rem;
+      line-height: 1.05rem;
+    }
   }
 }

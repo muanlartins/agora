@@ -4,34 +4,33 @@
       <app-logo class="login__header__logos__sdufrj"></app-logo>
       <img class="login__header__logos__ufrj" src="assets/ufrj.png" />
     </div>
-    <p class="login__header__title">{{ formModeText }}</p>
   </div>
   <div class="login__body">
     <form [formGroup]="form" class="login__body__form" (submit)="onSubmit()">
-      <div class="login__body__form__field">
-        <label class="login__body__form__field__label">Login</label>
-        <input
-          [ngClass]="{ 'login__body__form__field__input--warning': showWarnings.login }"
-          class="login__body__form__field__input"
-          type="text"
-          placeholder="Login"
-          formControlName="login"
-        />
-        <span *ngIf="showWarnings.login" class="login__body__form__field__warning">Preencha o login</span>
-      </div>
-      <div class="login__body__form__field">
-        <label class="login__body__form__field__label">Senha</label>
-        <input
-          [ngClass]="{ 'login__body__form__field__input--warning': showWarnings.password }"
-          class="login__body__form__field__input"
-          placeholder="Password"
-          type="password"
-          formControlName="password"
-        />
-        <span *ngIf="showWarnings.password" class="login__body__form__field__warning">Preencha a senha</span>
-      </div>
-      <button class="login__body__form__button" type="submit">Enviar</button>
+      <mat-form-field class="login__body__form__field">
+        <mat-label>Login</mat-label>
+        <input matInput formControlName="login">
+        <mat-error *ngIf="!form.valid">O login é obrigatório</mat-error>
+      </mat-form-field>
+      <mat-form-field class="login__body__form__field">
+        <mat-label>Senha</mat-label>
+        <input matInput formControlName="password" type="password">
+        <mat-error *ngIf="!form.valid">A senha é obrigatória</mat-error>
+      </mat-form-field>
+      <button
+        class="login__body__form__button"
+        mat-raised-button
+        color="primary"
+        type="submit"
+      >Enviar</button>
     </form>
-    <button class="login__body__signup" (click)="changeFormMode()">{{ changeFormModeText }}</button>
   </div>
 </div>
+<ngx-spinner
+  *ngIf="loading"
+  bdColor="#fffb"
+  size="large"
+  color="#fbb344"
+  type="timer"
+  [fullScreen]="true"
+></ngx-spinner>
