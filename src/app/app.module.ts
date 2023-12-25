@@ -6,7 +6,6 @@ import { LoginComponent } from './components/login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { ProfileComponent } from './components/profile/profile.component';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
 import { DebatesComponent } from './components/debates/debates.component';
@@ -23,7 +22,6 @@ import { NavbarComponent } from './utils/navbar/navbar.component';
     AppComponent,
     LoginComponent,
     DashboardComponent,
-    ProfileComponent,
     DebatesComponent,
     LogoComponent,
     NavbarComponent
