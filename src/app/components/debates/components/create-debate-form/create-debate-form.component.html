@@ -1,0 +1,227 @@
+<form class="form" [formGroup]="form">
+  <mat-stepper class="form__stepper" [linear]="false" orientation="vertical">
+    <mat-step class="form__stepper__step" [stepControl]="debateFormGroup">
+      <div class="form__stepper__step__debate" [formGroup]="debateFormGroup">
+        <ng-template class="form__stepper__step__debate__label" matStepLabel>Debate</ng-template>
+        <mat-form-field class="form__stepper__step__debate__input">
+          <mat-hint>DD/MM/YYYY</mat-hint>
+          <mat-datepicker #picker></mat-datepicker>
+          <input matInput [matDatepicker]="picker" formControlName="date" [max]="maxDate" />
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-label>Data</mat-label>
+        </mat-form-field>
+        <mat-form-field class="form__stepper__step__debate__input">
+          <mat-label>Horário</mat-label>
+          <mat-select formControlName="time">
+            <mat-option *ngFor="let time of timeOptions" [value]="time.value">
+              {{ time.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="form__stepper__step__debate__input">
+          <mat-label>Estilo</mat-label>
+          <mat-select formControlName="style">
+            <mat-option value="bp">Parlamento Britânico</mat-option>
+            <mat-option value="fundamentals">Fundamentos</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="form__stepper__step__debate__input">
+          <mat-label>Local</mat-label>
+          <mat-select formControlName="local">
+            <mat-option value="virtual">Virtual</mat-option>
+            <mat-option value="inPerson">Presencial</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="form__stepper__step__debate__input">
+          <mat-label>Tipo de Moção</mat-label>
+          <mat-select formControlName="motionType">
+            <mat-option value="policy">Policy</mat-option>
+            <mat-option value="agent">Agente</mat-option>
+            <mat-option value="value">Valorativa</mat-option>
+          </mat-select>
+          <mat-error>O tipo de moção é obrigatório</mat-error>
+        </mat-form-field>
+        <mat-form-field class="form__stepper__step__debate__input">
+          <mat-label>Tema da Moção</mat-label>
+          <mat-select formControlName="motionTheme">
+            <mat-option value="economy">Economia</mat-option>
+            <mat-option value="ri">RI</mat-option>
+            <mat-option value="environment">Meio Ambiente</mat-option>
+            <mat-option value="ludic">Lúdico</mat-option>
+            <mat-option value="philosophy">Filosofia</mat-option>
+            <mat-option value="socialMovements">Movimentos Sociais</mat-option>
+            <mat-option value="politics">Política</mat-option>
+            <mat-option value="technology">Tecnologia</mat-option>
+            <mat-option value="religion">Religião</mat-option>
+            <mat-option value="popCulture">Cultura Pop</mat-option>
+          </mat-select>
+          <mat-error>O tema da moção é obrigatório</mat-error>
+        </mat-form-field>
+        <mat-form-field
+          class="form__stepper__step__debate__input form__stepper__step__debate__input--motion"
+        >
+          <mat-label>Moção</mat-label>
+          <textarea
+            matInput
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="1"
+            formControlName="motion"
+          ></textarea>
+          <mat-error>A moção é obrigatória</mat-error>
+        </mat-form-field>
+        <mat-form-field
+          class="form__stepper__step__debate__input"
+          formArrayName="infoSlides"
+          *ngFor="let infoSlide of infoSlidesFormArray.controls;
+          index as index"
+        >
+          <mat-label>InfoSlide {{ index+1 }}</mat-label>
+          <textarea
+            [formControlName]="index"
+            matInput
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="1"
+            formControlName="motion"
+          ></textarea>
+          <img (click)="removeInfoSlide(index)" *ngIf="showInfoSlideDeleteIcon(index)" src="assets/trash.png" />
+        </mat-form-field>
+        <button *ngIf="canAddInfoSlide()" mat-stroked-button (click)="addInfoSlide()">Adicionar InfoSlide</button>
+        <button mat-flat-button color="primary" matStepperNext [disabled]="!debateFormGroup.valid">Próximo</button>
+      </div>
+    </mat-step>
+    <mat-step class="form__stepper__step">
+      <ng-template matStepLabel>Debatedores</ng-template>
+      <div class="form__stepper__step__debaters" [formGroup]="debatersFormGroup">
+        <div class="form__stepper__step__debaters__filters" [formGroup]="debatersFilterFormGroup">
+          <mat-form-field class="form__stepper__step__debaters__filters__field">
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="name" />
+            <img
+              (click)="removeDebatersNameFilter()"
+              *ngIf="showRemoveDebatersNameFilterIcon()"
+              src="assets/close.png"
+            />
+          </mat-form-field>
+          <mat-form-field class="form__stepper__step__debaters__filters__field form__stepper__step__debaters__filters__field--society">
+            <mat-label>Sociedade</mat-label>
+            <mat-select formControlName="society">
+              <mat-option *ngFor="let society of societyOptions" [value]="society.value">
+                {{ society.viewValue }}
+              </mat-option>
+            </mat-select>
+            <img
+              (click)="removeDebatersSocietyFilter($event)"
+              *ngIf="showRemoveDebatersSocietyFilterIcon()"
+              src="assets/close.png"
+            />
+          </mat-form-field>
+        </div>
+        <div class="form__stepper__step__debaters__all" formArrayName="debaters" >
+          <div class="form__stepper__step__debaters__all__label">Selecione os participantes do debate:</div>
+          <mat-checkbox
+            *ngFor="let debater of filteredDebaters; index as index"
+            color="primary"
+            [formControlName]="getFilteredDebaterIndex(index)"
+          >{{ debater.name }}</mat-checkbox>
+        </div>
+        <div
+          class="form__stepper__step__debaters__iron"
+          *ngIf="showIrons()"
+          formArrayName="irons"
+          >
+            <div class="form__stepper__step__debaters__iron__label">Selecione caso algum dos participantes tenha sido iron:</div>
+            <mat-checkbox
+              *ngFor="let debater of uniqueSelectedDebaters; index as index"
+              color="primary"
+              [formControlName]="index"
+            >{{ debater.name }}</mat-checkbox>
+        </div>
+        <div class="form__stepper__step__debaters__houses">
+          <div
+            #debatersLegendHouse
+            *ngFor="let house of getDebateHouses(); index as index"
+            class="form__stepper__step__debaters__houses__legend"
+            [ngClass]="
+              'form__stepper__step__debaters__houses__legend--' +
+              getHouseBackgroundColor(house)
+            "
+            (mouseenter)="debatersLegendMouseEnter(index)"
+            (mouseleave)="debatersLegendMouseLeave(index)"
+          >
+            {{ house }}
+          </div>
+        </div>
+        <div
+          class="form__stepper__step__debaters__positions"
+          cdkDropList
+          cdkDropListOrientation="horizontal"
+          (cdkDropListDropped)="dropDebater($event)"
+        >
+          <div
+            #debater
+            class="form__stepper__step__debaters__positions__debater"
+            [ngClass]="
+              'form__stepper__step__debaters__positions__debater--' +
+              getDebaterBackgroundColor(index)
+            "
+            *ngFor="let debater of selectedDebaters;
+            index as index"
+            cdkDrag
+          >
+            <div
+              class="form__stepper__step__debaters__positions__debater__placeholder"
+              *cdkDragPlaceholder
+            ></div>
+            <div class="form__stepper__step__debaters__positions__debater__content">
+              <div
+                class="form__stepper__step__debaters__positions__debater__content__name"
+              >{{ index+1 }}. {{ debater.name }}</div>
+              <div
+                class="form__stepper__step__debaters__positions__debater__content__position"
+              >{{ getDebatePositionByIndex(index) }}</div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="form__stepper__step__debaters__sps"
+          formArrayName="sps"
+        >
+          <mat-form-field
+            *ngFor="let sp of spsFormArray.controls; index as index"
+            [style.width] = "'calc(calc(100% - ' + spsFormArray.length*2 + 'rem) / ' + spsFormArray.length + ')'"
+          >
+            <mat-label>Speaker Points</mat-label>
+            <input matInput [formControlName]="index" type="number" />
+            <mat-error *ngIf="sp.errors && sp.errors['min']">O valor mínimo é 50</mat-error>
+            <mat-error *ngIf="sp.errors && sp.errors['max']">O valor máximo é 100</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step class="form__stepper__step">
+      <ng-template matStepLabel>Juízes</ng-template>
+      <div class="form__stepper__step__judges" [formGroup]="judgesFormGroup">
+        <mat-form-field>
+          <mat-label>Chair</mat-label>
+          <mat-select formControlName="chair">
+            <mat-option *ngFor="let judge of judgeOptions" [value]="judge.value">
+              {{ judge.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field formArrayName="wings" *ngFor="let wing of wingsFormArray.controls; index as index">
+          <mat-label>Wing {{ index+1 }}</mat-label>
+          <mat-select [formControlName]="index">
+            <mat-option *ngFor="let judge of judgeOptions" [value]="judge.value" [disabled]="judge.disabled">
+              {{ judge.viewValue }}
+            </mat-option>
+          </mat-select>
+          <img (click)="removeWing(index)" src="assets/trash.png" />
+        </mat-form-field>
+        <button mat-stroked-button (click)="addWing()">Adicionar Wing</button>
+      </div>
+    </mat-step>
+  </mat-stepper>
+</form>

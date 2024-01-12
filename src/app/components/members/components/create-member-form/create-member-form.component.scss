@@ -1,0 +1,34 @@
+:host {
+  --mat-form-field-width: calc(calc(100% - 10rem) / 6);
+  --button-height: 3.2rem;
+}
+
+.form {
+  display: flex;
+  gap: 2rem;
+
+  &__field {
+    position: relative;
+    width: var(--mat-form-field-width);
+
+    &__icon {
+      position: absolute;
+      right: 0.75rem;
+      top: 0.25rem;
+      transform: translateY(-50%);
+      width: 0.8rem;
+      height: 0.8rem;
+      cursor: pointer;
+      filter: var(--filter-black);
+    }
+
+    &--select &__icon {
+      right: 1.75rem;
+    }
+
+    &__button {
+      width: var(--mat-form-field-width);
+      height: var(--button-height);
+    }
+  }
+}

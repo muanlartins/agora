@@ -23,6 +23,11 @@ export class UtilsService {
         title: 'Debates',
         route: "/debates"
       },
+      {
+        src: 'assets/member.png',
+        title: 'Membros',
+        route: "/members"
+      },
     ];
   }
 

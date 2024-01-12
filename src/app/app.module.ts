@@ -11,11 +11,23 @@ import { NgxSpinnerModule } from "ngx-spinner";
 import { DebatesComponent } from './components/debates/debates.component';
 import { LoginGuard } from './guards/login.guard';
 import { DatePipe } from '@angular/common';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
 import { LogoComponent } from './utils/logo/logo.component';
 import { NavbarComponent } from './utils/navbar/navbar.component';
+
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
+import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatTabsModule } from '@angular/material/tabs';
+import { CreateDebateFormComponent } from './components/debates/components/create-debate-form/create-debate-form.component';
+import { CreateMemberFormComponent } from './components/members/components/create-member-form/create-member-form.component';
+import { MembersComponent } from './components/members/members.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +36,10 @@ import { NavbarComponent } from './utils/navbar/navbar.component';
     DashboardComponent,
     DebatesComponent,
     LogoComponent,
-    NavbarComponent
+    NavbarComponent,
+    CreateDebateFormComponent,
+    CreateMemberFormComponent,
+    MembersComponent,
   ],
   imports: [
     BrowserModule,
@@ -35,12 +50,26 @@ import { NavbarComponent } from './utils/navbar/navbar.component';
     BrowserAnimationsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSelectModule,
+    MatButtonToggleModule,
+    MatStepperModule,
+    MatCheckboxModule,
+    DragDropModule,
+    MatTabsModule,
+
   ],
   exports: [
     NgxSpinnerModule
   ],
-  providers: [LoginGuard, DatePipe],
+  providers: [
+    LoginGuard,
+    DatePipe,
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'}}
+  ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

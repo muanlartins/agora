@@ -1,11 +1,12 @@
 <div class="navbar">
   <app-logo [small]="true" class="navbar__logo"></app-logo>
+  <div class="navbar__title">{{ title }}</div>
   <ul class="navbar__menu">
     <li
       class="navbar__menu__item"
       *ngFor="let item of items"
       [routerLink]="item.route"
-      routerLinkActive=""
+      routerLinkActive="navbar__menu__item--active"
     >
       <img class="navbar__menu__item__icon" [src]="item.src" />
       <p class="navbar__menu__item__title">{{ item.title }}</p>
