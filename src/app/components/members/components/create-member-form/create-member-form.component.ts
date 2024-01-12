@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { Role } from 'src/app/models/role';
 import { SelectOption } from 'src/app/models/select-option';
 import { Society } from 'src/app/models/society';
 
@@ -11,8 +10,6 @@ import { Society } from 'src/app/models/society';
 })
 export class CreateMemberFormComponent implements OnInit {
   public form: FormGroup;
-
-  public roleOptions: SelectOption[] = [];
 
   public societyOptions: SelectOption[] = [];
 
@@ -26,7 +23,6 @@ export class CreateMemberFormComponent implements OnInit {
 
   public initForm() {
     this.form = this.formBuilder.group({
-      role: [''],
       name: [''],
       society: ['']
     });
@@ -37,15 +33,9 @@ export class CreateMemberFormComponent implements OnInit {
 
     this.societyOptions = society.map(([value, viewValue]) => ({ value, viewValue }))
       .sort((a, b) => a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase()));
-
-    const roles = Object.entries(Role);
-
-    this.roleOptions = roles.map(([value, viewValue]) => ({ value, viewValue }))
-      .sort((a, b) => a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase()));
   }
 
   public onSubmit() {
-    this.form.controls['role'].patchValue('');
     this.form.controls['name'].patchValue('');
     this.form.controls['society'].patchValue('');
   }
