@@ -1,0 +1,75 @@
+.form {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  &__input {
+    width: 240px;
+  }
+
+  &__button {
+    width: 120px;
+    height: 3.2rem;
+  }
+}
+
+.table {
+  width: 100%;
+  overflow-x: hidden;
+
+  &__header {
+    &__tr {
+      &__th {
+        width: 0;
+        padding-right: 16px;
+        white-space: nowrap;
+
+        &--0 {
+          width: 20%;
+          white-space: normal;
+        }
+      }
+    }
+  }
+
+  &__body {
+    &__tr {
+      padding-right: 16px;
+      cursor: pointer;
+      transition: background 0.1s ease-in-out;
+
+      &__td {
+        padding-right: 16px;
+        width: 0;
+        white-space: nowrap;
+
+        &__detail {
+          overflow: hidden;
+        }
+
+        &--collapsed {
+          height: 0;
+        }
+
+        &--expanded {
+          height: auto;
+        }
+
+        &--1 {
+          width: max-content;
+          white-space: normal;
+          padding-top: 12px;
+          padding-bottom: 12px;
+        }
+      }
+
+      &--detail {
+        height: 0;
+      }
+
+      &:hover {
+        background: rgba(0,0,0,0.05);
+      }
+    }
+  }
+}

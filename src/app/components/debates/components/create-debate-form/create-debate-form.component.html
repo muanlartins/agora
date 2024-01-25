@@ -21,39 +21,34 @@
         <mat-form-field class="form__stepper__step__debate__input">
           <mat-label>Estilo</mat-label>
           <mat-select formControlName="style">
-            <mat-option value="bp">Parlamento Britânico</mat-option>
-            <mat-option value="fundamentals">Fundamentos</mat-option>
+            <ng-container *ngFor="let entry of debateStyle | keyvalue">
+              <mat-option [value]="entry.key">{{ entry.value }}</mat-option>
+            </ng-container>
           </mat-select>
         </mat-form-field>
         <mat-form-field class="form__stepper__step__debate__input">
           <mat-label>Local</mat-label>
-          <mat-select formControlName="local">
-            <mat-option value="virtual">Virtual</mat-option>
-            <mat-option value="inPerson">Presencial</mat-option>
+          <mat-select formControlName="venue">
+            <ng-container *ngFor="let entry of debateVenue | keyvalue">
+              <mat-option [value]="entry.key">{{ entry.value }}</mat-option>
+            </ng-container>
           </mat-select>
         </mat-form-field>
         <mat-form-field class="form__stepper__step__debate__input">
           <mat-label>Tipo de Moção</mat-label>
           <mat-select formControlName="motionType">
-            <mat-option value="policy">Policy</mat-option>
-            <mat-option value="agent">Agente</mat-option>
-            <mat-option value="value">Valorativa</mat-option>
+            <ng-container *ngFor="let entry of motionType | keyvalue">
+              <mat-option [value]="entry.key">{{ entry.value }}</mat-option>
+            </ng-container>
           </mat-select>
           <mat-error>O tipo de moção é obrigatório</mat-error>
         </mat-form-field>
         <mat-form-field class="form__stepper__step__debate__input">
           <mat-label>Tema da Moção</mat-label>
           <mat-select formControlName="motionTheme">
-            <mat-option value="economy">Economia</mat-option>
-            <mat-option value="ri">RI</mat-option>
-            <mat-option value="environment">Meio Ambiente</mat-option>
-            <mat-option value="ludic">Lúdico</mat-option>
-            <mat-option value="philosophy">Filosofia</mat-option>
-            <mat-option value="socialMovements">Movimentos Sociais</mat-option>
-            <mat-option value="politics">Política</mat-option>
-            <mat-option value="technology">Tecnologia</mat-option>
-            <mat-option value="religion">Religião</mat-option>
-            <mat-option value="popCulture">Cultura Pop</mat-option>
+            <ng-container *ngFor="let entry of motionTheme | keyvalue">
+              <mat-option [value]="entry.key">{{ entry.value }}</mat-option>
+            </ng-container>
           </mat-select>
           <mat-error>O tema da moção é obrigatório</mat-error>
         </mat-form-field>
@@ -107,9 +102,9 @@
           <mat-form-field class="form__stepper__step__debaters__filters__field form__stepper__step__debaters__filters__field--society">
             <mat-label>Sociedade</mat-label>
             <mat-select formControlName="society">
-              <mat-option *ngFor="let society of societyOptions" [value]="society.value">
-                {{ society.viewValue }}
-              </mat-option>
+              <ng-container *ngFor="let entry of society | keyvalue">
+                <mat-option [value]="entry.key">{{ entry.value }}</mat-option>
+              </ng-container>
             </mat-select>
             <img
               (click)="removeDebatersSocietyFilter($event)"
@@ -139,20 +134,22 @@
             >{{ debater.name }}</mat-checkbox>
         </div>
         <div class="form__stepper__step__debaters__houses">
+          <!-- <div class="caption">Legenda</div> -->
           <div
             #debatersLegendHouse
-            *ngFor="let house of getDebateHouses(); index as index"
+            *ngFor="let house of debateHouses; index as index"
             class="form__stepper__step__debaters__houses__legend"
             [ngClass]="
               'form__stepper__step__debaters__houses__legend--' +
-              getHouseBackgroundColor(house)
+              getHouseBackgroundColor(house[1])
             "
-            (mouseenter)="debatersLegendMouseEnter(index)"
-            (mouseleave)="debatersLegendMouseLeave(index)"
+            (mouseenter)="debatersLegendMouseEnter(index, house)"
+            (mouseleave)="debatersLegendMouseLeave(index, house)"
           >
-            {{ house }}
+            {{ house[1] }}
           </div>
         </div>
+        <div style="font-weight: 500">Debatedores</div>
         <div
           class="form__stepper__step__debaters__positions"
           cdkDropList
@@ -198,6 +195,36 @@
             <mat-error *ngIf="sp.errors && sp.errors['max']">O valor máximo é 100</mat-error>
           </mat-form-field>
         </div>
+        <div style="font-weight: 500">Call</div>
+        <div
+          class="form__stepper__step__debaters__call"
+          cdkDropList
+          cdkDropListOrientation="horizontal"
+          (cdkDropListDropped)="dropHouse($event)"
+        >
+          <div
+            #call
+            class="form__stepper__step__debaters__call__house"
+            *ngFor="let house of callHouses;
+            index as index"
+            cdkDrag
+            [ngClass]="
+              'form__stepper__step__debaters__call__house--' +
+              getHouseBackgroundColor(house[1])
+            "
+            [id]="house[0]"
+          >
+            <div
+              class="form__stepper__step__debaters__call__house__placeholder"
+              *cdkDragPlaceholder
+            ></div>
+            <div class="form__stepper__step__debaters__call__house__content">
+              <div
+                class="form__stepper__step__debaters__call__house__content__name"
+              >{{ index+1 }}º {{ house[1] }}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </mat-step>
     <mat-step class="form__stepper__step">
@@ -206,22 +233,46 @@
         <mat-form-field>
           <mat-label>Chair</mat-label>
           <mat-select formControlName="chair">
-            <mat-option *ngFor="let judge of judgeOptions" [value]="judge.value">
-              {{ judge.viewValue }}
-            </mat-option>
+            <mat-form-field [formGroup]="judgesFormGroup" style="width: 100%">
+              <mat-label>Nome</mat-label>
+              <input matInput formControlName="filter" />
+            </mat-form-field>
+            <ng-container *ngIf="judgesFormGroup.controls['chair'].value">
+              <mat-option *ngFor="let judge of judgeOptions" [value]="judge.value">
+                {{ judge.viewValue }}
+              </mat-option>
+            </ng-container>
+            <ng-container *ngIf="!judgesFormGroup.controls['chair'].value">
+              <mat-option *ngFor="let judge of filteredJudgeOptions" [value]="judge.value">
+                {{ judge.viewValue }}
+              </mat-option>
+            </ng-container>
           </mat-select>
         </mat-form-field>
         <mat-form-field formArrayName="wings" *ngFor="let wing of wingsFormArray.controls; index as index">
           <mat-label>Wing {{ index+1 }}</mat-label>
           <mat-select [formControlName]="index">
-            <mat-option *ngFor="let judge of judgeOptions" [value]="judge.value" [disabled]="judge.disabled">
-              {{ judge.viewValue }}
-            </mat-option>
+            <mat-form-field [formGroup]="judgesFormGroup" style="width: 100%">
+              <mat-label>Nome</mat-label>
+              <input matInput formControlName="filter" />
+            </mat-form-field>
+            <ng-container *ngIf="wing.value">
+              <mat-option *ngFor="let judge of judgeOptions" [value]="judge.value">
+                {{ judge.viewValue }}
+              </mat-option>
+            </ng-container>
+            <ng-container *ngIf="!wing.value">
+              <mat-option *ngFor="let judge of filteredJudgeOptions" [value]="judge.value">
+                {{ judge.viewValue }}
+              </mat-option>
+            </ng-container>
           </mat-select>
           <img (click)="removeWing(index)" src="assets/trash.png" />
         </mat-form-field>
         <button mat-stroked-button (click)="addWing()">Adicionar Wing</button>
+        <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="!form.valid">Criar</button>
       </div>
     </mat-step>
   </mat-stepper>
 </form>
+<app-spinner [loading]="loading" [fullscreen]="true"></app-spinner>

@@ -2,12 +2,18 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { DebateHouses } from 'src/app/models/debate-houses';
-import { DebatePositions } from 'src/app/models/debate-positions';
-import { Debater } from 'src/app/models/debater';
-import { Judge } from 'src/app/models/judge';
-import { SelectOption } from 'src/app/models/select-option';
-import { Society } from 'src/app/models/society';
+import { DebateHouse } from 'src/app/models/enums/debate-house';
+import { DebatePosition } from 'src/app/models/enums/debate-position';
+import { DebateStyle } from 'src/app/models/enums/debate-style';
+import { DebateVenue } from 'src/app/models/enums/debate-venue';
+import { MotionTheme } from 'src/app/models/enums/motion-theme';
+import { MotionType } from 'src/app/models/enums/motion-type';
+import { SelectOption } from 'src/app/models/types/select-option';
+import { Society } from 'src/app/models/enums/society';
+import { Member } from 'src/app/models/types/member';
+import { MemberService } from 'src/app/services/member.service';
+import { DebateService } from 'src/app/services/debate.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-create-debate-form',
@@ -19,29 +25,38 @@ export class CreateDebateFormComponent implements OnInit {
 
   public timeOptions: SelectOption[] = [];
 
-  public societyOptions: SelectOption[] = [];
-
   public maxDate: Date = new Date();
 
-  public debaters: Debater[] = [];
+  public debaters: Member[] = [];
 
-  public filteredDebaters: Debater[] = [];
+  public filteredDebaters: Member[] = [];
 
-  public selectedDebaters: Debater[] = [];
+  public selectedDebaters: Member[] = [];
 
-  public judges: Judge[] = [];
+  public uniqueSelectedDebaters: Member[] = [];
+
+  public judges: Member[] = [];
+
+  public selectedJudges: Member[] = [];
 
   public judgeOptions: SelectOption[] = [];
 
-  public uniqueSelectedDebaters: Debater[] = [];
+  public filteredJudgeOptions: SelectOption[] = [];
 
-  public selectedJudges: Judge[] = [];
+  public debateHouses: [key: string, value: DebateHouse][] = Object.entries(DebateHouse);
+
+  public callHouses: [key: string, value: DebateHouse][] = [];
+
+  public loading: boolean = false;
 
   @ViewChildren('debatersLegendHouse')
   public debatersLegendHousesRefs: QueryList<ElementRef<HTMLDivElement>>;
 
   @ViewChildren('debater')
   public debatersRefs: QueryList<ElementRef<HTMLDivElement>>;
+
+  @ViewChildren('call')
+  public housesRefs: QueryList<ElementRef<HTMLDivElement>>;
 
   get debateFormGroup() {
     return this.form.controls['debate'] as FormGroup;
@@ -83,16 +98,43 @@ export class CreateDebateFormComponent implements OnInit {
 
   public wingSubscriptions: Subscription[] = [];
 
+  public spSubscriptions: Subscription[] = [];
+
+  get debatePosition() {
+    return DebatePosition;
+  }
+
+  get debateStyle() {
+    return DebateStyle;
+  }
+
+  get debateVenue() {
+    return DebateVenue;
+  }
+
+  get motionType() {
+    return MotionType;
+  }
+
+  get motionTheme() {
+    return MotionTheme;
+  }
+
+  get society() {
+    return Society;
+  }
+
   constructor(
     private formBuilder: FormBuilder,
+    private memberService: MemberService,
+    private debateService: DebateService,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
     this.initForm();
-    this.initDebaters();
-    this.initJudges();
-    this.initOptions();
-    this.subscribeToValueChanges();
+    this.initTimeOptions();
+    this.getAllMembers();
   }
 
   public initForm() {
@@ -101,7 +143,7 @@ export class CreateDebateFormComponent implements OnInit {
         date: [new Date().toISOString(), Validators.required],
         time: [this.getCurrentClosestTime(), Validators.required],
         style: ['bp', Validators.required],
-        local: ['virtual', Validators.required],
+        venue: ['remote', Validators.required],
         motionType: ['', Validators.required],
         motionTheme: ['', Validators.required],
         motion: ['', Validators.required],
@@ -118,12 +160,13 @@ export class CreateDebateFormComponent implements OnInit {
       }),
       judges: this.formBuilder.group({
         chair: [''],
-        wings: this.formBuilder.array([])
+        wings: this.formBuilder.array([]),
+        filter: ['']
       })
     });
   }
 
-  public initOptions() {
+  public initTimeOptions() {
     for (let m = 0; m < 1440; m += 30) {
       this.timeOptions.push(
         {
@@ -132,179 +175,52 @@ export class CreateDebateFormComponent implements OnInit {
         }
       )
     }
+  }
 
-    const society = Object.entries(Society);
+  public getAllMembers() {
+    this.loading = true;
+    this.memberService.getAllMembers().subscribe((members) => {
+      this.loading = false;
+      this.debaters = members.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+      this.judges = members.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
-    this.societyOptions = society.map(([value, viewValue]) => ({ value, viewValue }))
-      .sort((a, b) => a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase()));
+      this.initDebaters();
+      this.initJudgeOptions();
+      this.subscribeToValueChanges();
+    });
   }
 
   public initDebaters() {
-    this.debaters = [
-      {
-        id: '2',
-        name: 'Camila Caleones',
-        society: 'sdufrj'
-      },
-      {
-        id: '3',
-        name: 'Dylhermanno dos Reis',
-        society: 'hermeneutica'
-      },
-      {
-        id: '4',
-        name: 'Bruno Visnadi',
-        society: 'senatus'
-      },
-      {
-        id: '5',
-        name: 'Caio Castro',
-        society: 'uspd'
-      },
-      {
-        id: '6',
-        name: 'Jéssica Peixoto',
-        society: 'uspd'
-      },
-      {
-        id: '7',
-        name: 'Vinícius Brasileiro',
-        society: 'sdufrj'
-      },
-      {
-        id: '8',
-        name: 'Isabella Refkalefsky',
-        society: 'sdufrj'
-      },
-      {
-        id: '9',
-        name: 'Larissa dos Anjos',
-        society: 'hermeneutica'
-      },
-      {
-        id: '10',
-        name: 'Matheus Beninca',
-        society: 'gdo'
-      },
-      {
-        id: '11',
-        name: 'Cali Peixoto',
-        society: 'gdo'
-      },
-      {
-        id: '12',
-        name: 'Raphael Dias',
-        society: 'sdufrj'
-      },
-      {
-        id: '13',
-        name: 'João Miranda',
-        society: 'sdufrj'
-      },
-      {
-        id: '14',
-        name: 'Cecília Antunes',
-        society: 'sdufrj'
-      },
-      {
-        id: '15',
-        name: 'Luís Otávio',
-        society: 'sdufrj'
-      },
-      {
-        id: '16',
-        name: 'Isabella Romanholi',
-        society: 'sdufrj'
-      },
-      {
-        id: '17',
-        name: 'Carol Damascena',
-        society: 'sdufrj'
-      },
-      {
-        id: '18',
-        name: 'Rafaela Popov',
-        society: 'sdufrj'
-      },
-    ].sort((a, b) => a.name.localeCompare(b.name));
-
     this.filteredDebaters = this.debaters;
 
     this.initDebatersFormArray();
   }
 
-  public initJudges() {
-    this.judges = [
-      {
-        id: '1',
-        name: 'Luan Martins',
-        society: 'sdufrj'
-      },
-      {
-        id: '2',
-        name: 'Camila Caleones',
-        society: 'sdufrj'
-      },
-      {
-        id: '3',
-        name: 'Dylhermanno dos Reis',
-        society: 'hermeneutica'
-      },
-      {
-        id: '4',
-        name: 'Maria Marchesan',
-        society: 'gdo'
-      },
-      {
-        id: '6',
-        name: 'Jéssica Peixoto',
-        society: 'uspd'
-      },
-      {
-        id: '7',
-        name: 'Vinícius Brasileiro',
-        society: 'sdufrj'
-      },
-      {
-        id: '8',
-        name: 'Isabella Refkalefsky',
-        society: 'sdufrj'
-      },
-      {
-        id: '9',
-        name: 'Larissa dos Anjos',
-        society: 'hermeneutica'
-      },
-      {
-        id: '10',
-        name: 'Matheus Beninca',
-        society: 'gdo'
-      },
-      {
-        id: '11',
-        name: 'Cali Peixoto',
-        society: 'gdo'
-      },
-      {
-        id: '12',
-        name: 'Raphael Dias',
-        society: 'sdufrj'
-      }
-    ].sort((a, b) => a.name.localeCompare(b.name));
-
-    this.initJudgeOptions();
-  }
-
-  public initJudgeOptions() {
-    this.judgeOptions = this.judges.map((judge: Judge) => ({
-      value: judge.id,
-      viewValue: judge.name
-    }));
-  }
-
   public initDebatersFormArray() {
     this.debaters.forEach(() => {
       this.debatersFormArray.push(this.formBuilder.control(false));
+    });
+  }
+
+  public initJudgeOptions() {
+    this.judgeOptions = this.judges.map((judge: Member) => ({
+      value: judge.id,
+      viewValue: judge.name,
+      disabled: false
+    }));
+
+    this.filteredJudgeOptions = this.judgeOptions;
+  }
+
+  public filterJudgeOptions(filter?: string) {
+    if (filter) {
+      this.filteredJudgeOptions = this.judgeOptions
+        .filter((judge) => judge.viewValue.toLowerCase().includes(filter.toLowerCase()));
+    } else this.filteredJudgeOptions = this.judgeOptions;
+
+    this.selectedJudges.forEach((selectedJudge) => {
+      const filteredIndex = this.filteredJudgeOptions.findIndex((judge) => judge.value === selectedJudge.id);
+      if (filteredIndex !== -1) this.filteredJudgeOptions[filteredIndex].disabled = true;
     });
   }
 
@@ -328,18 +244,18 @@ export class CreateDebateFormComponent implements OnInit {
           this.uniqueSelectedDebaters.push(this.debaters[index]);
           this.ironsFormArray.push(this.formBuilder.control(false));
         } else {
-          const selectedDebaterIndex = this.selectedDebaters.findIndex((debater: Debater) =>
+          const selectedDebaterIndex = this.selectedDebaters.findIndex((debater: Member) =>
             debater.id === this.debaters[index].id
           );
           this.selectedDebaters.splice(selectedDebaterIndex, 1);
           this.spsFormArray.removeAt(selectedDebaterIndex);
 
-          const uniqueSelectedDebaterIndex = this.uniqueSelectedDebaters.findIndex((debater: Debater) =>
+          const uniqueSelectedDebaterIndex = this.uniqueSelectedDebaters.findIndex((debater: Member) =>
             debater.id === this.debaters[index].id
           );
 
           if (this.ironsFormArray.controls[uniqueSelectedDebaterIndex].value) {
-            const selectedDebaterIndex = this.selectedDebaters.findIndex((debater: Debater) =>
+            const selectedDebaterIndex = this.selectedDebaters.findIndex((debater: Member) =>
               debater.id === this.debaters[index].id
             );
             this.selectedDebaters.splice(selectedDebaterIndex, 1);
@@ -365,31 +281,73 @@ export class CreateDebateFormComponent implements OnInit {
               this.spsFormArray.removeAt(ironDebaterIndex);
             }
 
+            this.setCallHouses();
             this.checkIronsCheckboxDisable();
             this.checkDebatersCheckboxDisable();
           })
+        );
+
+        this.spSubscriptions.forEach((subscription) => subscription.unsubscribe());
+        this.spSubscriptions = this.spsFormArray.controls.map((control) =>
+          control.valueChanges.subscribe(() => {
+            this.setCallHouses();
+          })
         )
 
+        this.setCallHouses();
         this.checkIronsCheckboxDisable();
         this.checkDebatersCheckboxDisable();
       })
     );
 
     this.judgesFormGroup.valueChanges.subscribe(() => {
+      const filter = this.judgesFormGroup.controls['filter'].value;
+
       this.selectedJudges = [];
 
-      this.selectedJudges.push(this.getJudgeById(this.judgesFormGroup.controls['chair'].value));
-      this.wingsFormArray.controls.forEach((control) => this.selectedJudges.push(
-        this.getJudgeById(control.value)
-      ));
+      if (this.judgesFormGroup.controls['chair'].value)
+        this.selectedJudges.push(this.getJudgeById(this.judgesFormGroup.controls['chair'].value));
 
-      this.initJudgeOptions();
-
-      this.selectedJudges.forEach((selectedJudge) => {
-        const index = this.judgeOptions.findIndex((judge) => judge.value === selectedJudge.id);
-        this.judgeOptions[index].disabled = true;
+      this.wingsFormArray.controls.forEach((control) => {
+        if (control.value) this.selectedJudges.push(this.getJudgeById(control.value))
       });
+
+      this.filterJudgeOptions(filter);
     });
+  }
+
+  public setCallHouses() {
+    this.callHouses =
+      this.selectedDebaters.length ?
+      Object.entries(DebateHouse).slice() :
+      [];
+
+    if (this.selectedDebaters.length > 0 && this.selectedDebaters.length <= 1)
+      this.callHouses.splice(-3);
+    else if (this.selectedDebaters.length >= 2 && this.selectedDebaters.length <= 4)
+      this.callHouses.splice(-2);
+    else if (this.selectedDebaters.length === 5)
+      this.callHouses.splice(-1);
+
+      const sps: number[] = this.spsFormArray.controls.map((control) =>
+      Number(control.value)
+    );
+
+    let houseSps = Object.entries(DebateHouse).slice().map((entry) => ({
+      entry,
+      sp: 0
+    }));
+
+    sps.forEach((sp, i) => {
+      if (i === 0 || i === 2) houseSps[0].sp += sp;
+      if (i === 1 || i === 3) houseSps[1].sp += sp;
+      if (i === 4 || i === 6) houseSps[2].sp += sp;
+      if (i === 5 || i === 7) houseSps[3].sp += sp;
+    });
+
+    houseSps = houseSps.sort((a, b) => b.sp - a.sp).slice(0, this.callHouses.length);
+
+    this.callHouses = houseSps.map((houseSp) => houseSp.entry);
   }
 
   public getFilteredDebaterIndex(index: number) {
@@ -415,12 +373,12 @@ export class CreateDebateFormComponent implements OnInit {
 
     if (this.debatersFilterFormGroup.controls['name'].value) {
       const filter = this.debatersFilterFormGroup.controls['name'].value;
-      this.filteredDebaters = this.filteredDebaters.filter((debater: Debater) => debater.name.toLowerCase().match(filter.toLowerCase()))
+      this.filteredDebaters = this.filteredDebaters.filter((debater: Member) => debater.name.toLowerCase().match(filter.toLowerCase()))
     }
 
     if (this.debatersFilterFormGroup.controls['society'].value) {
       const filter = this.debatersFilterFormGroup.controls['society'].value;
-      this.filteredDebaters = this.filteredDebaters.filter((debater: Debater) => debater.society === filter)
+      this.filteredDebaters = this.filteredDebaters.filter((debater: Member) => debater.society === filter)
     }
   }
 
@@ -458,7 +416,7 @@ export class CreateDebateFormComponent implements OnInit {
     return index === this.infoSlidesFormArray.controls.length-1;
   }
 
-  public dropDebater(event: CdkDragDrop<Debater[]>) {
+  public dropDebater(event: CdkDragDrop<Member[]>) {
     moveItemInArray(this.selectedDebaters, event.previousIndex, event.currentIndex);
 
     const spsFormArray = this.spsFormArray.value;
@@ -466,24 +424,28 @@ export class CreateDebateFormComponent implements OnInit {
     this.spsFormArray.patchValue(spsFormArray);
   }
 
+  public dropHouse(event: CdkDragDrop<DebateHouse[]>) {
+    moveItemInArray(this.callHouses, event.previousIndex, event.currentIndex);
+  }
+
   public getDebatePositionByIndex(index: number) {
     switch(index) {
       case 0:
-        return DebatePositions.pm;
+        return DebatePosition.pm;
       case 1:
-        return DebatePositions.lo;
+        return DebatePosition.lo;
       case 2:
-        return DebatePositions.dpm;
+        return DebatePosition.dpm;
       case 3:
-        return DebatePositions.dlo;
+        return DebatePosition.dlo;
       case 4:
-        return DebatePositions.mg;
+        return DebatePosition.mg;
       case 5:
-        return DebatePositions.mo;
+        return DebatePosition.mo;
       case 6:
-        return DebatePositions.gw;
+        return DebatePosition.gw;
       case 7:
-        return DebatePositions.ow;
+        return DebatePosition.ow;
     }
 
     return '';
@@ -508,29 +470,25 @@ export class CreateDebateFormComponent implements OnInit {
     return ''
   }
 
-  public getDebateHouses() {
-    return Object.values(DebateHouses);
-  }
-
-  public getHouseBackgroundColor(house: DebateHouses) {
+  public getHouseBackgroundColor(house: DebateHouse) {
     switch(house) {
-      case DebateHouses.og:
+      case DebateHouse.og:
         return 'lime';
-      case DebateHouses.oo:
+      case DebateHouse.oo:
         return 'teal';
-      case DebateHouses.cg:
+      case DebateHouse.cg:
         return 'blue';
-      case DebateHouses.co:
+      case DebateHouse.co:
         return 'purple';
     }
   }
 
-  public debatersLegendMouseEnter(index: number) {
+  public debatersLegendMouseEnter(index: number, house: [key: string, value: DebateHouse]) {
     this.debatersLegendHousesRefs.toArray().forEach((ref, i) => {
       if (index === i) {
-        ref.nativeElement.classList.add('debates__form__stepper__step__debaters__houses__legend--focus');
+        ref.nativeElement.classList.add('form__stepper__step__debaters__houses__legend--focus');
       } else {
-        ref.nativeElement.classList.add('debates__form__stepper__step__debaters__houses__legend--blur');
+        ref.nativeElement.classList.add('form__stepper__step__debaters__houses__legend--blur');
       }
     });
 
@@ -542,21 +500,32 @@ export class CreateDebateFormComponent implements OnInit {
         (index === 3 && (i === 5 || i === 7))
       )
         ref.nativeElement.classList.add(
-          'debates__form__stepper__step__debaters__positions__debater--focus'
+          'form__stepper__step__debaters__positions__debater--focus'
         );
       else
         ref.nativeElement.classList.add(
-          'debates__form__stepper__step__debaters__positions__debater--blur'
+          'form__stepper__step__debaters__positions__debater--blur'
+        );
+    });
+
+    this.housesRefs.forEach((ref) => {
+      if (ref.nativeElement.id === house[0])
+        ref.nativeElement.classList.add(
+          'form__stepper__step__debaters__call__house--focus'
+        );
+      else
+        ref.nativeElement.classList.add(
+          'form__stepper__step__debaters__call__house--blur'
         );
     });
   }
 
-  public debatersLegendMouseLeave(index: number) {
+  public debatersLegendMouseLeave(index: number, house: [key: string, value: DebateHouse]) {
     this.debatersLegendHousesRefs.toArray().forEach((ref, i) => {
       if (index === i) {
-        ref.nativeElement.classList.remove('debates__form__stepper__step__debaters__houses__legend--focus');
+        ref.nativeElement.classList.remove('form__stepper__step__debaters__houses__legend--focus');
       } else {
-        ref.nativeElement.classList.remove('debates__form__stepper__step__debaters__houses__legend--blur');
+        ref.nativeElement.classList.remove('form__stepper__step__debaters__houses__legend--blur');
       }
     });
 
@@ -568,11 +537,22 @@ export class CreateDebateFormComponent implements OnInit {
         (index === 3 && (i === 5 || i === 7))
       )
         ref.nativeElement.classList.remove(
-          'debates__form__stepper__step__debaters__positions__debater--focus'
+          'form__stepper__step__debaters__positions__debater--focus'
         );
       else
         ref.nativeElement.classList.remove(
-          'debates__form__stepper__step__debaters__positions__debater--blur'
+          'form__stepper__step__debaters__positions__debater--blur'
+        );
+    });
+
+    this.housesRefs.forEach((ref) => {
+      if (ref.nativeElement.id === house[0])
+        ref.nativeElement.classList.remove(
+          'form__stepper__step__debaters__call__house--focus'
+        );
+      else
+        ref.nativeElement.classList.remove(
+          'form__stepper__step__debaters__call__house--blur'
         );
     });
   }
@@ -602,5 +582,59 @@ export class CreateDebateFormComponent implements OnInit {
 
   public getJudgeById(judgeId: string) {
     return this.judges.find((judge) => judge.id === judgeId)!;
+  }
+
+  public getDebaterById(debaterId: string) {
+    return this.debaters.find((debater) => debater.id === debaterId)!;
+  }
+
+  public async onSubmit() {
+    this.loading = true;
+
+    const date: string = new Date(this.debateFormGroup.controls['date'].value).toISOString();
+    const time: string = this.debateFormGroup.controls['time'].value;
+    const style: DebateStyle = this.debateFormGroup.controls['style'].value;
+    const venue: DebateVenue = this.debateFormGroup.controls['venue'].value;
+    const motionType: MotionType = this.debateFormGroup.controls['motionType'].value;
+    const motionTheme: MotionTheme = this.debateFormGroup.controls['motionTheme'].value;
+    const motion: string = this.debateFormGroup.controls['motion'].value;
+    const infoSlides: string[] = this.infoSlidesFormArray.controls.map((control) => control.value);
+
+    const debaters: Member[] = this.selectedDebaters;
+    const sps: number[] = this.spsFormArray.controls.map((control) =>
+      Number(control.value)
+    );
+
+    const points = [];
+    if (this.callHouses.findIndex((house) => house[1] === DebateHouse.og) !== -1)
+      points.push(3 - this.callHouses.findIndex((house) => house[1] === DebateHouse.og));
+    if (this.callHouses.findIndex((house) => house[1] === DebateHouse.oo) !== -1)
+      points.push(3 - this.callHouses.findIndex((house) => house[1] === DebateHouse.oo));
+    if (this.callHouses.findIndex((house) => house[1] === DebateHouse.cg) !== -1)
+      points.push(3 - this.callHouses.findIndex((house) => house[1] === DebateHouse.cg));
+    if (this.callHouses.findIndex((house) => house[1] === DebateHouse.co) !== -1)
+      points.push(3 - this.callHouses.findIndex((house) => house[1] === DebateHouse.co));
+
+    const chair: Member = this.getJudgeById(this.judgesFormGroup.controls['chair'].value);
+    const wings: Member[] = this.wingsFormArray.controls.map((control) => this.getJudgeById(control.value));
+
+    await this.debateService.createDebate(
+      date,
+      time,
+      style,
+      venue,
+      motionType,
+      motionTheme,
+      motion,
+      infoSlides,
+      debaters,
+      sps,
+      points,
+      chair,
+      wings
+    );
+
+    this.loading = false;
+    this.dialog.closeAll();
   }
 }

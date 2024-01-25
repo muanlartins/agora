@@ -1,0 +1,87 @@
+.form {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  &__input {
+    width: 240px;
+  }
+
+  &__button {
+    width: 120px;
+    height: 3.2rem;
+  }
+}
+
+.table {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  table-layout: fixed;
+
+  &__header {
+    &__tr {
+      &__th {
+        padding-right: 16px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &--0 {
+          width: 20rem;
+        }
+
+        &--2 {
+          width: 20rem;
+        }
+      }
+    }
+  }
+
+  &__body {
+    &__tr {
+      padding-right: 16px;
+      cursor: pointer;
+      transition: background 0.1s ease-in-out;
+
+      &__td {
+        padding-right: 16px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &__details {
+          display: flex;
+          flex-direction: row;
+          gap: 2rem;
+          align-items: center;
+          overflow: hidden;
+          flex-wrap: wrap;
+
+          &__detail {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            align-items: flex-start;
+
+            &__title {
+              font-weight: 500;
+              font-size: 12px;
+              opacity: 0.7;
+            }
+
+            &__value {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+
+      &--detail {
+        height: 0;
+      }
+
+      &:hover {
+        background: rgba(0,0,0,0.05);
+      }
+    }
+  }
+}

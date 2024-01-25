@@ -1,10 +1,6 @@
 <div class="page">
   <app-navbar class="page__navbar"></app-navbar>
-  <mat-tab-group mat-stretch-tabs class="page__group" >
-    <mat-tab label="Criar um debate">
-      <app-create-debate-form></app-create-debate-form>
-    </mat-tab>
-    <mat-tab label="Visualizar debates">
-    </mat-tab>
-  </mat-tab-group>
+  <div class="page__content">
+    <app-debates-table class="page__content__table"></app-debates-table>
+  </div>
 </div>

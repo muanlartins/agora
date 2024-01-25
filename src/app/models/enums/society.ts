@@ -10,5 +10,6 @@ export enum Society {
   sdufes = 'Sdufes',
   sds = 'SDS',
   uspd = 'USPD',
-  sdp = 'SDP'
+  sdp = 'SDP',
+  tribuna = 'Tribuna'
 };

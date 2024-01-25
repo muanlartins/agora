@@ -1,15 +1,11 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Token } from 'src/app/models/token';
-import { Observable } from 'rxjs';
-import { User } from 'src/app/models/user';
-
-const BASE_URL = "https://bvgmvdgrcvnpvu5ho3y2ttxbpe0txcfp.lambda-url.sa-east-1.on.aws";
-// const BASE_URL = "https://localhost:7044";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Token } from "@angular/compiler";
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+import { User } from "../models/types/user";
+import { BASE_URL } from "../utils/constants";
 
 const ENDPOINTS = {
-  login: '/auth/login',
-  refresh: '/auth/refresh',
   signup: '/user',
   getUser: '/user',
   updateUser: '/user/update',
@@ -18,22 +14,9 @@ const ENDPOINTS = {
 @Injectable({
   providedIn: 'root'
 })
-export class TabdebService {
+export class UserService {
 
   constructor(private httpClient: HttpClient) { }
-
-  public login(login: string, password: string): Observable<Token> {
-    return this.httpClient.post<string>(BASE_URL + ENDPOINTS.login, {
-      login,
-      password
-    });
-  }
-
-  public refresh(token: string) {
-    return this.httpClient.get<Token>(BASE_URL + ENDPOINTS.refresh, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
-    });
-  }
 
   public signup(login: string, password: string): Observable<boolean> {
     return this.httpClient.post<boolean>(BASE_URL + ENDPOINTS.signup, {

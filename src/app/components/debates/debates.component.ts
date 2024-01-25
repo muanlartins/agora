@@ -1,15 +1,6 @@
-import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Debater } from 'src/app/models/debater';
-import { SelectOption } from 'src/app/models/select-option';
-import { TabdebService } from 'src/app/services/tabdeb.service';
-import { UtilsService } from 'src/app/services/utils.service';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { DebatePositions } from 'src/app/models/debate-positions';
-import { DebateHouses } from 'src/app/models/debate-houses';
-import { Subscription } from 'rxjs';
-import { Society } from 'src/app/models/society';
-import { Judge } from 'src/app/models/judge';
+import { Component, OnInit } from '@angular/core';
+import { Debate } from 'src/app/models/types/debate';
+import { DebateService } from 'src/app/services/debate.service';
 
 @Component({
   selector: 'app-debates',
@@ -17,7 +8,11 @@ import { Judge } from 'src/app/models/judge';
   styleUrls: ['./debates.component.scss'],
 })
 export class DebatesComponent implements OnInit {
+  public debates: Debate[] = [];
+
   constructor() { }
 
   ngOnInit(): void {}
+
+
 }

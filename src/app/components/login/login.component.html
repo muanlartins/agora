@@ -26,11 +26,4 @@
     </form>
   </div>
 </div>
-<ngx-spinner
-  *ngIf="loading"
-  bdColor="#fffb"
-  size="large"
-  color="#fbb344"
-  type="timer"
-  [fullScreen]="true"
-></ngx-spinner>
+<app-spinner [loading]="loading" [fullscreen]="true"></app-spinner>

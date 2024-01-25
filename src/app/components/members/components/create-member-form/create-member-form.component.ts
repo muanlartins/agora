@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { SelectOption } from 'src/app/models/select-option';
-import { Society } from 'src/app/models/society';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { SelectOption } from 'src/app/models/types/select-option';
+import { Society } from 'src/app/models/enums/society';
+import { MemberService } from 'src/app/services/member.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-create-member-form',
@@ -13,7 +15,13 @@ export class CreateMemberFormComponent implements OnInit {
 
   public societyOptions: SelectOption[] = [];
 
-  constructor(private formBuilder: FormBuilder) {
+  public loading: boolean = false;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private memberService: MemberService,
+    private dialog: MatDialog
+  ) {
     this.initForm();
     this.initOptions();
   }
@@ -23,8 +31,8 @@ export class CreateMemberFormComponent implements OnInit {
 
   public initForm() {
     this.form = this.formBuilder.group({
-      name: [''],
-      society: ['']
+      name: ['', Validators.required],
+      society: ['', Validators.required]
     });
   }
 
@@ -35,7 +43,16 @@ export class CreateMemberFormComponent implements OnInit {
       .sort((a, b) => a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase()));
   }
 
-  public onSubmit() {
+  public async onSubmit() {
+    const name = this.form.controls['name'].value;
+    const society = this.form.controls['society'].value;
+    this.loading = true;
+
+    await this.memberService.createMember(name, society);
+
+    this.loading = false;
+    this.dialog.closeAll();
+
     this.form.controls['name'].patchValue('');
     this.form.controls['society'].patchValue('');
   }
@@ -49,3 +66,4 @@ export class CreateMemberFormComponent implements OnInit {
     return this.form.controls[control].value;
   }
 }
+;

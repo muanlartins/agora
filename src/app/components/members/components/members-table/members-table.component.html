@@ -1,0 +1,49 @@
+<form [formGroup]="form" class="form">
+  <mat-form-field class="form__input">
+    <mat-label>Nome</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
+  <button class="form__button" mat-flat-button color="primary" (click)="openCreateMemberModal()">Criar</button>
+</form>
+
+<div style="position: relative; min-height: 500px;">
+  <table
+    class="table"
+    mat-table
+    [dataSource]="dataSource"
+    matSort
+    multiTemplateDataRows
+    matSortActive="name"
+    matSortDirection="asc"
+    matSortDisableClear
+  >
+    <tr class="table__head__tr" mat-header-row *matHeaderRowDef="columns"></tr>
+
+    <ng-container [matColumnDef]="column" *ngFor="let column of columns; index as index">
+      <th
+        class="table__head__tr__th"
+        [ngClass]="'table__header__tr__th--' + index"
+        mat-header-cell
+        *matHeaderCellDef
+        [mat-sort-header]="column"
+      >{{ label[column] }}</th>
+      <td
+        class="table__body__tr__td"
+        [ngClass]="'table__body__tr__td--' + index"
+        mat-cell
+        *matCellDef="let element"
+      >
+        {{ getColumnData(element, column) }}
+      </td>
+    </ng-container>
+
+    <tr
+      class="table__body__tr"
+      mat-row
+      *matRowDef="let element; columns: columns"
+      (click)="expandedElement = expandedElement === element ? null : element"
+    ></tr>
+  </table>
+  <app-spinner [loading]="loading" [fullscreen]="false"></app-spinner>
+</div>
+<mat-paginator pageSize="10"></mat-paginator>

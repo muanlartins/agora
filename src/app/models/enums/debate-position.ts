@@ -1,4 +1,4 @@
-export enum DebatePositions {
+export enum DebatePosition {
   pm = 'Primeiro Ministro',
   lo = 'Líder da Oposição',
   dpm = 'Adjunto do Governo',

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DashboardItem } from '../models/dashboard-item';
+import { DashboardItem } from '../models/types/dashboard-item';
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +13,11 @@ export class UtilsService {
 
   public initItems() {
     this.items = [
-      {
-        src: 'assets/dashboard.png',
-        title: 'Dashboard',
-        route: "/dashboard"
-      },
+      // {
+      //   src: 'assets/dashboard.png',
+      //   title: 'Dashboard',
+      //   route: "/dashboard"
+      // },
       {
         src: 'assets/debate.png',
         title: 'Debates',

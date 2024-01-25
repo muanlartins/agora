@@ -4,8 +4,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { sha256 } from 'js-sha256';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Token } from 'src/app/models/token';
-import { TabdebService } from 'src/app/services/tabdeb.service';
+import { Token } from 'src/app/models/types/token';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -18,15 +18,13 @@ export class LoginComponent implements OnInit {
   public loading: boolean;
 
   constructor(
-    private tabdebService: TabdebService,
     private router: Router,
-    private spinner: NgxSpinnerService,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
     this.checkLogin();
     this.initForm();
-    this.spinner.show();
   }
 
   public initForm() {
@@ -50,7 +48,7 @@ export class LoginComponent implements OnInit {
 
   public login(login: string, password: string) {
     this.loading = true;
-    this.tabdebService.login(login, password).subscribe({
+    this.authService.login(login, password).subscribe({
       next: (token: Token) => {
         localStorage.setItem("token", token);
         this.checkLogin();
@@ -63,6 +61,6 @@ export class LoginComponent implements OnInit {
   }
 
   public checkLogin() {
-    if (localStorage.getItem("token")) this.router.navigate(["/dashboard"]);
+    if (localStorage.getItem("token")) this.router.navigate(["/debates"]);
   }
 }

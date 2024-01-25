@@ -1,6 +1,5 @@
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, OnInit } from '@angular/core';
-import { DashboardItem } from 'src/app/models/dashboard-item';
+import { DashboardItem } from 'src/app/models/types/dashboard-item';
 import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({

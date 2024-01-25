@@ -1,4 +1,4 @@
-export enum DebateHouses {
+export enum DebateHouse {
   og = 'Primeiro Governo',
   oo = 'Primeira Oposição',
   cg = 'Segundo Governo',
