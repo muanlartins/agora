@@ -15,7 +15,6 @@ import { MotionType } from 'src/app/models/enums/motion-type';
 import { MotionTheme } from 'src/app/models/enums/motion-theme';
 import { DebatePosition } from 'src/app/models/enums/debate-position';
 import { Society } from 'src/app/models/enums/society';
-import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-debates-table',

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Debate } from 'src/app/models/types/debate';
-import { DebateService } from 'src/app/services/debate.service';
 
 @Component({
   selector: 'app-debates',
@@ -13,6 +12,4 @@ export class DebatesComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {}
-
-
 }
