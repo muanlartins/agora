@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouteTitles } from 'src/app/models/types/route-titles';
-import { DashboardItem } from 'src/app/models/types/dashboard-item';
+import { NavbarItem } from 'src/app/models/types/dashboard-item';
 import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { UtilsService } from 'src/app/services/utils.service';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
-  public items: DashboardItem[];
+  public items: NavbarItem[];
 
   public title: string;
 

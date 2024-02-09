@@ -15,6 +15,7 @@ import { MotionType } from 'src/app/models/enums/motion-type';
 import { MotionTheme } from 'src/app/models/enums/motion-theme';
 import { DebatePosition } from 'src/app/models/enums/debate-position';
 import { Society } from 'src/app/models/enums/society';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-debates-table',
@@ -53,12 +54,12 @@ export class DebatesTableComponent implements OnInit {
     private debateService: DebateService,
     private dialog: MatDialog
   ) {
-    this.getAllDebates();
   }
 
   public ngOnInit(): void {
     this.initColumns();
     this.initForm();
+    this.getAllDebates();
   }
 
   public initForm() {
@@ -103,13 +104,17 @@ export class DebatesTableComponent implements OnInit {
 
   public getAllDebates() {
     this.loading = true;
-    this.debateService.getAllDebates().subscribe((debates: Debate[]) => {
-      this.loading = false;
-      this.debates = debates.sort((a, b) =>
-        this.getDatetimeMoment(b.date, b.time).toDate().getTime() - this.getDatetimeMoment(a.date, a.time).toDate().getTime()
-      );
 
-      this.setDataSource();
+    this.debateService.getAllDebates().subscribe({
+      next: (debates: Debate[]) => {
+        setTimeout(() => this.loading = false, 500);
+
+        this.debates = debates.sort((a, b) =>
+          this.getDatetimeMoment(b.date, b.time).toDate().getTime() - this.getDatetimeMoment(a.date, a.time).toDate().getTime()
+        );
+
+        this.setDataSource();
+      },
     });
   }
 

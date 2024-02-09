@@ -1,3 +1,11 @@
 <div class="dashboard">
   <app-navbar class="dashboard__navbar"></app-navbar>
+  <div class="dashboard__graphs">
+    <div class="dashboard__graphs__graph">
+      <canvas #topTenSpeakersByAverageSps></canvas>
+    </div>
+    <div class="dashboard__graphs__graph">
+      <canvas #topTenMembersByFrequency></canvas>
+    </div>
+  </div>
 </div>

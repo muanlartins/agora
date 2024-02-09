@@ -9,7 +9,7 @@ import { MembersComponent } from './components/members/members.component';
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: "full" },
   { path: 'login', component: LoginComponent, data: {} },
-  // { path: 'dashboard', component: DashboardComponent, canActivate: [LoginGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [LoginGuard] },
   { path: 'debates', component: DebatesComponent, canActivate: [LoginGuard] },
   { path: 'members', component: MembersComponent, canActivate: [LoginGuard] },
 ];

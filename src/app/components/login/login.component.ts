@@ -52,15 +52,14 @@ export class LoginComponent implements OnInit {
       next: (token: Token) => {
         localStorage.setItem("token", token);
         this.checkLogin();
+      },
+      complete: () => {
         this.loading = false;
       },
-      error: (error: HttpErrorResponse) => {
-        this.loading = false;
-      }
     });
   }
 
   public checkLogin() {
-    if (localStorage.getItem("token")) this.router.navigate(["/debates"]);
+    if (localStorage.getItem("token")) this.router.navigate(["/dashboard"]);
   }
 }

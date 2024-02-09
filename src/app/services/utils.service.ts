@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { DashboardItem } from '../models/types/dashboard-item';
+import { NavbarItem } from '../models/types/dashboard-item';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UtilsService {
-  public items: DashboardItem[];
+  public items: NavbarItem[];
 
   constructor() {
     this.initItems();
@@ -13,11 +13,11 @@ export class UtilsService {
 
   public initItems() {
     this.items = [
-      // {
-      //   src: 'assets/dashboard.png',
-      //   title: 'Dashboard',
-      //   route: "/dashboard"
-      // },
+      {
+        src: 'assets/dashboard.png',
+        title: 'Dashboard',
+        route: "/dashboard"
+      },
       {
         src: 'assets/debate.png',
         title: 'Debates',
@@ -31,7 +31,7 @@ export class UtilsService {
     ];
   }
 
-  public getItems(): DashboardItem[] {
+  public getItems(): NavbarItem[] {
     return this.items;
   }
 }
