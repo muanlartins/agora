@@ -117,7 +117,7 @@ export class DebatesTableComponent implements OnInit {
   }
 
   public openCreateDebateModal() {
-    this.dialog.open(CreateDebateModalComponent);
+    this.dialog.open(CreateDebateModalComponent, { height : '90%' });
   }
 
   public getDatetimeMoment(date: string, time: string) {
