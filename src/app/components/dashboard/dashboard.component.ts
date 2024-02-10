@@ -106,6 +106,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             min: 65,
             max: 80
           }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Top 10 debatedores por média de SPs',
+            font: {
+              size: 32
+            }
+          }
         }
       },
       data: {
@@ -132,7 +141,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             backgroundColor: data.map(() => '#fbb34460'),
             borderColor: data.map(() => '#fbb34460')
           },
-        ]
+        ],
       }
     }));
   }
@@ -187,6 +196,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
               stepSize: 1
             },
             stacked: true
+          }
+        },
+        plugins: {
+          title: {
+            display: true,
+            text: 'Top 10 membros mais frequentes',
+            font: {
+              size: 32
+            }
           }
         }
       },
