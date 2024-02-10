@@ -29,7 +29,6 @@ import { Society } from 'src/app/models/enums/society';
   ],
 })
 export class DebatesTableComponent implements OnInit {
-
   @ViewChild(MatPaginator, { static: true })
   public paginator: MatPaginator;
 
@@ -106,7 +105,7 @@ export class DebatesTableComponent implements OnInit {
 
     this.debateService.getAllDebates().subscribe({
       next: (debates: Debate[]) => {
-        setTimeout(() => this.loading = false, 500);
+        this.loading = false;
 
         this.debates = debates.sort((a, b) =>
           this.getDatetimeMoment(b.date, b.time).toDate().getTime() - this.getDatetimeMoment(a.date, a.time).toDate().getTime()

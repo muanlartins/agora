@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
-import * as moment from 'moment';
+import { combineLatest, forkJoin, lastValueFrom, merge } from 'rxjs';
 import { Debate } from 'src/app/models/types/debate';
 import { Member } from 'src/app/models/types/member';
 import { DebateService } from 'src/app/services/debate.service';
@@ -11,25 +11,20 @@ import { MemberService } from 'src/app/services/member.service';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit, AfterViewInit {
+export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public debates: Debate[];
 
   public members: Member[];
 
-  public loading = {
-    debates: false,
-    members: false
-  };
+  public loading = false;
 
   @ViewChild('topTenSpeakersByAverageSps')
   public topTenSpeakersByAverageSps: ElementRef<HTMLCanvasElement>;
 
-  public topTenSpeakersByAverageSpsChart: Chart;
-
   @ViewChild('topTenMembersByFrequency')
   public topTenMembersByFrequency: ElementRef<HTMLCanvasElement>;
 
-  public topTenMembersByFrequencyChart: Chart;
+  public charts: Chart[] = [];
 
   constructor(
     private memberService: MemberService,
@@ -37,41 +32,35 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
-    this.getAllDebates();
-    this.getAllMembers();
+    this.getData();
   }
 
   ngAfterViewInit(): void {
     this.generateGraphs();
   }
 
-  public getAllDebates() {
-    this.loading.debates = true;
-
-    this.debateService.getAllDebates().subscribe({
-      next: (debates: Debate[]) => {
-        this.debates = debates.filter((debate) => debate.date.length > 10);
-        setTimeout(() => this.loading.debates = false, 500);
-        this.generateGraphs();
-      },
-    });
+  ngOnDestroy(): void {
+    this.charts.forEach((chart) => chart.destroy());
   }
 
-  public getAllMembers() {
-    this.loading.members = true;
+  public async getData() {
+    this.loading = true;
 
-    this.memberService.getAllMembers().subscribe({
-      next: (members: Member[]) => {
+    combineLatest([
+      this.debateService.getAllDebates(),
+      this.memberService.getAllMembers()
+    ]).subscribe(([debates, members]) => {
+      if (members && members.length && debates && debates.length) {
+        this.debates = debates.filter((debate) => debate.date.length > 10);
         this.members = members;
-        setTimeout(() => this.loading.members = false, 500);
+        this.loading = false;
+
         this.generateGraphs();
-      },
+      }
     });
   }
 
   public generateTopTenSpeakersByAverageSpsGraph() {
-    if (this.topTenSpeakersByAverageSpsChart) this.topTenSpeakersByAverageSpsChart.destroy();
-
     const sp: { [id: string]: number } = {};
     const maxSp: { [id: string]: number } = {};
     const minSp: { [id: string]: number } = {};
@@ -110,7 +99,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     const max = topTenSpeakers.map(([id, sp]) => maxSp[id]);
     const min = topTenSpeakers.map(([id, sp]) => minSp[id]);
 
-    this.topTenSpeakersByAverageSpsChart = new Chart(this.topTenSpeakersByAverageSps.nativeElement, {
+    this.charts.push(new Chart(this.topTenSpeakersByAverageSps.nativeElement, {
       options: {
         scales: {
           y: {
@@ -145,12 +134,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           },
         ]
       }
-    });
+    }));
   }
 
   public generateTopTenMembersByFrequencyGraph() {
-    if (this.topTenMembersByFrequencyChart) this.topTenMembersByFrequencyChart.destroy();
-
     const debatesParticipated: { [id: string]: number } = {};
     const debatesParticipatedAsDebater: { [id: string]: number } = {};
     const debatesParticipatedAsJudge: { [id: string]: number } = {};
@@ -187,7 +174,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     const debaterFrequency = topTenMembers.map(([id, debatesParticipated]) => debatesParticipatedAsDebater[id]);
     const judgeFrequency = topTenMembers.map(([id, debatesParticipated]) => debatesParticipatedAsJudge[id]);
 
-    this.topTenMembersByFrequencyChart = new Chart(this.topTenMembersByFrequency.nativeElement, {
+    this.charts.push(new Chart(this.topTenMembersByFrequency.nativeElement, {
       options: {
         scales: {
           x: {
@@ -222,7 +209,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
           },
         ]
       }
-    });
+    }));
   }
 
   public generateGraphs() {

@@ -15,14 +15,14 @@
 //  If you don't need the default component typographies but still want the hierarchy styles,
 //  you can delete this line and instead use:
 //    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
-@include mat.all-legacy-component-typographies();
-@include mat.legacy-core();
+@include mat.all-component-typographies();
+@include mat.core();
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
 $TabDeb-primary: mat.define-palette(mat.$orange-palette);
-$TabDeb-accent: mat.define-palette(mat.$amber-palette, A200, A100, A400);
+$TabDeb-accent: mat.define-palette(mat.$amber-palette, A100, A200, A400);
 
 // The warn palette is optional (defaults to red).
 $TabDeb-warn: mat.define-palette(mat.$red-palette);
@@ -40,28 +40,10 @@ $TabDeb-theme: mat.define-light-theme((
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include mat.all-legacy-component-themes($TabDeb-theme);
+@include mat.all-component-themes($TabDeb-theme);
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;700&display=swap');
-
-@font-face {
-  font-family: 'Satoshi';
-  src: url('./assets/fonts/Satoshi-Light.otf');
-  font-weight: 300;
-}
-
-@font-face {
-  font-family: 'Satoshi';
-  src: url('./assets/fonts/Satoshi-Regular.otf');
-  font-weight: 400;
-}
-
-@font-face {
-  font-family: 'Satoshi';
-  src: url('./assets/fonts/Satoshi-Medium.otf');
-  font-weight: 500;
-}
 
 * {
 	margin: 0;

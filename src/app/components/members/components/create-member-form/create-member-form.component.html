@@ -2,26 +2,27 @@
   <mat-form-field class="form__field">
     <mat-label>Nome</mat-label>
     <input matInput formControlName="name" />
-    <img
+    <!-- <img
       class="form__field__icon"
       (click)="clearControlValue('name')"
       *ngIf="showClearControlValueIcon('name')"
       src="assets/close.png"
-    />
+    /> -->
   </mat-form-field>
   <mat-form-field class="form__field form__field--select">
     <mat-label>Sociedade</mat-label>
+    <mat-option>Remover Filtro</mat-option>
     <mat-select formControlName="society">
       <mat-option *ngFor="let society of societyOptions" [value]="society.value">
         {{ society.viewValue }}
       </mat-option>
     </mat-select>
-    <img
+    <!-- <img
       class="form__field__icon"
       (click)="clearControlValue('society', $event)"
       *ngIf="showClearControlValueIcon('society')"
       src="assets/close.png"
-    />
+    /> -->
   </mat-form-field>
   <button
     class="form__field__button"

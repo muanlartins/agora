@@ -89,7 +89,7 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
 
     this.memberService.getAllMembers().subscribe({
       next: (members: Member[]) => {
-        setTimeout(() => this.loading = false, 500)
+        this.loading = false;
         this.members = members;
         this.setDataSource();
       },

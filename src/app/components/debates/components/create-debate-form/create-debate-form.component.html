@@ -1,4 +1,4 @@
-<!-- <form class="form" [formGroup]="form">
+<form class="form" [formGroup]="form">
   <mat-stepper class="form__stepper" [linear]="false" orientation="vertical">
     <mat-step class="form__stepper__step" [stepControl]="debateFormGroup">
       <div class="form__stepper__step__debate" [formGroup]="debateFormGroup">
@@ -93,24 +93,25 @@
           <mat-form-field class="form__stepper__step__debaters__filters__field">
             <mat-label>Nome</mat-label>
             <input matInput formControlName="name" />
-            <img
+            <!-- <img
               (click)="removeDebatersNameFilter()"
               *ngIf="showRemoveDebatersNameFilterIcon()"
               src="assets/close.png"
-            />
+            /> -->
           </mat-form-field>
           <mat-form-field class="form__stepper__step__debaters__filters__field form__stepper__step__debaters__filters__field--society">
             <mat-label>Sociedade</mat-label>
             <mat-select formControlName="society">
+              <mat-option>Remover Filtro</mat-option>
               <ng-container *ngFor="let entry of society | keyvalue">
                 <mat-option [value]="entry.key">{{ entry.value }}</mat-option>
               </ng-container>
             </mat-select>
-            <img
+            <!-- <img
               (click)="removeDebatersSocietyFilter($event)"
               *ngIf="showRemoveDebatersSocietyFilterIcon()"
               src="assets/close.png"
-            />
+            /> -->
           </mat-form-field>
         </div>
         <div class="form__stepper__step__debaters__all" formArrayName="debaters" >
@@ -274,4 +275,4 @@
     </mat-step>
   </mat-stepper>
 </form>
-<app-spinner [loading]="loading" [fullscreen]="true"></app-spinner> -->
+<app-spinner [loading]="loading" [fullscreen]="true"></app-spinner>
