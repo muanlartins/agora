@@ -9,5 +9,5 @@ Chart.register(...registerables);
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'TabDeb';
+  title = 'Ágora';
 }

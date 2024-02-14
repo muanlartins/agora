@@ -1,54 +1,96 @@
-
-// Custom Theming for Angular Material
-// For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
-// Plus imports for other components in your app.
 
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
-// TODO(v15): As of v15 mat.legacy-core no longer includes default typography styles.
-//  The following line adds:
-//    1. Default typography styles for all components
-//    2. Styles for typography hierarchy classes (e.g. .mat-headline-1)
-//  If you specify typography styles for the components you use elsewhere, you should delete this line.
-//  If you don't need the default component typographies but still want the hierarchy styles,
-//  you can delete this line and instead use:
-//    `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
-@include mat.all-component-typographies();
 @include mat.core();
 
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue. Available color palettes: https://material.io/design/color/
-$TabDeb-primary: mat.define-palette(mat.$orange-palette);
-$TabDeb-accent: mat.define-palette(mat.$amber-palette, A100, A200, A400);
-
-// The warn palette is optional (defaults to red).
-$TabDeb-warn: mat.define-palette(mat.$red-palette);
-
-// Create the theme object. A theme consists of configurations for individual
-// theming systems such as "color" or "typography".
-$TabDeb-theme: mat.define-light-theme((
-  color: (
-    primary: $TabDeb-primary,
-    accent: $TabDeb-accent,
-    warn: $TabDeb-warn,
+$my-primary: mat.define-palette((
+  50: #fff7e8,
+  100: #ffecc6,
+  200: #ffe0a0,
+  300: #ffd379,
+  400: #ffc95d,
+  500: #ffc040,
+  600: #ffba3a,
+  700: #ffb232,
+  800: #ffaa2a,
+  900: #ff9c1c,
+  A100: #ffffff,
+  A200: #ffffff,
+  A400: #ffe8cd,
+  A700: #ffdcb3,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #000000,
+    600: #000000,
+    700: #000000,
+    800: #000000,
+    900: #000000,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000,
+  )
+));
+$my-accent: mat.define-palette((
+  50: #f2eee6,
+  100: #ded4c0,
+  200: #c8b797,
+  300: #b19a6d,
+  400: #a1844d,
+  500: #906e2e,
+  600: #886629,
+  700: #7d5b23,
+  800: #73511d,
+  900: #613f12,
+  A100: #ffcf98,
+  A200: #ffb765,
+  A400: #ffa032,
+  A700: #ff9419,
+  contrast: (
+      50: #000000,
+      100: #000000,
+      200: #000000,
+      300: #000000,
+      400: #000000,
+      500: #ffffff,
+      600: #ffffff,
+      700: #ffffff,
+      800: #ffffff,
+      900: #ffffff,
+      A100: #000000,
+      A200: #000000,
+      A400: #000000,
+      A700: #000000,
   )
 ));
 
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-@include mat.all-component-themes($TabDeb-theme);
+$my-theme: mat.define-dark-theme((
+ color: (
+   primary: $my-primary,
+   accent: $my-accent,
+ ),
+ typography: mat.define-typography-config(
+  $font-family: 'Poppins'
+ ),
+ density: 0,
+));
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;700&display=swap');
+@include mat.all-component-themes($my-theme);
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap');
+
+@font-face {
+  src: url('assets/fonts/Greek-Freak.ttf');
+  font-family: 'Greek Freak';
+}
 
 * {
 	margin: 0;
 	padding: 0;
-  font-family: 'Open Sans';
+  font-family: 'Poppins';
 }
 
 html, body { height: 100%; }

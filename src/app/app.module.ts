@@ -37,6 +37,7 @@ import { CreateDebateModalComponent } from './components/debates/components/crea
 import { MembersTableComponent } from './components/members/components/members-table/members-table.component';
 import { CreateMemberModalComponent } from './components/members/components/create-member-modal/create-member-modal.component';
 import { SpinnerComponent } from './utils/components/spinner/spinner.component';
+import { LandingPageComponent } from './components/landing-page/landing-page.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { SpinnerComponent } from './utils/components/spinner/spinner.component';
     MembersTableComponent,
     CreateMemberModalComponent,
     SpinnerComponent,
+    LandingPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -85,7 +87,7 @@ import { SpinnerComponent } from './utils/components/spinner/spinner.component';
     LoginGuard,
     DatePipe,
     { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
-    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'fill'}}
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'}}
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

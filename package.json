@@ -20,6 +20,7 @@
     "@angular/platform-browser": "^16.2.12",
     "@angular/platform-browser-dynamic": "^16.2.12",
     "@angular/router": "^16.2.12",
+    "aos": "^3.0.0-beta.6",
     "chart.js": "^4.4.1",
     "date-format": "^4.0.14",
     "js-sha256": "^0.10.1",
@@ -28,12 +29,14 @@
     "ngx-spinner": "^16.0.2",
     "rxjs": "~7.5.0",
     "tslib": "^2.5.0",
+    "typed.js": "^2.1.0",
     "zone.js": "~0.13.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.2.12",
     "@angular/cli": "~16.2.12",
     "@angular/compiler-cli": "^16.2.12",
+    "@types/aos": "^3.0.7",
     "@types/jasmine": "~4.0.0",
     "jasmine-core": "~4.3.0",
     "karma": "~6.4.0",

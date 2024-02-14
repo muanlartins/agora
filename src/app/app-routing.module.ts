@@ -5,9 +5,10 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { DebatesComponent } from './components/debates/debates.component';
 import { LoginGuard } from './guards/login.guard';
 import { MembersComponent } from './components/members/members.component';
+import { LandingPageComponent } from './components/landing-page/landing-page.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: "full" },
+  { path: '', component: LandingPageComponent, pathMatch: "full" },
   { path: 'login', component: LoginComponent, data: {} },
   { path: 'dashboard', component: DashboardComponent, canActivate: [LoginGuard] },
   { path: 'debates', component: DebatesComponent, canActivate: [LoginGuard] },

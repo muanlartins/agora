@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "TabDeb": {
+    "Agora": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -31,8 +31,15 @@
             ],
             "styles": [
               "node_modules/ngx-spinner/animations/timer.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/variables.scss",
+              "node_modules/aos/dist/aos.css"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                 "./src"
+              ]
+            },
             "scripts": []
           },
           "configurations": {
@@ -72,10 +79,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "TabDeb:build:production"
+              "browserTarget": "Agora:build:production"
             },
             "development": {
-              "browserTarget": "TabDeb:build:development"
+              "browserTarget": "Agora:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -83,7 +90,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "TabDeb:build"
+            "browserTarget": "Agora:build"
           }
         },
         "test": {
