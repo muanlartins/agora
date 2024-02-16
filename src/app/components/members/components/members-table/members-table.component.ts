@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
@@ -10,8 +10,10 @@ import { CreateMemberModalComponent } from '../create-member-modal/create-member
 import { Society } from 'src/app/models/enums/society';
 import { Debate } from 'src/app/models/types/debate';
 import { DebateService } from 'src/app/services/debate.service';
+import { combineLatest } from 'rxjs';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-members-table',
   templateUrl: './members-table.component.html',
   styleUrls: ['./members-table.component.scss']
@@ -20,7 +22,7 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: true })
   public paginator: MatPaginator;
 
-  @ViewChild(MatSort)
+  @ViewChild(MatSort, { static: true })
   public sort: MatSort;
 
   public members: Member[] = [];
@@ -31,7 +33,7 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
 
   public form: FormGroup;
 
-  public dataSource: MatTableDataSource<Member>;
+  public dataSource: MatTableDataSource<Member> = new MatTableDataSource<Member>();
 
   public columns: string[] = [];
 
@@ -48,10 +50,10 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private memberService: MemberService,
     private debateService: DebateService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
-    this.getAllMembers();
-    this.getAllDebates();
+
   }
 
   public ngOnInit(): void {
@@ -60,15 +62,18 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
-    if (this.members) this.setDataSource();
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
+    this.getData();
   }
 
   public setDataSource() {
-    if (!this.members) return;
+    if (!this.filteredMembers) return;
 
-    this.dataSource = new MatTableDataSource<Member>(this.filteredMembers);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.dataSource.data = this.filteredMembers;
+
+    this.changeDetectorRef.detectChanges();
   }
 
   public initForm() {
@@ -94,12 +99,14 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
             debate.debaters?.some((debater) => debater.id === member.id)
           )
         );
+
         this.setDataSource();
       } else {
         this.filteredMembers = this.members;
+
         this.setDataSource();
       }
-    })
+    });
   }
 
   public initColumns() {
@@ -109,27 +116,21 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
     ];
   }
 
-  public getAllMembers() {
+  public getData() {
     this.loading = true;
 
-    this.debateService.getAllDebates().subscribe({
-      next: (debates: Debate[]) => {
-        this.loading = false;
-        this.debates = debates;
-      },
-    });
-  }
+    combineLatest([
+      this.debateService.getAllDebates(),
+      this.memberService.getAllMembers()
+    ]).subscribe(([debates, members]) => {
+      this.loading = false;
+      this.debates = debates;
+      this.members = members;
+      this.filteredMembers = members;
 
-  public getAllDebates() {
-    this.loading = true;
+      this.form.controls['active'].patchValue(true);
 
-    this.memberService.getAllMembers().subscribe({
-      next: (members: Member[]) => {
-        this.loading = false;
-        this.members = members;
-        this.filteredMembers = members;
-        this.setDataSource();
-      },
+      this.setDataSource();
     });
   }
 

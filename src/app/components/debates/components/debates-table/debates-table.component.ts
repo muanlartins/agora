@@ -1,5 +1,5 @@
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -17,6 +17,7 @@ import { DebatePosition } from 'src/app/models/enums/debate-position';
 import { Society } from 'src/app/models/enums/society';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-debates-table',
   templateUrl: './debates-table.component.html',
   styleUrls: ['./debates-table.component.scss'],
@@ -28,18 +29,18 @@ import { Society } from 'src/app/models/enums/society';
     ]),
   ],
 })
-export class DebatesTableComponent implements OnInit {
+export class DebatesTableComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: true })
   public paginator: MatPaginator;
 
-  @ViewChild(MatSort)
+  @ViewChild(MatSort, { static: true })
   public sort: MatSort;
 
   public debates: Debate[];
 
   public form: FormGroup;
 
-  public dataSource: MatTableDataSource<Debate>;
+  public dataSource: MatTableDataSource<Debate> = new MatTableDataSource();
 
   public columns: string[] = [];
 
@@ -50,13 +51,20 @@ export class DebatesTableComponent implements OnInit {
   public constructor(
     private formBuilder: FormBuilder,
     private debateService: DebateService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
   }
 
   public ngOnInit(): void {
     this.initColumns();
     this.initForm();
+  }
+
+  public ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
     this.getAllDebates();
   }
 
@@ -77,9 +85,9 @@ export class DebatesTableComponent implements OnInit {
   public setDataSource() {
     if (!this.debates) return;
 
-    this.dataSource = new MatTableDataSource<Debate>(this.debates);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.dataSource.data = this.debates;
+
+    this.changeDetectorRef.detectChanges();
 
     this.form.controls['year'].patchValue('2024');
   }

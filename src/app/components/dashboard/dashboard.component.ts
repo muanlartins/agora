@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
-import { combineLatest, forkJoin, lastValueFrom, merge } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { Debate } from 'src/app/models/types/debate';
 import { Member } from 'src/app/models/types/member';
 import { DebateService } from 'src/app/services/debate.service';
