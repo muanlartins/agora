@@ -55,3 +55,59 @@
     }
   }
 }
+
+@media (width <= 1920px) {
+  .navbar {
+    padding: 48px 96px;
+
+    &__logo {
+      gap: 16px;
+
+      &__agora {
+        padding-bottom: 8px;
+        height: 48px;
+      }
+
+      &__sd {
+        width: 36px;
+        height: 36px;
+        padding: 8px 0 8px 16px;
+      }
+    }
+
+    &__menu {
+      &__option {
+        font-size: 12px;
+        padding: 8px 16px;
+      }
+    }
+  }
+}
+
+@media (width < 1440px) {
+  .navbar {
+    padding: 36px 64px;
+
+    &__logo {
+      gap: 8px;
+
+      &__agora {
+        padding-bottom: 4px;
+        height: 36px;
+      }
+
+      &__sd {
+        width: 24px;
+        height: 24px;
+        padding: 4px 0 4px 8px;
+      }
+    }
+
+    &__menu {
+      &__option {
+        font-size: 10px;
+        padding: 4px 8px;
+      }
+    }
+  }
+}

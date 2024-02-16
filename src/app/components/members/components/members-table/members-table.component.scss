@@ -83,3 +83,22 @@
     }
   }
 }
+
+
+@media (width <= 1920px) {
+  table {
+    td, th {
+      font-size: 12px;
+      line-height: 125%;
+    }
+  }
+}
+
+@media (width < 1440px) {
+  table {
+    td, th {
+      font-size: 10px;
+      line-height: 125%;
+    }
+  }
+}

@@ -8,11 +8,6 @@
   &__input {
     width: 240px;
   }
-
-  &__button {
-    width: 120px;
-    height: 3.2rem;
-  }
 }
 
 .table {
@@ -84,6 +79,66 @@
 
       &:hover {
         background: rgba(0,0,0,0.05);
+      }
+    }
+  }
+}
+
+@media (width <= 1920px) {
+  table {
+    td, th {
+      font-size: 12px;
+      line-height: 125%;
+    }
+  }
+
+  .table {
+    &__body {
+      &__tr {
+        &__td {
+          &__details {
+            gap: 2rem;
+            &__detail {
+              &__title {
+                font-size: 10px;
+              }
+
+              &__value {
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (width < 1440px) {
+  table {
+    td, th {
+      font-size: 10px;
+      line-height: 125%;
+    }
+  }
+
+  .table {
+    &__body {
+      &__tr {
+        &__td {
+          &__details {
+            gap: 2rem;
+            &__detail {
+              &__title {
+                font-size: 8px;
+              }
+
+              &__value {
+                font-size: 10px;
+              }
+            }
+          }
+        }
       }
     }
   }

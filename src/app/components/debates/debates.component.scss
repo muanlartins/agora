@@ -15,10 +15,26 @@
   }
 
   &__content {
-    margin: 64px 128px 64px 128px;
+    margin: 64px 128px;
 
     &__table {
       width: 100%;
+    }
+  }
+}
+
+@media (width <= 1920px) {
+  .page {
+    &__content {
+      margin: 48px 96px;
+    }
+  }
+}
+
+@media (width < 1440px) {
+  .page {
+    &__content {
+      margin: 36px 64px;
     }
   }
 }

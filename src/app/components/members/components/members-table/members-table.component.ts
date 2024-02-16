@@ -135,7 +135,7 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   }
 
   public openCreateMemberModal() {
-    this.dialog.open(CreateMemberModalComponent, { width: '50%' });
+    this.dialog.open(CreateMemberModalComponent, { width: '70%' });
   }
 
   public getColumnData(element: Member, column: string) {
