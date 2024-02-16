@@ -16,15 +16,22 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    width: 80%;
+    width: 70%;
     gap: 6rem;
     padding-bottom: 6rem;
 
-    &__graph {
+    &__tabs {
       width: 100%;
 
-      &--pie {
-        width: 50%;
+      &__tab {
+        &__graph {
+          margin-top: 64px;
+          width: 100%;
+
+          &--pie {
+            width: 50%;
+          }
+        }
       }
     }
   }

@@ -1,11 +1,17 @@
 <div class="dashboard">
   <app-navbar class="dashboard__navbar"></app-navbar>
   <div class="dashboard__graphs">
-    <div class="dashboard__graphs__graph">
-      <canvas #topTenSpeakersByAverageSps></canvas>
-    </div>
-    <div class="dashboard__graphs__graph">
-      <canvas #topTenMembersByFrequency></canvas>
-    </div>
+    <mat-tab-group class="dashboard__graphs__tabs">
+      <mat-tab class="dashboard__graphs__tabs__tab" label="MELHORES DEBATEDORES">
+        <div class="dashboard__graphs__tabs__tab__graph">
+          <canvas #topTenSpeakersByAverageSps></canvas>
+        </div>
+      </mat-tab>
+      <mat-tab class="dashboard__graphs__tabs__tab" label="MEMBROS MAIS ATIVOS">
+        <div class="dashboard__graphs__tabs__tab__graph">
+          <canvas #topTenMembersByFrequency></canvas>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
   </div>
 </div>

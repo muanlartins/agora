@@ -101,21 +101,34 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.charts.push(new Chart(this.topTenSpeakersByAverageSps.nativeElement, {
       options: {
-        scales: {
-          y: {
-            min: 65,
-            max: 80
-          }
-        },
         plugins: {
-          title: {
-            display: true,
-            text: 'Top 10 debatedores por média de SPs',
-            font: {
-              size: 32
+          legend: {
+            labels: {
+              color: '#D9D9D9'
             }
           }
-        }
+        },
+        scales: {
+          x: {
+            grid: {
+              color: '#D9D9D920'
+            },
+            ticks: {
+              color: '#D9D9D9'
+            }
+          },
+          y: {
+            min: 65,
+            max: 80,
+            grid: {
+              color: '#D9D9D920'
+            },
+            ticks: {
+              color: '#D9D9D9',
+              stepSize: 3
+            }
+          }
+        },
       },
       data: {
         labels,
@@ -188,22 +201,31 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         scales: {
           x: {
             stacked: true,
+            ticks: {
+              color: '#D9D9D9'
+            },
+            grid: {
+              color: '#D9D9D920'
+            }
           },
           y: {
             min: 0,
             max: 3,
             ticks: {
-              stepSize: 1
+              stepSize: 1,
+              color: '#D9D9D9'
+
             },
-            stacked: true
+            stacked: true,
+            grid: {
+              color: '#D9D9D920'
+            }
           }
         },
         plugins: {
-          title: {
-            display: true,
-            text: 'Top 10 membros mais frequentes',
-            font: {
-              size: 32
+          legend: {
+            labels: {
+              color: '#D9D9D9'
             }
           }
         }
@@ -216,7 +238,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             label: 'Frequência em Debates (como debatedor)',
             data: debaterFrequency,
             backgroundColor: debaterFrequency.map(() => '#fbb394'),
-            borderColor: debaterFrequency.map(() => '#fbb394')
+            borderColor: debaterFrequency.map(() => '#fbb394'),
           },
           {
             type: 'bar',

@@ -1,3 +1,5 @@
+@import 'src/variables.scss';
+
 :host {
   --mat-form-field-width: calc(calc(100% - 2rem) / 2);
 }
@@ -109,6 +111,7 @@
             font-size: 14px;
             padding: 0.25rem 0.5rem;
             cursor: pointer;
+            color: $black;
 
             &--focus {
               font-weight: 500;
@@ -142,7 +145,7 @@
           height: 4rem;
           display: flex;
           flex-direction: row;
-          background: white;
+          background: $black;
           border-radius: 4px;
           overflow: hidden;
 
@@ -239,7 +242,7 @@
           height: 4rem;
           display: flex;
           flex-direction: row;
-          background: white;
+          background: $black;
           border-radius: 4px;
           overflow: hidden;
 

@@ -1,8 +1,8 @@
 <div class="login">
   <div class="login__header">
-    <div class="login__header__logos">
-      <app-logo class="login__header__logos__sdufrj"></app-logo>
-      <img class="login__header__logos__ufrj" src="assets/ufrj.png" />
+    <div class="login__header__logo">
+      <img src="assets/agora-logo.png" class="login__header__logo__agora" />
+      <img src="assets/sd-logo.png" class="login__header__logo__sd" />
     </div>
   </div>
   <div class="login__body">
@@ -24,6 +24,9 @@
         type="submit"
       >Enviar</button>
     </form>
+    <p class="login__body__text">
+      Não possui um cadastro? Crie um <b routerLink="/signup" class="login__body__text__link">aqui</b>.
+    </p>
   </div>
 </div>
 <app-spinner [loading]="loading" [fullscreen]="true"></app-spinner>

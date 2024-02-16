@@ -1,15 +1,17 @@
 <div class="navbar">
-  <app-logo [small]="true" class="navbar__logo"></app-logo>
-  <div class="navbar__title">{{ title }}</div>
+  <div class="navbar__logo">
+    <img src="assets/agora-logo.png" class="navbar__logo__agora" />
+    <img src="assets/sd-logo.png" class="navbar__logo__sd" />
+  </div>
   <ul class="navbar__menu">
-    <li
-      class="navbar__menu__item"
-      *ngFor="let item of items"
-      [routerLink]="item.route"
-      routerLinkActive="navbar__menu__item--active"
-    >
-      <img class="navbar__menu__item__icon" [src]="item.src" />
-      <p class="navbar__menu__item__title">{{ item.title }}</p>
+    <li class="navbar__menu__option" routerLink="/dashboard" routerLinkActive="navbar__menu__option--active">
+      Dashboard
+    </li>
+    <li class="navbar__menu__option" routerLink="/debates" routerLinkActive="navbar__menu__option--active">
+      Debates
+    </li>
+    <li class="navbar__menu__option" routerLink="/members" routerLinkActive="navbar__menu__option--active">
+      Membros
     </li>
   </ul>
 </div>

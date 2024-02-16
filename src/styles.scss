@@ -1,5 +1,7 @@
 @use '@angular/material' as mat;
 
+@import 'src/variables.scss';
+
 @include mat.core();
 
 $my-primary: mat.define-palette((
@@ -105,4 +107,31 @@ html, body { height: 100%; }
 
 .cdk-drag-animating {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+body {
+  background: $black;
+}
+
+html {
+  --primary: #FFC040;
+  --secondary: #906E2E;
+  --white: #D9D9D9;
+  --black: #201C1C;
+}
+
+table {
+  --mat-table-background-color: var(--black) !important;
+}
+
+mat-paginator {
+  --mat-paginator-container-background-color: var(--black) !important;
+}
+
+mat-dialog-container {
+  --mdc-dialog-container-color: var(--black) !important;
+}
+
+mat-stepper {
+  --mat-stepper-container-color: var(--black) !important;
 }

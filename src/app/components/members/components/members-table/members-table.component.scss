@@ -2,9 +2,18 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  margin-bottom: 32px;
 
-  &__input {
-    width: 240px;
+  &__filter {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 32px;
+
+    &__input {
+      width: 240px;
+    }
   }
 
   &__button {
@@ -14,6 +23,7 @@
 }
 
 .table {
+  position: relative;
   width: 100%;
   overflow-x: hidden;
 

@@ -1,8 +1,15 @@
 <form [formGroup]="form" class="form">
-  <mat-form-field class="form__input">
-    <mat-label>Nome</mat-label>
-    <input matInput formControlName="name" />
-  </mat-form-field>
+  <div class="form__filter">
+    <mat-form-field class="form__filter__input">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+    <mat-checkbox
+      class="form__filter__checkbox"
+      color="primary"
+      formControlName="active"
+    >Ativos em 2024</mat-checkbox>
+  </div>
   <button class="form__button" mat-flat-button color="primary" (click)="openCreateMemberModal()">Criar</button>
 </form>
 

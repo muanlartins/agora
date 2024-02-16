@@ -1,3 +1,5 @@
+@import 'src/variables.scss';
+
 .page {
   width: 100%;
 
@@ -6,18 +8,14 @@
   justify-content: flex-start;
   align-items: center;
 
+  background: $black;
+
   &__navbar {
     width: 100%;
   }
 
-  &__group {
-    width: calc(100% - 10rem);
-    padding: 2rem 5rem;
-  }
-
   &__content {
-    width: calc(100% - 10rem);
-    margin: 0 5rem 2rem 5rem;
+    margin: 64px 128px 64px 128px;
 
     &__table {
       width: 100%;

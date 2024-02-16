@@ -11,7 +11,6 @@ import { NgxSpinnerModule } from "ngx-spinner";
 import { DebatesComponent } from './components/debates/debates.component';
 import { LoginGuard } from './guards/login.guard';
 import { DatePipe } from '@angular/common';
-import { LogoComponent } from './utils/components/logo/logo.component';
 import { NavbarComponent } from './utils/components/navbar/navbar.component';
 
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -45,7 +44,6 @@ import { LandingPageComponent } from './components/landing-page/landing-page.com
     LoginComponent,
     DashboardComponent,
     DebatesComponent,
-    LogoComponent,
     NavbarComponent,
     CreateDebateFormComponent,
     CreateMemberFormComponent,
@@ -87,7 +85,10 @@ import { LandingPageComponent } from './components/landing-page/landing-page.com
     LoginGuard,
     DatePipe,
     { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
-    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'}}
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {
+      appearance: 'outline',
+      subscriptSizing: 'dynamic'
+    }}
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

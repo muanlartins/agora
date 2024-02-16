@@ -80,6 +80,8 @@ export class DebatesTableComponent implements OnInit {
     this.dataSource = new MatTableDataSource<Debate>(this.debates);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+
+    this.form.controls['year'].patchValue('2024');
   }
 
   public initColumns() {

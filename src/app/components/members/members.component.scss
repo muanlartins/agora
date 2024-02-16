@@ -1,6 +1,5 @@
 .page {
   width: 100%;
-  height: 100vh;
 
   display: flex;
   flex-direction: column;
@@ -12,7 +11,11 @@
   }
 
   &__body {
-    width: calc(100% - 10rem);
-    margin: 2rem 5rem;
+    width: calc(100% - 256px);
+    margin: 64px 128px 64px 128px;
+
+    &__table {
+      width: 100%;
+    }
   }
 }

@@ -5,26 +5,14 @@
 
 .form {
   display: flex;
-  gap: 2rem;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 64px;
+  padding: 32px;
 
   &__field {
     position: relative;
     width: var(--mat-form-field-width);
-
-    &__icon {
-      position: absolute;
-      right: 0.75rem;
-      top: 0.25rem;
-      transform: translateY(-50%);
-      width: 0.8rem;
-      height: 0.8rem;
-      cursor: pointer;
-      filter: var(--filter-black);
-    }
-
-    &--select &__icon {
-      right: 1.75rem;
-    }
 
     &__button {
       width: var(--mat-form-field-width);
