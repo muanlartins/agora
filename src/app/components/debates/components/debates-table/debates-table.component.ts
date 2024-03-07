@@ -48,6 +48,22 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
 
   public loading: boolean = false;
 
+  public get DebateStyle() {
+    return DebateStyle;
+  }
+
+  public get DebateVenue() {
+    return DebateVenue;
+  }
+
+  public get MotionType() {
+    return MotionType;
+  }
+
+  public get MotionTheme() {
+    return MotionTheme;
+  }
+
   public constructor(
     private formBuilder: FormBuilder,
     private debateService: DebateService,
@@ -152,54 +168,78 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
     }
   }
 
-  public getDetails(element: Debate) {
-    const details: {
-      title: string,
-      value: any,
-      detail?: any
-    }[] = [
+  public getHouses(debate: Debate) {
+    const houses = [
       {
-        title: 'Estilo',
-        value: DebateStyle[element.style]
+        debaters: [
+          {
+            position: DebatePosition.pm,
+            debater: debate.debaters?.[0],
+            sps: debate.sps?.[0]
+          },
+          {
+            position: DebatePosition.dpm,
+            debater: debate.debaters?.[2],
+            sps: debate.sps?.[2]
+          }
+        ],
+        title: 'Primeiro Governo (1G)',
+        index: 0
       },
       {
-        title: 'Lugar',
-        value: DebateVenue[element.venue]
+        debaters: [
+          {
+            position: DebatePosition.lo,
+            debater: debate.debaters?.[1],
+            sps: debate.sps?.[1]
+          },
+          {
+            position: DebatePosition.dlo,
+            debater: debate.debaters?.[3],
+            sps: debate.sps?.[3]
+          }
+        ],
+        title: 'Primeira Oposição (1O)',
+        index: 1
       },
       {
-        title: 'Tipo da Moção',
-        value: MotionType[element.motionType]
+        debaters: [
+          {
+            position: DebatePosition.mg,
+            debater: debate.debaters?.[4],
+            sps: debate.sps?.[4]
+          },
+          {
+            position: DebatePosition.gw,
+            debater: debate.debaters?.[6],
+            sps: debate.sps?.[6]
+          }
+        ],
+        title: 'Segundo Governo (2G)',
+        index: 2
       },
       {
-        title: 'Tema da Moção',
-        value: MotionTheme[element.motionTheme]
+        debaters: [
+          {
+            position: DebatePosition.mo,
+            debater: debate.debaters?.[5],
+            sps: debate.sps?.[5]
+          },
+          {
+            position: DebatePosition.ow,
+            debater: debate.debaters?.[7],
+            sps: debate.sps?.[7]
+          }
+        ],
+        title: 'Segunda Oposição (2O)',
+        index: 3
       },
-    ];
+    ].sort((a, b) => debate.points[b.index] - debate.points[a.index]);
 
-    if (element.infoSlides) element.infoSlides.forEach((infoSlide, index) =>
-      details.push({
-        title: `InfoSlide ${index+1}`,
-        value: infoSlide
-      })
-    );
+    return houses;
+  }
 
-    if (element.debaters) element.debaters.forEach((debater, index) => {
-      const debatePositions = Object.entries(DebatePosition);
-
-      details.push({
-        title: debatePositions[index][1],
-        value: `${debater.name} (${Society[debater.society]})`,
-        detail: element.sps ? element.sps[index] : ''
-      });
-    });
-
-    if (element.wings) element.wings.forEach((wing, index) =>
-      details.push({
-        title: `Wing ${index+1}`,
-        value: `${wing.name} (${Society[wing.society]})`
-      })
-    );
-
-    return details;
+  public getDebate(element: Debate) {
+    return element;
   }
 }

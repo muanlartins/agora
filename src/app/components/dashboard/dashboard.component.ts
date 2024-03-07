@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
+import * as moment from 'moment';
 import { combineLatest } from 'rxjs';
+import { Society } from 'src/app/models/enums/society';
 import { Debate } from 'src/app/models/types/debate';
 import { Member } from 'src/app/models/types/member';
 import { DebateService } from 'src/app/services/debate.service';
@@ -18,13 +20,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public loading = false;
 
-  @ViewChild('topTenSpeakersByAverageSps')
-  public topTenSpeakersByAverageSps: ElementRef<HTMLCanvasElement>;
+  @ViewChild('topSpeakersByAverageSps')
+  public topSpeakersByAverageSps: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('topTenMembersByFrequency')
-  public topTenMembersByFrequency: ElementRef<HTMLCanvasElement>;
+  @ViewChild('topMembersByFrequency')
+  public topMembersByFrequency: ElementRef<HTMLCanvasElement>;
 
   public charts: Chart[] = [];
+
+  public statistics: { title: string, value: string, details?: { title: string, value: string }[] }[];
 
   constructor(
     private memberService: MemberService,
@@ -56,14 +60,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loading = false;
 
         this.generateGraphs();
+        this.getStatistics();
       }
     });
   }
 
-  public generateTopTenSpeakersByAverageSpsGraph() {
+  public generateTopSpeakersByAverageSpsGraph() {
     const sp: { [id: string]: number } = {};
     const maxSp: { [id: string]: number } = {};
     const minSp: { [id: string]: number } = {};
+    const participations: { [id: string]: number } = {};
 
     this.members.forEach((member) => {
       sp[member.id] = 0;
@@ -86,20 +92,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       })
 
+      participations[member.id] = debatesParticipated;
+
       if (debatesParticipated) sp[member.id] /= debatesParticipated;
     });
 
-    const topTenSpeakers = Object.entries(sp).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const topSpeakers =
+      Object.entries(sp).sort((a, b) => b[1] - a[1])
+        .filter(([id, sp]) => participations[id] >= 3)
+        .slice(0, 8);
 
-    const labels = topTenSpeakers.map(([id, sp]) =>
+    const labels = topSpeakers.map(([id, sp]) =>
       this.members.find((member) => member.id === id)!.name
-        .split(' ').slice(0, 2).join(' ')
+        .split(' ').slice(0, 3).join(' ')
     );
-    const data = topTenSpeakers.map(([id, sp]) => sp);
-    const max = topTenSpeakers.map(([id, sp]) => maxSp[id]);
-    const min = topTenSpeakers.map(([id, sp]) => minSp[id]);
+    const data = topSpeakers.map(([id, sp]) => sp);
+    const max = topSpeakers.map(([id, sp]) => maxSp[id]);
+    const min = topSpeakers.map(([id, sp]) => minSp[id]);
 
-    this.charts.push(new Chart(this.topTenSpeakersByAverageSps.nativeElement, {
+    this.charts.push(new Chart(this.topSpeakersByAverageSps.nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -159,7 +170,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }));
   }
 
-  public generateTopTenMembersByFrequencyGraph() {
+  public generateTopMembersByFrequencyGraph() {
     const debatesParticipated: { [id: string]: number } = {};
     const debatesParticipatedAsDebater: { [id: string]: number } = {};
     const debatesParticipatedAsJudge: { [id: string]: number } = {};
@@ -187,16 +198,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       debatesParticipated[member.id] = debatesParticipatedByMemberAsDebater + debatesParticipatedByMemberAsJudge;
     });
 
-    const topTenMembers = Object.entries(debatesParticipated).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const topMembers = Object.entries(debatesParticipated).sort((a, b) => b[1] - a[1]).slice(0, 8);
 
-    const labels = topTenMembers.map(([id, debatesParticipated]) =>
+    const labels = topMembers.map(([id, debatesParticipated]) =>
       this.members.find((member) => member.id === id)!.name
-        .split(' ').slice(0, 2).join(' ')
+        .split(' ').slice(0, 3).join(' ')
     );
-    const debaterFrequency = topTenMembers.map(([id, debatesParticipated]) => debatesParticipatedAsDebater[id]);
-    const judgeFrequency = topTenMembers.map(([id, debatesParticipated]) => debatesParticipatedAsJudge[id]);
+    const debaterFrequency = topMembers.map(([id, debatesParticipated]) => debatesParticipatedAsDebater[id]);
+    const judgeFrequency = topMembers.map(([id, debatesParticipated]) => debatesParticipatedAsJudge[id]);
 
-    this.charts.push(new Chart(this.topTenMembersByFrequency.nativeElement, {
+    this.charts.push(new Chart(this.topMembersByFrequency.nativeElement, {
       options: {
         scales: {
           x: {
@@ -209,8 +220,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           },
           y: {
-            min: 0,
-            max: 3,
             ticks: {
               stepSize: 1,
               color: '#D9D9D9'
@@ -256,11 +265,162 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (
       !this.members ||
       !this.debates ||
-      !this.topTenSpeakersByAverageSps ||
-      !this.topTenMembersByFrequency
+      !this.topSpeakersByAverageSps ||
+      !this.topMembersByFrequency
     ) return;
 
-    this.generateTopTenSpeakersByAverageSpsGraph();
-    this.generateTopTenMembersByFrequencyGraph();
+    this.generateTopSpeakersByAverageSpsGraph();
+    this.generateTopMembersByFrequencyGraph();
+  }
+
+  public getStatistics() {
+    const debates = this.debates.filter((debate) => moment(debate.date).month() === 1);
+
+    const winsByDebater: { [id: string]: number } = {};
+    const duosByDebater: { [id: string]: string[]} = {};
+    const bestSpByDebater: { [id: string]: { sp: number, debate: Debate } } = {}
+    const debatesByJudge: { [id: string]: number } = {}
+    const societyParticipations: { [society: string]: number } = {}
+    const societyParticipants: { [society: string]: string[] } = {}
+
+    this.members.forEach((member) => {
+      winsByDebater[member.id] = 0;
+      duosByDebater[member.id] = [];
+      bestSpByDebater[member.id] = {
+        sp: 0,
+        debate: {} as Debate
+      };
+      debatesByJudge[member.id] = 0;
+    });
+
+    Object.entries(Society).forEach(([key, society]) => {
+      societyParticipations[key] = 0;
+      societyParticipants[key] = [];
+    });
+
+    this.debates.forEach((debate) => {
+      debate.debaters?.forEach((debater) => {
+        societyParticipations[debater.society] ++;
+        societyParticipants[debater.society].push(debater.name);
+      });
+      societyParticipations[debate.chair.society] ++;
+      societyParticipants[debate.chair.society].push(debate.chair.name);
+      debate.wings?.forEach((wing) => {
+        societyParticipations[wing.society] ++;
+        societyParticipants[wing.society].push(wing.name);
+      });
+    });
+
+    debates.forEach((debate) => {
+      const winnerIndex = debate.points.findIndex((points) => points === 3);
+
+      debate.debaters?.forEach((debater, index) => {
+        if (bestSpByDebater[debater.id].sp < (debate.sps?.[index] ?? 0)) {
+          bestSpByDebater[debater.id].sp = debate.sps?.[index] ?? 0;
+          bestSpByDebater[debater.id].debate = debate;
+        }
+      });
+
+      [0,1,4,5].forEach((i) => {
+        if (winnerIndex === Math.floor(i/3) + (i%3)) {
+          winsByDebater[debate.debaters![i].id]++;
+          duosByDebater[debate.debaters![i].id].push(debate.debaters![i+2].name);
+
+          if (debate.debaters![i].id !== debate.debaters![i+2].id){
+            winsByDebater[debate.debaters![i+2].id]++;
+            duosByDebater[debate.debaters![i+2].id].push(debate.debaters![i].name);
+          }
+        }
+      });
+
+      debatesByJudge[debate.chair.id] ++;
+      debate.wings?.forEach((wing) => debatesByJudge[wing.id] ++);
+    });
+
+    const winnerId = Object.entries(winsByDebater).sort((a, b) => b[1] - a[1])[0][0];
+    const winnerDebates = Object.entries(winsByDebater).sort((a, b) => b[1] - a[1])[0][1];
+    const winner = this.members.find((member) => member.id === winnerId)!;
+
+    const mostSpsId = Object.entries(bestSpByDebater).sort((a, b) => b[1].sp - a[1].sp)[0][0];
+    const mostSpsDebate = Object.entries(bestSpByDebater).sort((a, b) => b[1].sp - a[1].sp)[0][1].debate;
+    const mostSpsSp = Object.entries(bestSpByDebater).sort((a, b) => b[1].sp - a[1].sp)[0][1].sp;
+    const mostSps = this.members.find((member) => member.id === mostSpsId)!;
+
+    const mostDebatesByJudgeId = Object.entries(debatesByJudge).sort((a, b) => b[1] - a[1])[0][0];
+    const mostDebatesByJudgeAmount = Object.entries(debatesByJudge).sort((a, b) => b[1] - a[1])[0][1];
+    const mostDebatesByJudge = this.members.find((member) => member.id === mostDebatesByJudgeId)!;
+
+    const mostParticipationsSociety = Object.entries(societyParticipations).sort((a, b) => b[1] - a[1])[1][0];
+    const mostParticipationsParticipations = Object.entries(societyParticipations).sort((a, b) => b[1] - a[1])[1][1];
+    const mostParticipationsParticipants = societyParticipants[mostParticipationsSociety];
+
+    this.statistics = [
+      {
+        title: 'Debatedor com mais vitórias',
+        value: `${winner.name} (${Society[winner.society]})`,
+        details: [
+          {
+            title: 'Vitórias',
+            value: winnerDebates.toString()
+          },
+          {
+            title: 'Duplas',
+            value: duosByDebater[winnerId].join(', '),
+          }
+        ]
+      },
+      {
+        title: 'Debatedor com o maior speaker points',
+        value: `${mostSps.name} (${Society[mostSps.society]})`,
+        details: [
+          {
+            title: 'SP',
+            value: `${mostSpsSp}`
+          },
+          {
+            title: 'Data',
+            value: `${
+                moment(mostSpsDebate?.date)
+                  .hour(Number(mostSpsDebate.time.split(':')[0]))
+                  .minute(Number(mostSpsDebate.time.split(':')[1]))
+                  .locale('pt-br')
+                  .format(`LLL`)
+            }`
+          },
+          {
+            title: 'Juíz',
+            value: `${mostSpsDebate?.chair.name}`
+          }
+        ]
+      },
+      {
+        title: 'Juíz com mais participações',
+        value: `${mostDebatesByJudge.name} (${Society[mostDebatesByJudge.society]})`,
+        details: [
+          {
+            title: 'Debates',
+            value: `${mostDebatesByJudgeAmount}`
+          }
+        ]
+      },
+      {
+        title: 'Sociedade parceira',
+        value: `${Society[mostParticipationsSociety as keyof typeof Society]}`,
+        details: [
+          {
+            title: 'Participações',
+            value: `${mostParticipationsParticipations}`,
+          },
+          {
+            title: 'Participantes',
+            value: `${[...new Set(mostParticipationsParticipants)].join(', ')}`
+          }
+        ]
+      },
+      {
+        title: 'Treinos',
+        value: `${debates.length}`
+      }
+    ];
   }
 }

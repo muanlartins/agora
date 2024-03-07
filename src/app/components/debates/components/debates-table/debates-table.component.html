@@ -42,10 +42,53 @@
         class="table__body__tr__td__details"
           [@expandDetail]="element == expandedElement ? 'expanded' : 'collapsed'"
         >
-          <div class="table__body__tr__td__details__detail" *ngFor="let detail of getDetails(element)">
-            <div class="table__body__tr__td__details__detail__title">{{ detail.title }}</div>
-            <div class="table__body__tr__td__details__detail__value">{{ detail.value }}</div>
-            <div *ngIf="detail.detail" class="table__body__tr__td__details__detail__value">{{ detail.detail }}</div>
+          <div class="table__body__tr__td__details__call">
+            <div class="table__body__tr__td__details__call__house" *ngFor="let house of getHouses(element); index as index">
+              <div class="table__body__tr__td__details__call__house__header">
+                <div class="table__body__tr__td__details__call__house__header__placement">{{ index+1 }}º</div>
+                <div class="table__body__tr__td__details__call__house__header__name">{{ house.title }}</div>
+              </div>
+              <div class="table__body__tr__td__details__call__house__debater" *ngFor="let debater of house.debaters">
+                <div class="table__body__tr__td__details__call__house__debater__position">{{ debater.position }}</div>
+                <div class="table__body__tr__td__details__call__house__debater__name">{{ debater.debater?.name }}</div>
+                <div class="table__body__tr__td__details__call__house__debater__sps">{{ debater.sps }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="table__body__tr__td__details__debate">
+            <div
+              class="
+                table__body__tr__td__details__debate__detail
+                table__body__tr__td__details__debate__detail--100
+                table__body__tr__td__details__debate__detail--big
+              "
+            >
+              <div class="table__body__tr__td__details__debate__detail__title">Moção</div>
+              <div class="table__body__tr__td__details__debate__detail__value">{{ element.motion }}</div>
+            </div>
+            <div class="table__body__tr__td__details__debate__detail">
+              <div class="table__body__tr__td__details__debate__detail__title">Estilo</div>
+              <div class="table__body__tr__td__details__debate__detail__value">{{ DebateStyle[getDebate(element).style] }}</div>
+            </div>
+            <div class="table__body__tr__td__details__debate__detail">
+              <div class="table__body__tr__td__details__debate__detail__title">Lugar</div>
+              <div class="table__body__tr__td__details__debate__detail__value">{{ DebateVenue[getDebate(element).venue] }}</div>
+            </div>
+            <div class="table__body__tr__td__details__debate__detail">
+              <div class="table__body__tr__td__details__debate__detail__title">Tipo da Moção</div>
+              <div class="table__body__tr__td__details__debate__detail__value">{{ MotionType[getDebate(element).motionType] }}</div>
+            </div>
+            <div class="table__body__tr__td__details__debate__detail">
+              <div class="table__body__tr__td__details__debate__detail__title">Tema da Moção</div>
+              <div class="table__body__tr__td__details__debate__detail__value">{{ MotionTheme[getDebate(element).motionTheme] }}</div>
+            </div>
+            <div
+              class="table__body__tr__td__details__debate__detail table__body__tr__td__details__debate__detail--100"
+              *ngFor="let infoSlide of element.infoSlides; index as index"
+            >
+              <div class="table__body__tr__td__details__debate__detail__title">InfoSlide {{ index+1 }}</div>
+              <div class="table__body__tr__td__details__debate__detail__value">{{ infoSlide }}</div>
+            </div>
           </div>
         </div>
       </td>

@@ -49,36 +49,130 @@
         &__details {
           display: flex;
           flex-direction: row;
-          gap: 2rem;
+          justify-content: flex-start;
           align-items: center;
-          overflow: hidden;
-          flex-wrap: wrap;
+          gap: 32px;
 
-          &__detail {
+          &__call {
             display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+
+            &__house {
+              display: flex;
+              flex-direction: column;
+              justify-content: flex-start;
+              align-items: flex-start;
+              gap: 24px;
+              padding: 16px 32px;
+              border-right: 1px solid $secondary;
+              width: max-content;
+
+              &:last-child {
+                padding: 32px;
+              }
+
+              &__header {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+                gap: 8px;
+
+                &__placement {
+                  font-size: 16px;
+                  line-height: 100%;
+                  color: $primary;
+                }
+
+                &__name {
+                  font-size: 16px;
+                  line-height: 100%;
+                  color: $secondary;
+                }
+              }
+
+              &__debater {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+                gap: 4px;
+
+                &__position {
+                  font-size: 12px;
+                  line-height: 100%;
+                  color: $secondary;
+                }
+
+                &__name {
+                  font-size: 14px;
+                  line-height: 100%;
+                  color: $primary;
+                }
+
+                &__sps {
+                  font-size: 14px;
+                  line-height: 100%;
+                  color: $secondary;
+                }
+              }
+            }
+          }
+
+          &__debate {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
             align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding-right: 32px;
 
-            &__title {
-              font-weight: 500;
-              font-size: 12px;
-              opacity: 0.7;
+            &__detail {
+              display: flex;
+              flex-direction: column;
+              justify-content: flex-start;
+              align-items: flex-start;
+              gap: 4px;
+
+              &--100 {
+                width: 100%;
+              }
+
+              &--100 &__value {
+                line-height: 125%;
+              }
+
+              &--big &__title {
+                font-size: 14px;
+              }
+
+              &--big &__value{
+                font-size: 16px;
+              }
+
+              &__title {
+                font-size: 12px;
+                line-height: 100%;
+                color: $secondary;
+              }
+
+              &__value {
+                font-size: 14px;
+                line-height: 100%;
+                color: $primary;
+              }
             }
 
-            &__value {
-              font-size: 14px;
-            }
           }
         }
       }
 
       &--detail {
         height: 0;
-      }
-
-      &:hover {
-        background: rgba(0,0,0,0.05);
+        background: $brown;
       }
     }
   }
@@ -97,14 +191,69 @@
       &__tr {
         &__td {
           &__details {
-            gap: 2rem;
-            &__detail {
-              &__title {
-                font-size: 10px;
-              }
+            gap: 24px;
 
-              &__value {
-                font-size: 12px;
+            &__call {
+              &__house {
+                gap: 16px;
+                padding: 12px 24px;
+
+                &:last-child {
+                  padding: 24px;
+                }
+
+                &__header {
+                  gap: 4px;
+
+                  &__placement {
+                    font-size: 14px;
+                  }
+
+                  &__name {
+                    font-size: 14px;
+                  }
+                }
+
+                &__debater {
+                  gap: 2px;
+
+                  &__position {
+                    font-size: 10px;
+                  }
+
+                  &__name {
+                    font-size: 12px;
+                  }
+
+                  &__sps {
+                    font-size: 12px;
+                  }
+                }
+              }
+            }
+
+            &__debate {
+              gap: 12px;
+              padding-right: 24px;
+
+              &__detail {
+                gap: 2px;
+
+                &--big &__title {
+                  font-size: 12px;
+                }
+
+                &--big &__value{
+                  font-size: 14px;
+                }
+
+                &__title {
+                  font-size: 10px;
+                }
+
+                &__value {
+                  font-size: 12px;
+                }
               }
             }
           }
@@ -127,14 +276,69 @@
       &__tr {
         &__td {
           &__details {
-            gap: 2rem;
-            &__detail {
-              &__title {
-                font-size: 8px;
-              }
+            gap: 16px;
 
-              &__value {
-                font-size: 10px;
+            &__call {
+              &__house {
+                gap: 12px;
+                padding: 8px 16px;
+
+                &:last-child {
+                  padding: 16px;
+                }
+
+                &__header {
+                  gap: 2px;
+
+                  &__placement {
+                    font-size: 12px;
+                  }
+
+                  &__name {
+                    font-size: 12px;
+                  }
+                }
+
+                &__debater {
+                  gap: 1px;
+
+                  &__position {
+                    font-size: 8px;
+                  }
+
+                  &__name {
+                    font-size: 10px;
+                  }
+
+                  &__sps {
+                    font-size: 10px;
+                  }
+                }
+              }
+            }
+
+            &__debate {
+              gap: 8px;
+              padding-right: 16px;
+
+              &__detail {
+                gap: 1px;
+
+                &--big &__title {
+                  font-size: 10px;
+                }
+
+                &--big &__value{
+                  font-size: 12px;
+                }
+
+                &__title {
+                  font-size: 8px;
+                }
+
+                &__value {
+                  font-size: 10px;
+                }
               }
             }
           }

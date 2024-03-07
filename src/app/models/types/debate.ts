@@ -13,6 +13,7 @@ export type Debate = {
   motionType: keyof typeof MotionType;
   motionTheme: keyof typeof MotionTheme;
   motion: string;
+  points: number[];
   infoSlides?: string[];
   debaters?: Member[];
   sps?: number[];

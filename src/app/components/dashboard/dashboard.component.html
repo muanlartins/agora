@@ -2,14 +2,31 @@
   <app-navbar class="dashboard__navbar"></app-navbar>
   <div class="dashboard__graphs">
     <mat-tab-group class="dashboard__graphs__tabs">
+      <mat-tab class="dashboard__graphs__tabs__tab" label="ESTATÍSTICAS">
+        <div class="dashboard__graphs__tabs__tab__title" *ngIf="statistics">Resumo do mês de fevereiro</div>
+        <div class="dashboard__graphs__tabs__tab__details">
+          <div class="dashboard__graphs__tabs__tab__details__detail" *ngFor="let statistic of statistics">
+            <div class="dashboard__graphs__tabs__tab__details__detail__content">
+              <div class="dashboard__graphs__tabs__tab__details__detail__content__title">{{ statistic.title }}</div>
+              <div class="dashboard__graphs__tabs__tab__details__detail__content__value">{{ statistic.value }}</div>
+            </div>
+            <div class="dashboard__graphs__tabs__tab__details__detail__details">
+              <div class="dashboard__graphs__tabs__tab__details__detail__details__detail" *ngFor="let detail of statistic.details">
+                <div class="dashboard__graphs__tabs__tab__details__detail__details__detail__title">{{ detail.title }}</div>
+                <div class="dashboard__graphs__tabs__tab__details__detail__details__detail__value">{{ detail.value }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
       <mat-tab class="dashboard__graphs__tabs__tab" label="MELHORES DEBATEDORES">
         <div class="dashboard__graphs__tabs__tab__graph">
-          <canvas #topTenSpeakersByAverageSps></canvas>
+          <canvas #topSpeakersByAverageSps></canvas>
         </div>
       </mat-tab>
       <mat-tab class="dashboard__graphs__tabs__tab" label="MEMBROS MAIS ATIVOS">
         <div class="dashboard__graphs__tabs__tab__graph">
-          <canvas #topTenMembersByFrequency></canvas>
+          <canvas #topMembersByFrequency></canvas>
         </div>
       </mat-tab>
     </mat-tab-group>
