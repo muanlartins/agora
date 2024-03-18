@@ -51,7 +51,8 @@ export class DebateService {
     sps: number[],
     points: number[],
     chair: Member,
-    wings: Member[]
+    wings: Member[],
+    tournament?: string
   ) {
     const token = getToken();
 
@@ -68,7 +69,8 @@ export class DebateService {
       sps,
       points,
       chair,
-      wings
+      wings,
+      tournament
     }, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
     }));
@@ -90,7 +92,8 @@ export class DebateService {
     sps: number[],
     points: number[],
     chair: Member,
-    wings: Member[]
+    wings: Member[],
+    tournament?: string
   ) {
     const token = getToken();
 
@@ -108,7 +111,8 @@ export class DebateService {
       sps,
       points,
       chair,
-      wings
+      wings,
+      tournament
     }, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
     }));

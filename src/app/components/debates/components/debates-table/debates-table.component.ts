@@ -111,8 +111,6 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
     this.dataSource.data = this.debates;
 
     this.changeDetectorRef.detectChanges();
-
-    this.form.controls['year'].patchValue('2024');
   }
 
   public initColumns() {
@@ -272,7 +270,11 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
         .format(`LLL`)}</b>, moção <b>${debate.motion} (${MotionType[debate.motionType]},
         ${MotionTheme[debate.motionTheme]})</b>, chair <b>${debate.chair.name} (${Society[debate.chair.society]})</b> e debatedores
         <b>${debate.debaters?.map((member) => `${member.name} (${Society[member.society]})`).join(', ')}</b>?`,
-      callback: async () => { await this.debateService.deleteDebate(id); }
+      callback: async () => {
+        this.loading = true;
+        await this.debateService.deleteDebate(id);
+        this.loading = false;
+      }
     }});
 
     event.stopPropagation();

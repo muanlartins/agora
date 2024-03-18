@@ -83,7 +83,8 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   public initForm() {
     this.form = this.formBuilder.group({
       name: [''],
-      active: [false]
+      active: [false],
+      trainee: [false]
     });
 
     this.subscribeToValueChanges();
@@ -94,22 +95,12 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
       this.dataSource.filter = name;
     });
 
-    this.form.controls['active'].valueChanges.subscribe((active) => {
-      if (active) {
-        this.filteredMembers = this.members.filter((member) =>
-          this.debates.some((debate) =>
-            debate.chair.id === member.id ||
-            debate.wings?.some((wing) => wing.id === member.id) ||
-            debate.debaters?.some((debater) => debater.id === member.id)
-          )
-        );
+    this.form.controls['active'].valueChanges.subscribe(() => {
+      this.setFilters();
+    });
 
-        this.setDataSource();
-      } else {
-        this.filteredMembers = this.members;
-
-        this.setDataSource();
-      }
+    this.form.controls['trainee'].valueChanges.subscribe(() => {
+      this.setFilters();
     });
   }
 
@@ -144,8 +135,6 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
       });
       this.filteredMembers = members;
 
-      this.form.controls['active'].patchValue(true);
-
       this.setDataSource();
     });
   }
@@ -174,7 +163,32 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
 
     this.dialog.open(ConfirmModalComponent, { data: {
       text: `Você tem certeza que quer deletar o membro <b>${member.name} (${Society[member.society]})</b>?`,
-      callback: async () => { await this.memberService.deleteMember(id); }
+      callback: async () => {
+        this.loading = true;
+        await this.memberService.deleteMember(id);
+        this.loading = false;
+      }
     } })
+  }
+
+  public setFilters() {
+    const active = this.form.controls['active'].value;
+    const trainee = this.form.controls['trainee'].value;
+
+    this.filteredMembers = this.members;
+
+    if (active)
+      this.filteredMembers = this.filteredMembers.filter((member) =>
+        this.debates.some((debate) =>
+          debate.chair.id === member.id ||
+          debate.wings?.some((wing) => wing.id === member.id) ||
+          debate.debaters?.some((debater) => debater.id === member.id)
+        )
+      );
+
+    if (trainee)
+      this.filteredMembers = this.filteredMembers.filter((member) => member.isTrainee);
+
+    this.setDataSource();
   }
 }

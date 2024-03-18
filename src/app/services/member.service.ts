@@ -34,12 +34,13 @@ export class MemberService {
     return this.members$.asObservable();
   }
 
-  public async createMember(name: string, society: keyof typeof Society) {
+  public async createMember(name: string, society: keyof typeof Society, isTrainee: boolean) {
     const token = getToken();
 
     const member = await firstValueFrom(this.httpClient.post<Member>(BASE_URL + ENDPOINTS.createMember, {
       name,
-      society
+      society,
+      isTrainee
     }, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
     }));
@@ -47,20 +48,21 @@ export class MemberService {
     this.members$.next([...this.members$.value, member]);
   }
 
-  public async updateMember(id: string, name: string, society: keyof typeof Society) {
+  public async updateMember(id: string, name: string, society: keyof typeof Society, isTrainee: boolean) {
     const token = getToken();
 
     await firstValueFrom(this.httpClient.put<boolean>(BASE_URL + ENDPOINTS.editMember, {
       id,
       name,
-      society
+      society,
+      isTrainee
     }, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
     }));
 
     const members = [...this.members$.value];
     members.splice(members.findIndex((member) => member.id === id), 1);
-    members.push({id, name, society});
+    members.push({id, name, society, isTrainee});
 
     this.members$.next(members);
   }

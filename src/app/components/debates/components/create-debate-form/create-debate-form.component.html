@@ -65,6 +65,27 @@
           ></textarea>
           <mat-error>A moção é obrigatória</mat-error>
         </mat-form-field>
+        <mat-form-field class="form__stepper__step__debate__input">
+          <mat-label>Ocasião</mat-label>
+          <mat-select formControlName="tournament">
+            <mat-option *ngFor="let tournament of tournamentOptions" [value]="tournament.value">
+              {{ tournament.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field
+          *ngIf="showNewTournamentFormField()"
+          class="form__stepper__step__debate__input"
+        >
+          <mat-label>Nova Ocasião</mat-label>
+          <textarea
+            matInput
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="1"
+            formControlName="newTournament"
+          ></textarea>
+        </mat-form-field>
         <mat-form-field
           class="form__stepper__step__debate__input"
           formArrayName="infoSlides"

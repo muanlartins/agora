@@ -38,12 +38,14 @@ export class CreateMemberFormComponent implements OnInit {
   public initForm() {
     this.form = this.formBuilder.group({
       name: ['', Validators.required],
-      society: ['', Validators.required]
+      society: ['', Validators.required],
+      isTrainee: [false],
     });
 
     if (this.isEditing) {
       this.form.controls['name'].patchValue(this.member.name);
       this.form.controls['society'].patchValue(this.member.society);
+      this.form.controls['isTrainee'].patchValue(this.member.isTrainee);
     }
   }
 
@@ -55,27 +57,26 @@ export class CreateMemberFormComponent implements OnInit {
   }
 
   public async onSubmit() {
+    const name = this.form.controls['name'].value;
+    const society = this.form.controls['society'].value;
+    const isTrainee = this.form.controls['isTrainee'].value;
+
     if (this.isEditing) {
       const id = this.member.id;
-      const name = this.form.controls['name'].value;
-      const society = this.form.controls['society'].value;
 
-      if (this.member.name === name && this.member.society === society) {
+      if (this.member.name === name && this.member.society === society && this.member.isTrainee === isTrainee) {
         this.dialog.closeAll();
         return;
       }
 
       this.loading = true;
-      await this.memberService.updateMember(id, name, society);
+      await this.memberService.updateMember(id, name, society, isTrainee);
       this.loading = false;
 
       this.dialog.closeAll();
     } else {
-      const name = this.form.controls['name'].value;
-      const society = this.form.controls['society'].value;
-
       this.loading = true;
-      await this.memberService.createMember(name, society);
+      await this.memberService.createMember(name, society, isTrainee);
       this.loading = false;
 
       this.dialog.closeAll();

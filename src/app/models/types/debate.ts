@@ -19,4 +19,5 @@ export type Debate = {
   sps?: number[];
   chair: Member;
   wings?: Member[];
+  tournament?: string;
 }
