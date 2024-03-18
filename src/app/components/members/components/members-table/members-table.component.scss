@@ -1,3 +1,5 @@
+@import '/src/variables';
+
 .form {
   display: flex;
   align-items: flex-start;
@@ -33,6 +35,14 @@
           width: 20%;
           white-space: normal;
         }
+
+        &--1 {
+          width: 60%;
+        }
+
+        &--2 {
+          width: 20%;
+        }
       }
     }
   }
@@ -47,6 +57,12 @@
         padding-right: 16px;
         width: 0;
         white-space: nowrap;
+
+        &__img {
+          filter: $filter;
+          width: 24px;
+          height: 24px;
+        }
 
         &__detail {
           overflow: hidden;

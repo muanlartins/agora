@@ -32,13 +32,13 @@
 
           img {
             position: absolute;
-            right: 0.75rem;
-            top: 0.25rem;
+            right: 16px;
+            top: 50%;
             transform: translateY(-50%);
-            width: 1.2rem;
-            height: 1.2rem;
+            width: 32px;
+            height: 32px;
             cursor: pointer;
-            filter: var(--filter-black);
+            filter: $filter;
           }
         }
 
@@ -67,17 +67,6 @@
           &__field {
             width: var(--mat-form-field-width);
             position: relative;
-
-            img {
-              position: absolute;
-              right: 0.75rem;
-              top: 0.25rem;
-              transform: translateY(-50%);
-              width: 0.8rem;
-              height: 0.8rem;
-              cursor: pointer;
-              filter: var(--filter-black);
-            }
 
             &--society img {
               right: 1.75rem;
@@ -329,13 +318,13 @@
 
           img {
             position: absolute;
-            right: 1.75rem;
-            top: 0.25rem;
+            right: 32px;
+            top: 50%;
             transform: translateY(-50%);
-            width: 1.2rem;
-            height: 1.2rem;
+            width: 24px;
+            height: 24px;
             cursor: pointer;
-            filter: var(--filter-black);
+            filter: $filter;
           }
         }
 
@@ -346,4 +335,8 @@
       }
     }
   }
+}
+
+input, textarea {
+  padding-right: 64px;
 }

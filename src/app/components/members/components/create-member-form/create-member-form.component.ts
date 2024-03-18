@@ -1,9 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SelectOption } from 'src/app/models/types/select-option';
 import { Society } from 'src/app/models/enums/society';
 import { MemberService } from 'src/app/services/member.service';
 import { MatDialog } from '@angular/material/dialog';
+import { Member } from 'src/app/models/types/member';
 
 @Component({
   selector: 'app-create-member-form',
@@ -11,6 +12,12 @@ import { MatDialog } from '@angular/material/dialog';
   styleUrls: ['./create-member-form.component.scss']
 })
 export class CreateMemberFormComponent implements OnInit {
+  @Input()
+  public isEditing: boolean;
+
+  @Input()
+  public member: Member;
+
   public form: FormGroup;
 
   public societyOptions: SelectOption[] = [];
@@ -21,12 +28,11 @@ export class CreateMemberFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private memberService: MemberService,
     private dialog: MatDialog
-  ) {
-    this.initForm();
-    this.initOptions();
-  }
+  ) {}
 
   ngOnInit(): void {
+    this.initForm();
+    this.initOptions();
   }
 
   public initForm() {
@@ -34,6 +40,11 @@ export class CreateMemberFormComponent implements OnInit {
       name: ['', Validators.required],
       society: ['', Validators.required]
     });
+
+    if (this.isEditing) {
+      this.form.controls['name'].patchValue(this.member.name);
+      this.form.controls['society'].patchValue(this.member.society);
+    }
   }
 
   public initOptions() {
@@ -44,17 +55,31 @@ export class CreateMemberFormComponent implements OnInit {
   }
 
   public async onSubmit() {
-    const name = this.form.controls['name'].value;
-    const society = this.form.controls['society'].value;
-    this.loading = true;
+    if (this.isEditing) {
+      const id = this.member.id;
+      const name = this.form.controls['name'].value;
+      const society = this.form.controls['society'].value;
 
-    await this.memberService.createMember(name, society);
+      if (this.member.name === name && this.member.society === society) {
+        this.dialog.closeAll();
+        return;
+      }
 
-    this.loading = false;
-    this.dialog.closeAll();
+      this.loading = true;
+      await this.memberService.updateMember(id, name, society);
+      this.loading = false;
 
-    this.form.controls['name'].patchValue('');
-    this.form.controls['society'].patchValue('');
+      this.dialog.closeAll();
+    } else {
+      const name = this.form.controls['name'].value;
+      const society = this.form.controls['society'].value;
+
+      this.loading = true;
+      await this.memberService.createMember(name, society);
+      this.loading = false;
+
+      this.dialog.closeAll();
+    }
   }
 
   public clearControlValue(control: string, event?: Event) {
@@ -65,5 +90,10 @@ export class CreateMemberFormComponent implements OnInit {
   public showClearControlValueIcon(control: string) {
     return this.form.controls[control].value;
   }
+
+  public getButtonText(): string {
+    if (this.isEditing) return 'Atualizar';
+
+    return 'Adicionar';
+  }
 }
-;

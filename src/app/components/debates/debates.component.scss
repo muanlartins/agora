@@ -16,6 +16,7 @@
 
   &__content {
     margin: 64px 128px;
+    width: calc(100% - 256px);
 
     &__table {
       width: 100%;

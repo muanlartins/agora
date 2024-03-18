@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Member } from 'src/app/models/types/member';
 
 @Component({
   selector: 'app-create-member-modal',
@@ -6,8 +8,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./create-member-modal.component.scss']
 })
 export class CreateMemberModalComponent implements OnInit {
+  public isEditing: boolean;
 
-  constructor() { }
+  public member: Member;
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: { isEditing: boolean, member: Member }) {
+    if (data) {
+      this.isEditing = data.isEditing;
+      this.member = data.member;
+    }
+  }
 
   ngOnInit(): void {
   }

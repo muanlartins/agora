@@ -37,6 +37,7 @@ import { MembersTableComponent } from './components/members/components/members-t
 import { CreateMemberModalComponent } from './components/members/components/create-member-modal/create-member-modal.component';
 import { SpinnerComponent } from './utils/components/spinner/spinner.component';
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
+import { ConfirmModalComponent } from './components/members/components/confirm-modal/confirm-modal.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { LandingPageComponent } from './components/landing-page/landing-page.com
     CreateMemberModalComponent,
     SpinnerComponent,
     LandingPageComponent,
+    ConfirmModalComponent,
   ],
   imports: [
     BrowserModule,

@@ -15,6 +15,7 @@ import { MotionType } from 'src/app/models/enums/motion-type';
 import { MotionTheme } from 'src/app/models/enums/motion-theme';
 import { DebatePosition } from 'src/app/models/enums/debate-position';
 import { Society } from 'src/app/models/enums/society';
+import { ConfirmModalComponent } from 'src/app/components/members/components/confirm-modal/confirm-modal.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,6 +48,12 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
   public expandedElement?: Debate;
 
   public loading: boolean = false;
+
+  public label: { [column: string]: string } = {
+    'Data': 'Data',
+    'Moção': 'Moção',
+    'Chair': 'Chair',
+  };
 
   public get DebateStyle() {
     return DebateStyle;
@@ -112,7 +119,9 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
     this.columns = [
       'Data',
       'Moção',
-      'Chair'
+      'Chair',
+      'edit',
+      'delete'
     ];
   }
 
@@ -241,5 +250,31 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
 
   public getDebate(element: Debate) {
     return element;
+  }
+
+  public editDebate(id: string, event: any) {
+    this.dialog.open(CreateDebateModalComponent, { height: '90%', data: {
+      isEditing: true,
+      debate: this.debates.find((debate) => debate.id === id)
+    }});
+
+    event.stopPropagation();
+  }
+
+  public deleteDebate(id: string, event: any) {
+    const debate = this.debates.find((debate) => debate.id === id)!;
+
+    this.dialog.open(ConfirmModalComponent, { data: {
+      text: `Você tem certeza que quer deletar o debate de data <b>${moment(debate.date)
+        .hour(Number(debate.time.split(':')[0]))
+        .minute(Number(debate.time.split(':')[1]))
+        .locale('pt-br')
+        .format(`LLL`)}</b>, moção <b>${debate.motion} (${MotionType[debate.motionType]},
+        ${MotionTheme[debate.motionTheme]})</b>, chair <b>${debate.chair.name} (${Society[debate.chair.society]})</b> e debatedores
+        <b>${debate.debaters?.map((member) => `${member.name} (${Society[member.society]})`).join(', ')}</b>?`,
+      callback: async () => { await this.debateService.deleteDebate(id); }
+    }});
+
+    event.stopPropagation();
   }
 }

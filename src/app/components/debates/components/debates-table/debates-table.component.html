@@ -20,14 +20,20 @@
         [ngClass]="'table__header__tr__th--' + index"
         mat-header-cell
         *matHeaderCellDef
-      >{{column}}</th>
+      >{{ label[column] }}</th>
       <td
         class="table__body__tr__td"
         [ngClass]="'table__body__tr__td--' + index"
         mat-cell
         *matCellDef="let element"
       >
-        {{getColumnData(element, column)}}
+        {{ getColumnData(element, column) }}
+        <ng-container *ngIf="column === 'edit'">
+          <img (click)="editDebate(element.id, $event)" src="assets/edit-text.png" class="table__body__tr__td__img" />
+        </ng-container>
+        <ng-container *ngIf="column === 'delete'">
+          <img (click)="deleteDebate(element.id, $event)" src="assets/delete.png" class="table__body__tr__td__img" />
+        </ng-container>
       </td>
     </ng-container>
 

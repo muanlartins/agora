@@ -2,12 +2,6 @@
   <mat-form-field class="form__field">
     <mat-label>Nome</mat-label>
     <input matInput formControlName="name" />
-    <!-- <img
-      class="form__field__icon"
-      (click)="clearControlValue('name')"
-      *ngIf="showClearControlValueIcon('name')"
-      src="assets/close.png"
-    /> -->
   </mat-form-field>
   <mat-form-field class="form__field form__field--select">
     <mat-label>Sociedade</mat-label>
@@ -16,12 +10,6 @@
         {{ society.viewValue }}
       </mat-option>
     </mat-select>
-    <!-- <img
-      class="form__field__icon"
-      (click)="clearControlValue('society', $event)"
-      *ngIf="showClearControlValueIcon('society')"
-      src="assets/close.png"
-    /> -->
   </mat-form-field>
   <button
     class="form__field__button"
@@ -29,6 +17,6 @@
     color="primary"
     [disabled]="!form.valid"
     type="submit"
-  >Adicionar</button>
+  >{{ getButtonText() }}</button>
 </form>
 <app-spinner [loading]="loading" [fullscreen]="true"></app-spinner>

@@ -8,7 +8,9 @@ import { Society } from "../models/enums/society";
 
 const ENDPOINTS = {
   getAllMembers: '/members',
-  createMember: '/member'
+  createMember: '/member',
+  editMember: '/member',
+  deleteMember: (id: string) => `/member/${id}`
 }
 
 @Injectable({
@@ -43,5 +45,36 @@ export class MemberService {
     }));
 
     this.members$.next([...this.members$.value, member]);
+  }
+
+  public async updateMember(id: string, name: string, society: keyof typeof Society) {
+    const token = getToken();
+
+    await firstValueFrom(this.httpClient.put<boolean>(BASE_URL + ENDPOINTS.editMember, {
+      id,
+      name,
+      society
+    }, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
+    }));
+
+    const members = [...this.members$.value];
+    members.splice(members.findIndex((member) => member.id === id), 1);
+    members.push({id, name, society});
+
+    this.members$.next(members);
+  }
+
+  public async deleteMember(id: string) {
+    const token = getToken();
+
+    await firstValueFrom(this.httpClient.delete<boolean>(BASE_URL + ENDPOINTS.deleteMember(id), {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
+    }));
+
+    const members = [...this.members$.value];
+    members.splice(members.findIndex((member) => member.id === id), 1);
+
+    this.members$.next(members);
   }
 }

@@ -11,6 +11,7 @@ import { Society } from 'src/app/models/enums/society';
 import { Debate } from 'src/app/models/types/debate';
 import { DebateService } from 'src/app/services/debate.service';
 import { combineLatest } from 'rxjs';
+import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,8 +42,11 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
 
   public label: { [column: string]: string } = {
     name: 'Nome',
-    society: 'Sociedade'
+    society: 'Sociedade',
+    debates: 'Debates Participados'
   }
+
+  public debatesParticipations: { [id: string]: number } = {};
 
   public loading: boolean = false;
 
@@ -112,7 +116,10 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   public initColumns() {
     this.columns = [
       'name',
-      'society'
+      'society',
+      'debates',
+      'edit',
+      'delete'
     ];
   }
 
@@ -126,6 +133,15 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
       this.loading = false;
       this.debates = debates;
       this.members = members;
+      this.members.forEach((member) => {
+        const debatesParticipations = this.debates.filter((debate) =>
+          debate.chair.id === member.id ||
+          debate.wings?.some((wing) => wing.id === member.id) ||
+          debate.debaters?.some((debater) => debater.id === member.id)
+        ).length;
+
+        this.debatesParticipations[member.id] = debatesParticipations;
+      });
       this.filteredMembers = members;
 
       this.form.controls['active'].patchValue(true);
@@ -141,7 +157,24 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   public getColumnData(element: Member, column: string) {
     if (column === 'name') return element.name;
     if (column === 'society') return Society[element.society];
+    if (column === 'debates') return this.debatesParticipations[element.id];
 
     return '';
+  }
+
+  public editMember(id: string) {
+    this.dialog.open(CreateMemberModalComponent, { width: '70%', data: {
+      isEditing: true,
+      member: this.members.find((member) => member.id === id)
+    }});
+  }
+
+  public deleteMember(id: string) {
+    const member = this.members.find((member) => member.id === id)!;
+
+    this.dialog.open(ConfirmModalComponent, { data: {
+      text: `Você tem certeza que quer deletar o membro <b>${member.name} (${Society[member.society]})</b>?`,
+      callback: async () => { await this.memberService.deleteMember(id); }
+    } })
   }
 }

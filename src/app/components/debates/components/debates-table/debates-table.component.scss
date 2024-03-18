@@ -14,7 +14,6 @@
   position: relative;
   width: 100%;
   overflow-x: hidden;
-  table-layout: fixed;
   margin-top: 32px;
 
   &__header {
@@ -22,14 +21,14 @@
       &__th {
         padding-right: 16px;
         overflow: hidden;
-        text-overflow: ellipsis;
 
         &--0 {
-          width: 20rem;
+          width: 320px;
+          white-space: normal;
         }
 
         &--2 {
-          width: 20rem;
+          width: 240px;
         }
       }
     }
@@ -42,9 +41,22 @@
       transition: background 0.1s ease-in-out;
 
       &__td {
+        width: 0;
         padding-right: 16px;
         overflow: hidden;
-        text-overflow: ellipsis;
+
+        &--1 {
+          width: max-content;
+          white-space: normal;
+          padding-top: 12px;
+          padding-bottom: 12px;
+        }
+
+        &__img {
+          filter: $filter;
+          width: 24px;
+          height: 24px;
+        }
 
         &__details {
           display: flex;

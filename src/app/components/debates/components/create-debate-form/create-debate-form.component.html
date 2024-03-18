@@ -80,7 +80,7 @@
             cdkAutosizeMinRows="1"
             formControlName="motion"
           ></textarea>
-          <img (click)="removeInfoSlide(index)" *ngIf="showInfoSlideDeleteIcon(index)" src="assets/trash.png" />
+          <img (click)="removeInfoSlide(index)" *ngIf="showInfoSlideDeleteIcon(index)" src="assets/delete.png" />
         </mat-form-field>
         <button *ngIf="canAddInfoSlide()" mat-stroked-button (click)="addInfoSlide()">Adicionar InfoSlide</button>
         <button mat-flat-button color="primary" matStepperNext [disabled]="!debateFormGroup.valid">Próximo</button>
@@ -93,11 +93,6 @@
           <mat-form-field class="form__stepper__step__debaters__filters__field">
             <mat-label>Nome</mat-label>
             <input matInput formControlName="name" />
-            <!-- <img
-              (click)="removeDebatersNameFilter()"
-              *ngIf="showRemoveDebatersNameFilterIcon()"
-              src="assets/close.png"
-            /> -->
           </mat-form-field>
           <mat-form-field class="form__stepper__step__debaters__filters__field form__stepper__step__debaters__filters__field--society">
             <mat-label>Sociedade</mat-label>
@@ -107,11 +102,6 @@
                 <mat-option [value]="entry.key">{{ entry.value }}</mat-option>
               </ng-container>
             </mat-select>
-            <!-- <img
-              (click)="removeDebatersSocietyFilter($event)"
-              *ngIf="showRemoveDebatersSocietyFilterIcon()"
-              src="assets/close.png"
-            /> -->
           </mat-form-field>
         </div>
         <div class="form__stepper__step__debaters__all" formArrayName="debaters" >
@@ -267,10 +257,10 @@
               </mat-option>
             </ng-container>
           </mat-select>
-          <img (click)="removeWing(index)" src="assets/trash.png" />
+          <img (click)="removeWing(index)" src="assets/delete.png" />
         </mat-form-field>
         <button mat-stroked-button (click)="addWing()">Adicionar Wing</button>
-        <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="!form.valid">Criar</button>
+        <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="!form.valid">{{ getButtonText() }}</button>
       </div>
     </mat-step>
   </mat-stepper>

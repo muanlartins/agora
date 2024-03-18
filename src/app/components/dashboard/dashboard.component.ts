@@ -130,13 +130,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           },
           y: {
             min: 65,
-            max: 80,
+            max: 85,
             grid: {
               color: '#D9D9D920'
             },
             ticks: {
               color: '#D9D9D9',
-              stepSize: 3
+              stepSize: 2
             }
           }
         },
