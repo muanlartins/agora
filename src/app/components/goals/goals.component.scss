@@ -1,0 +1,58 @@
+@import './src/variables.scss';
+
+.goals {
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  &__navbar {
+    width: 100%;
+  }
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 70%;
+
+    &__tabs {
+      width: 100%;
+
+      &__tab {
+        padding: 32px 0;
+
+        &__goals {
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          gap: 16px;
+          padding: 32px 0;
+
+          &__goal {
+            &__title {
+              display: flex;
+              justify-content: row;
+              align-items: center;
+              gap: 8px;
+
+              &__text {
+                font-size: 16px;
+                color: $white;
+              }
+
+              &__counter {
+                font-size: 14px;
+                color: $primary;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

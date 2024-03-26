@@ -12,6 +12,7 @@ import { Debate } from 'src/app/models/types/debate';
 import { DebateService } from 'src/app/services/debate.service';
 import { combineLatest } from 'rxjs';
 import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
+import { isAdmin } from 'src/app/utils/auth';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -190,5 +191,9 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
       this.filteredMembers = this.filteredMembers.filter((member) => member.isTrainee);
 
     this.setDataSource();
+  }
+
+  public isAdmin() {
+    return isAdmin();
   }
 }

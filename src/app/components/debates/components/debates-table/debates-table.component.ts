@@ -16,6 +16,7 @@ import { MotionTheme } from 'src/app/models/enums/motion-theme';
 import { DebatePosition } from 'src/app/models/enums/debate-position';
 import { Society } from 'src/app/models/enums/society';
 import { ConfirmModalComponent } from 'src/app/components/members/components/confirm-modal/confirm-modal.component';
+import { isAdmin } from 'src/app/utils/auth';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -69,6 +70,10 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
 
   public get MotionTheme() {
     return MotionTheme;
+  }
+
+  public get Society() {
+    return Society;
   }
 
   public constructor(
@@ -176,77 +181,94 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
   }
 
   public getHouses(debate: Debate) {
-    const houses = [
-      {
-        debaters: [
-          {
-            position: DebatePosition.pm,
-            debater: debate.debaters?.[0],
-            sps: debate.sps?.[0]
-          },
-          {
-            position: DebatePosition.dpm,
-            debater: debate.debaters?.[2],
-            sps: debate.sps?.[2]
-          }
-        ],
-        title: 'Primeiro Governo (1G)',
-        index: 0
-      },
-      {
-        debaters: [
-          {
-            position: DebatePosition.lo,
-            debater: debate.debaters?.[1],
-            sps: debate.sps?.[1]
-          },
-          {
-            position: DebatePosition.dlo,
-            debater: debate.debaters?.[3],
-            sps: debate.sps?.[3]
-          }
-        ],
-        title: 'Primeira Oposição (1O)',
-        index: 1
-      },
-      {
-        debaters: [
-          {
-            position: DebatePosition.mg,
-            debater: debate.debaters?.[4],
-            sps: debate.sps?.[4]
-          },
-          {
-            position: DebatePosition.gw,
-            debater: debate.debaters?.[6],
-            sps: debate.sps?.[6]
-          }
-        ],
-        title: 'Segundo Governo (2G)',
-        index: 2
-      },
-      {
-        debaters: [
-          {
-            position: DebatePosition.mo,
-            debater: debate.debaters?.[5],
-            sps: debate.sps?.[5]
-          },
-          {
-            position: DebatePosition.ow,
-            debater: debate.debaters?.[7],
-            sps: debate.sps?.[7]
-          }
-        ],
-        title: 'Segunda Oposição (2O)',
-        index: 3
-      },
-    ].sort((a, b) => debate.points[b.index] - debate.points[a.index]);
+    const houses = [];
+
+    if (debate.debaters && debate.debaters.length >= 4) {
+      houses.push(
+        {
+          debaters: [
+            {
+              position: DebatePosition.pm,
+              debater: debate.debaters[0],
+              sps: debate.sps?.[0]
+            },
+            {
+              position: DebatePosition.dpm,
+              debater: debate.debaters[2],
+              sps: debate.sps?.[2]
+            }
+          ],
+          title: 'Primeiro Governo (1G)',
+          index: 0
+        }
+      );
+
+      houses.push(
+        {
+          debaters: [
+            {
+              position: DebatePosition.lo,
+              debater: debate.debaters[1],
+              sps: debate.sps?.[1]
+            },
+            {
+              position: DebatePosition.dlo,
+              debater: debate.debaters[3],
+              sps: debate.sps?.[3]
+            }
+          ],
+          title: 'Primeira Oposição (1O)',
+          index: 1
+        }
+      );
+    }
+
+    if (debate.debaters && debate.debaters.length >= 8) {
+      houses.push(
+        {
+          debaters: [
+            {
+              position: DebatePosition.mg,
+              debater: debate.debaters?.[4],
+              sps: debate.sps?.[4]
+            },
+            {
+              position: DebatePosition.gw,
+              debater: debate.debaters?.[6],
+              sps: debate.sps?.[6]
+            }
+          ],
+          title: 'Segundo Governo (2G)',
+          index: 2
+        }
+      );
+
+      houses.push(
+        {
+          debaters: [
+            {
+              position: DebatePosition.mo,
+              debater: debate.debaters?.[5],
+              sps: debate.sps?.[5]
+            },
+            {
+              position: DebatePosition.ow,
+              debater: debate.debaters?.[7],
+              sps: debate.sps?.[7]
+            }
+          ],
+          title: 'Segunda Oposição (2O)',
+          index: 3
+        }
+      );
+    }
+
+    houses.sort((a, b) => debate.points[b.index] - debate.points[a.index]);
 
     return houses;
   }
 
-  public getDebate(element: Debate) {
+  public getDebate(element: Debate): Debate {
     return element;
   }
 
@@ -278,5 +300,9 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
     }});
 
     event.stopPropagation();
+  }
+
+  public isAdmin() {
+    return isAdmin();
   }
 }

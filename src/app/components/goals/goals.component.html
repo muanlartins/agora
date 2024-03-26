@@ -1,0 +1,33 @@
+<div class="goals">
+  <app-navbar class="goals__navbar"></app-navbar>
+  <div class="goals__container">
+    <mat-tab-group class="goals__container__tabs">
+      <mat-tab class="goals__container__tabs__tab" label="COMPETIÇÃO">
+        <div class="goals__container__tabs__tab__goals">
+          <div class="goals__container__tabs__tab__goals__goal" *ngFor="let goal of competitiveGoals">
+            <mat-checkbox color="primary" [disabled]="true" [checked]="goal.achieved">
+              <div class="goals__container__tabs__tab__goals__goal__title">
+                <span class="goals__container__tabs__tab__goals__goal__title__text">{{ goal.title }}</span>
+                <span class="goals__container__tabs__tab__goals__goal__title__counter">({{ goal.currentCount }}/{{ goal.totalCount }})</span>
+              </div>
+            </mat-checkbox>
+            <mat-progress-bar class="goals__container__tabs__tab__goals__goal__progress" mode="determinate" [value]="goal.currentCount/goal.totalCount * 100"></mat-progress-bar>
+          </div>
+        </div>
+      </mat-tab>
+      <mat-tab class="goals__container__tabs__tab" label="GESTÃO" *ngIf="isAdmin()">
+        <div class="goals__container__tabs__tab__goals">
+          <div class="goals__container__tabs__tab__goals__goal" *ngFor="let goal of managementGoals">
+            <mat-checkbox color="primary" [disabled]="true" [checked]="goal.achieved">
+              <div class="goals__container__tabs__tab__goals__goal__title">
+                <span class="goals__container__tabs__tab__goals__goal__title__text">{{ goal.title }}</span>
+                <span class="goals__container__tabs__tab__goals__goal__title__counter">({{ goal.currentCount }}/{{ goal.totalCount }})</span>
+              </div>
+            </mat-checkbox>
+            <mat-progress-bar class="goals__container__tabs__tab__goals__goal__progress" mode="determinate" [value]="goal.currentCount/goal.totalCount * 100"></mat-progress-bar>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

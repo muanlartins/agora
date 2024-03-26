@@ -59,6 +59,12 @@
       &__field {
         width: 100%;
       }
+
+      &__text {
+        font-size: 16px;
+        color: $danger;
+        line-height: 100%;
+      }
     }
 
     &__text {

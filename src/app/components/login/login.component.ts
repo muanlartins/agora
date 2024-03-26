@@ -15,7 +15,9 @@ import { AuthService } from 'src/app/services/auth.service';
 export class LoginComponent implements OnInit {
   public form: FormGroup;
 
-  public loading: boolean;
+  public loading: boolean = false;
+
+  public wrongLogin: boolean = false;
 
   constructor(
     private router: Router,
@@ -35,10 +37,7 @@ export class LoginComponent implements OnInit {
   }
 
   public onSubmit() {
-    if (!this.form.valid) {
-
-      return;
-    }
+    if (!this.form.valid) return;
 
     const login = this.form.controls['login'].value;
     const encryptedPassword = sha256(this.form.controls['password'].value);
@@ -53,8 +52,9 @@ export class LoginComponent implements OnInit {
         localStorage.setItem("token", token);
         this.checkLogin();
       },
-      complete: () => {
+      error: () => {
         this.loading = false;
+        this.wrongLogin = true;
       },
     });
   }

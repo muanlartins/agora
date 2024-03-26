@@ -17,6 +17,7 @@
         <input matInput formControlName="password" type="password">
         <mat-error *ngIf="!form.valid">A senha é obrigatória</mat-error>
       </mat-form-field>
+      <p class="login__body__form__text" *ngIf="wrongLogin">O login ou senha estão errados.</p>
       <button
         class="login__body__form__button"
         mat-raised-button
@@ -24,9 +25,9 @@
         type="submit"
       >Enviar</button>
     </form>
-    <p class="login__body__text">
+    <!-- <p class="login__body__text">
       Não possui um cadastro? Crie um <b routerLink="/signup" class="login__body__text__link">aqui</b>.
-    </p>
+    </p> -->
   </div>
 </div>
 <app-spinner [loading]="loading" [fullscreen]="true"></app-spinner>

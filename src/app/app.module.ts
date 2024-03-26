@@ -27,6 +27,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CreateDebateFormComponent } from './components/debates/components/create-debate-form/create-debate-form.component';
 import { CreateMemberFormComponent } from './components/members/components/create-member-form/create-member-form.component';
 import { MembersComponent } from './components/members/members.component';
@@ -38,6 +39,7 @@ import { CreateMemberModalComponent } from './components/members/components/crea
 import { SpinnerComponent } from './utils/components/spinner/spinner.component';
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { ConfirmModalComponent } from './components/members/components/confirm-modal/confirm-modal.component';
+import { GoalsComponent } from './components/goals/goals.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +58,7 @@ import { ConfirmModalComponent } from './components/members/components/confirm-m
     SpinnerComponent,
     LandingPageComponent,
     ConfirmModalComponent,
+    GoalsComponent,
   ],
   imports: [
     BrowserModule,
@@ -78,7 +81,8 @@ import { ConfirmModalComponent } from './components/members/components/confirm-m
     MatSortModule,
     MatPaginatorModule,
     MatTabsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatProgressBarModule,
   ],
   exports: [
     NgxSpinnerModule
