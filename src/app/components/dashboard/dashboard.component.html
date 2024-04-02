@@ -3,7 +3,16 @@
   <div class="dashboard__graphs">
     <mat-tab-group class="dashboard__graphs__tabs">
       <mat-tab class="dashboard__graphs__tabs__tab" label="ESTATÍSTICAS">
-        <div class="dashboard__graphs__tabs__tab__title" *ngIf="statistics">Resumo do mês de fevereiro</div>
+        <form [formGroup]="form" class="dashboard__graphs__tabs__tab__form">
+          <mat-form-field>
+            <mat-select formControlName="month">
+              <mat-option *ngFor="let month of monthOptions" [value]="month.value">
+                {{ month.viewValue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </form>
+        <div class="dashboard__graphs__tabs__tab__title" *ngIf="statistics">Resumo do mês de {{ MONTHS[month].toLowerCase() }}</div>
         <div class="dashboard__graphs__tabs__tab__details">
           <div class="dashboard__graphs__tabs__tab__details__detail" *ngFor="let statistic of statistics">
             <div class="dashboard__graphs__tabs__tab__details__detail__content">

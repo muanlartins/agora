@@ -1,12 +1,15 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Chart } from 'chart.js';
 import * as moment from 'moment';
 import { combineLatest } from 'rxjs';
 import { Society } from 'src/app/models/enums/society';
 import { Debate } from 'src/app/models/types/debate';
 import { Member } from 'src/app/models/types/member';
+import { SelectOption } from 'src/app/models/types/select-option';
 import { DebateService } from 'src/app/services/debate.service';
 import { MemberService } from 'src/app/services/member.service';
+import { MONTHS } from 'src/app/utils/constants';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,6 +17,8 @@ import { MemberService } from 'src/app/services/member.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
+  public form: FormGroup;
+
   public debates: Debate[];
 
   public members: Member[];
@@ -30,13 +35,26 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public statistics: { title: string, value: string, details?: { title: string, value: string }[] }[];
 
+  public monthOptions: SelectOption[] = [];
+
+  public month: number = moment(Date.now()).month()-1;
+
+  public get MONTHS() {
+    return MONTHS;
+  }
+
   constructor(
     private memberService: MemberService,
     private debateService: DebateService,
-  ) { }
+    private formBuilder: FormBuilder
+  ) {
+    this.initForm();
+    this.initOptions();
+  }
 
   ngOnInit(): void {
     this.getData();
+    this.subscribeToValueChanges();
   }
 
   ngAfterViewInit(): void {
@@ -45,6 +63,23 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.charts.forEach((chart) => chart.destroy());
+  }
+
+  public initForm() {
+    this.form = this.formBuilder.group({
+      month: [moment(Date.now()).month()-1],
+    });
+  }
+
+  public initOptions() {
+    this.monthOptions = MONTHS.map((viewValue, value) => ({ value, viewValue })).filter((option) => option.value < moment(Date.now()).month());
+  }
+
+  public subscribeToValueChanges() {
+    this.form.controls['month'].valueChanges.subscribe((month: number) => {
+      this.month = month;
+      this.getStatistics();
+    });
   }
 
   public async getData() {
@@ -129,8 +164,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           },
           y: {
-            min: 65,
-            max: 85,
+            min: 60,
+            max: 84,
             grid: {
               color: '#D9D9D920'
             },
@@ -274,7 +309,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public getStatistics() {
-    const debates = this.debates.filter((debate) => moment(debate.date).month() === 1);
+    const debates = this.debates.filter((debate) => moment(debate.date).month() === this.form.controls['month'].value);
 
     const winsByDebater: { [id: string]: number } = {};
     const duosByDebater: { [id: string]: string[]} = {};
@@ -298,7 +333,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       societyParticipants[key] = [];
     });
 
-    this.debates.forEach((debate) => {
+    debates.forEach((debate) => {
       debate.debaters?.forEach((debater) => {
         societyParticipations[debater.society] ++;
         societyParticipants[debater.society].push(debater.name);
