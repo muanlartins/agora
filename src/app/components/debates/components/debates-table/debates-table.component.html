@@ -1,12 +1,12 @@
 <form [formGroup]="form" class="form">
-  <mat-form-field class="form__input">
+  <!-- <mat-form-field class="form__input">
     <mat-label>Ano</mat-label>
     <mat-select formControlName="year">
       <mat-option>Remover Filtro</mat-option>
-      <mat-option value="2023">2023</mat-option>
       <mat-option value="2024">2024</mat-option>
     </mat-select>
-  </mat-form-field>
+  </mat-form-field> -->
+  <div></div>
   <button *ngIf="isAdmin()" class="form__button" mat-flat-button color="primary" (click)="openCreateDebateModal()">Criar</button>
 </form>
 

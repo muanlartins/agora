@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, firstValueFrom } from "rxjs";
+import { BehaviorSubject, Observable, combineLatest, firstValueFrom } from "rxjs";
 import { BASE_URL } from "../utils/constants";
 import { Debate } from "../models/types/debate";
 import { getToken } from "../utils/token";
@@ -9,6 +9,7 @@ import { DebateVenue } from "../models/enums/debate-venue";
 import { MotionType } from "../models/enums/motion-type";
 import { MotionTheme } from "../models/enums/motion-theme";
 import { Member } from "../models/types/member";
+import { MemberService } from "./member.service";
 
 const ENDPOINTS = {
   getAllDebates: '/debates',
@@ -23,7 +24,7 @@ const ENDPOINTS = {
 export class DebateService {
   public debates$: BehaviorSubject<Debate[]> = new BehaviorSubject<Debate[]>([]);
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(private httpClient: HttpClient, private memberService: MemberService) { }
 
   public getAllDebates(): Observable<Debate[]> {
     if (this.debates$.value && this.debates$.value.length)
@@ -31,9 +32,16 @@ export class DebateService {
 
     const token = getToken();
 
-    this.httpClient.get<Debate[]>(BASE_URL + ENDPOINTS.getAllDebates, {
+    combineLatest([this.httpClient.get<Debate[]>(BASE_URL + ENDPOINTS.getAllDebates, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
-    }).subscribe((debates) => this.debates$.next(debates));
+    }), this.memberService.getAllMembers()]).subscribe(([debates, members]) => this.debates$.next(debates
+      .map((debate) => ({
+        ...debate,
+        debaters: debate.debaters?.map((debater) => members.find((member) => member.id === debater.id)!),
+        chair: members.find((member) => member.id === debate.chair.id)!,
+        wings: debate.debaters?.map((wing) => members.find((member) => member.id === wing.id)!),
+      }))
+    ));
 
     return this.debates$.asObservable();
   }

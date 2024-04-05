@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } fr
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Chart } from 'chart.js';
 import * as moment from 'moment';
-import { combineLatest } from 'rxjs';
+import { combineLatest, lastValueFrom } from 'rxjs';
 import { Society } from 'src/app/models/enums/society';
 import { Debate } from 'src/app/models/types/debate';
 import { Member } from 'src/app/models/types/member';

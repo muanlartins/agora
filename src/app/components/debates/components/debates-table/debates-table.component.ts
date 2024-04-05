@@ -111,7 +111,7 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
   }
 
   public setDataSource() {
-    if (!this.debates) return;
+    if (!this.debates || !this.debates.length) return;
 
     this.dataSource.data = this.debates;
 
@@ -159,25 +159,12 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
   }
 
   public getDatetimeMoment(date: string, time: string) {
-    if (date.length === 10) {
-      const day = date.split('/')[0];
-      const month = date.split('/')[1];
-      const year = date.split('/')[2];
-      const hour = time.replace('h', '');
+    let datetime = moment(date);
 
-      const dateIsoString = `${year}-${month}-${day}T${hour}:00:00-0300`;
+    datetime = datetime.hour(Number(time.split(':')[0]));
+    datetime = datetime.minute(Number(time.split(':')[1]));
 
-      const datetime = moment(dateIsoString);
-
-      return datetime;
-    } else {
-      let datetime = moment(date);
-
-      datetime = datetime.hour(Number(time.split(':')[0]));
-      datetime = datetime.minute(Number(time.split(':')[1]));
-
-      return datetime;
-    }
+    return datetime;
   }
 
   public getHouses(debate: Debate) {

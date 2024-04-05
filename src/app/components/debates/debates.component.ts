@@ -7,8 +7,6 @@ import { Debate } from 'src/app/models/types/debate';
   styleUrls: ['./debates.component.scss'],
 })
 export class DebatesComponent implements OnInit {
-  public debates: Debate[] = [];
-
   constructor() { }
 
   ngOnInit(): void {}
