@@ -90,7 +90,6 @@ export class CreateMemberFormComponent implements OnInit {
     this.loading = false;
 
     if (this.avatarFile) {
-
       const formData: FormData = new FormData();
       formData.append('file', this.avatarFile, id);
 
@@ -120,6 +119,8 @@ export class CreateMemberFormComponent implements OnInit {
   onFileSelected(event: any) {
     if(event.target.files.length > 0) {
       this.avatarFile = event.target.files[0];
+
+      this.useIcon = false;
 
       this.pfpUrl = URL.createObjectURL(this.avatarFile);
     }
