@@ -10,7 +10,8 @@ const ENDPOINTS = {
   getAllMembers: '/members',
   createMember: '/member',
   editMember: '/member',
-  deleteMember: (id: string) => `/member/${id}`
+  deleteMember: (id: string) => `/member/${id}`,
+  updatePfp: `/member/pfp`
 }
 
 @Injectable({
@@ -46,6 +47,8 @@ export class MemberService {
     }));
 
     this.members$.next([...this.members$.value, member]);
+
+    return member;
   }
 
   public async updateMember(id: string, name: string, society: keyof typeof Society, isTrainee: boolean) {
@@ -65,6 +68,18 @@ export class MemberService {
     members.push({id, name, society, isTrainee});
 
     this.members$.next(members);
+  }
+
+  public async uploadMemberPfp(formData: FormData) {
+    const token = getToken();
+
+    await firstValueFrom(this.httpClient.post<boolean>(BASE_URL + ENDPOINTS.updatePfp, formData, {
+      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`)
+    }));
+  }
+
+  public getMemberPfpUrl(id: string) {
+    return `/assets/pfps/${id}`;
   }
 
   public async deleteMember(id: string) {

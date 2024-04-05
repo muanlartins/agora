@@ -1,4 +1,33 @@
 <form class="form" [formGroup]="form" (submit)="onSubmit()">
+  <div class="form__avatars">
+    <label
+      for="upload"
+      class="form__avatars__avatar"
+      (mouseenter)="avatarIcon = 'upload'"
+      (mouseleave)="avatarIcon = 'user'"
+    >
+      <input type='file' hidden id="upload" (change)="onFileSelected($event)" />
+      <nz-avatar [nzSize]="128" [nzIcon]="avatarIcon" [nzSrc]="avatarIconUrl"></nz-avatar>
+    </label>
+    <label
+      for="upload"
+      class="form__avatars__avatar"
+      (mouseenter)="avatarIcon = 'upload'"
+      (mouseleave)="avatarIcon = 'user'"
+    >
+      <input type='file' hidden id="upload" (change)="onFileSelected($event)" />
+      <nz-avatar [nzSize]="96" [nzIcon]="avatarIcon" [nzSrc]="avatarIconUrl"></nz-avatar>
+    </label>
+    <label
+      for="upload"
+      class="form__avatars__avatar"
+      (mouseenter)="avatarIcon = 'upload'"
+      (mouseleave)="avatarIcon = 'user'"
+    >
+      <input type='file' hidden id="upload" (change)="onFileSelected($event)" />
+      <nz-avatar [nzSize]="64" [nzIcon]="avatarIcon" [nzSrc]="avatarIconUrl"></nz-avatar>
+    </label>
+  </div>
   <mat-form-field class="form__field">
     <mat-label>Nome</mat-label>
     <input matInput formControlName="name" />

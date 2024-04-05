@@ -51,7 +51,7 @@
     &__tr {
       padding-right: 16px;
       cursor: pointer;
-      transition: background 0.1s ease-in-out;
+      transition: $transition;
 
       &__td {
         padding-right: 16px;

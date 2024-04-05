@@ -38,7 +38,7 @@
     &__tr {
       padding-right: 16px;
       cursor: pointer;
-      transition: background 0.1s ease-in-out;
+      transition: $transition;
 
       &__td {
         width: 0;
@@ -186,6 +186,10 @@
       &--detail {
         height: 0;
         background: $brown;
+      }
+
+      &:hover {
+        background: rgba(0,0,0,0.05);
       }
     }
   }

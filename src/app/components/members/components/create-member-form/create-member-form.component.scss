@@ -1,3 +1,5 @@
+@import './src/variables.scss';
+
 :host {
   --mat-form-field-width: calc(calc(100% - 4rem) / 3);
   --button-height: 3.2rem;
@@ -17,6 +19,34 @@
     &__button {
       width: var(--mat-form-field-width);
       height: var(--button-height);
+    }
+  }
+
+  &__avatars {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 32px;
+
+    &__avatar {
+      position: relative;
+      transition: $transition;
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      &:hover::after {
+        content: '';
+        background: black;
+        opacity: 0.3;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        border-radius: 50%;
+        top: 0;
+        left: 0;
+      }
     }
   }
 }

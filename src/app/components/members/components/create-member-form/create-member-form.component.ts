@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SelectOption } from 'src/app/models/types/select-option';
 import { Society } from 'src/app/models/enums/society';
@@ -24,6 +24,12 @@ export class CreateMemberFormComponent implements OnInit {
 
   public loading: boolean = false;
 
+  public avatarIcon: string = 'user';
+
+  public avatarIconUrl: string;
+
+  public avatarFile: File;
+
   constructor(
     private formBuilder: FormBuilder,
     private memberService: MemberService,
@@ -39,13 +45,15 @@ export class CreateMemberFormComponent implements OnInit {
     this.form = this.formBuilder.group({
       name: ['', Validators.required],
       society: ['', Validators.required],
-      isTrainee: [false],
+      isTrainee: [false]
     });
 
     if (this.isEditing) {
       this.form.controls['name'].patchValue(this.member.name);
       this.form.controls['society'].patchValue(this.member.society);
       this.form.controls['isTrainee'].patchValue(this.member.isTrainee);
+
+      this.avatarIconUrl = this.memberService.getMemberPfpUrl(this.member.id);
     }
   }
 
@@ -61,26 +69,28 @@ export class CreateMemberFormComponent implements OnInit {
     const society = this.form.controls['society'].value;
     const isTrainee = this.form.controls['isTrainee'].value;
 
+    this.loading = true;
+    let id: string;
     if (this.isEditing) {
-      const id = this.member.id;
-
-      if (this.member.name === name && this.member.society === society && this.member.isTrainee === isTrainee) {
-        this.dialog.closeAll();
-        return;
-      }
-
-      this.loading = true;
+      id = this.member.id;
       await this.memberService.updateMember(id, name, society, isTrainee);
-      this.loading = false;
-
-      this.dialog.closeAll();
     } else {
-      this.loading = true;
-      await this.memberService.createMember(name, society, isTrainee);
-      this.loading = false;
-
-      this.dialog.closeAll();
+      const member: Member = await this.memberService.createMember(name, society, isTrainee);
+      id = member.id;
     }
+    this.loading = false;
+
+    if (this.avatarFile) {
+
+      const formData: FormData = new FormData();
+      formData.append('file', this.avatarFile, id);
+
+      this.loading = true;
+      await this.memberService.uploadMemberPfp(formData);
+      this.loading = false;
+    }
+
+    this.dialog.closeAll();
   }
 
   public clearControlValue(control: string, event?: Event) {
@@ -96,5 +106,13 @@ export class CreateMemberFormComponent implements OnInit {
     if (this.isEditing) return 'Atualizar';
 
     return 'Adicionar';
+  }
+
+  onFileSelected(event: any) {
+    if(event.target.files.length > 0) {
+      this.avatarFile = event.target.files[0];
+
+      this.avatarIconUrl = URL.createObjectURL(this.avatarFile);
+    }
   }
 }

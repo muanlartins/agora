@@ -10,4 +10,6 @@ Chart.register(...registerables);
 })
 export class AppComponent {
   title = 'Ágora';
+
+  constructor() {}
 }

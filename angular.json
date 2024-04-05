@@ -27,9 +27,15 @@
             "assets": [
               "src/favicon.ico",
               "src/assets",
-              "src/fonts"
+              "src/fonts",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
+                "output": "/assets/"
+              }
             ],
             "styles": [
+              "src/theme.less",
               "node_modules/ngx-spinner/animations/timer.css",
               "src/styles.scss",
               "src/variables.scss",

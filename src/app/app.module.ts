@@ -1,3 +1,5 @@
+import { registerLocaleData } from '@angular/common';
+import pt from '@angular/common/locales/pt';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
@@ -40,6 +42,12 @@ import { SpinnerComponent } from './utils/components/spinner/spinner.component';
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { ConfirmModalComponent } from './components/members/components/confirm-modal/confirm-modal.component';
 import { GoalsComponent } from './components/goals/goals.component';
+import { NewsComponent } from './components/news/news.component';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+
+registerLocaleData(pt);
 
 @NgModule({
   declarations: [
@@ -59,6 +67,7 @@ import { GoalsComponent } from './components/goals/goals.component';
     LandingPageComponent,
     ConfirmModalComponent,
     GoalsComponent,
+    NewsComponent,
   ],
   imports: [
     BrowserModule,
@@ -83,6 +92,9 @@ import { GoalsComponent } from './components/goals/goals.component';
     MatTabsModule,
     MatDialogModule,
     MatProgressBarModule,
+    NzAvatarModule,
+    NzIconModule,
+    NzToolTipModule
   ],
   exports: [
     NgxSpinnerModule
