@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public charts: Chart[] = [];
 
-  public statistics: { title: string, value: string, details?: { title: string, value: string }[] }[];
+  public statistics: { title: string, value: string, img?: string, details?: { title: string, value: string }[] }[];
 
   public monthOptions: SelectOption[] = [];
 
@@ -308,7 +308,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.generateTopMembersByFrequencyGraph();
   }
 
-  public getStatistics() {
+  public async getStatistics() {
     const debates = this.debates.filter((debate) => moment(debate.date).month() === this.form.controls['month'].value);
 
     const winsByDebater: { [id: string]: number } = {};
@@ -393,10 +393,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       {
         title: 'Debatedor com mais vitórias',
         value: `${winner.name} (${Society[winner.society]})`,
+        img: await this.memberService.memberHasPfp(winnerId) ? this.memberService.getMemberPfpUrl(winnerId) : undefined,
         details: [
           {
             title: 'Vitórias',
-            value: winnerDebates.toString()
+            value: winnerDebates.toString(),
           },
           {
             title: 'Duplas',
@@ -407,6 +408,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       {
         title: 'Debatedor com o maior speaker points',
         value: `${mostSps.name} (${Society[mostSps.society]})`,
+        img: await this.memberService.memberHasPfp(mostSpsId) ? this.memberService.getMemberPfpUrl(mostSpsId) : undefined,
         details: [
           {
             title: 'SP',
@@ -431,6 +433,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       {
         title: 'Juíz com mais participações',
         value: `${mostDebatesByJudge.name} (${Society[mostDebatesByJudge.society]})`,
+        img: await this.memberService.memberHasPfp(mostDebatesByJudgeId) ? this.memberService.getMemberPfpUrl(mostDebatesByJudgeId) : undefined,
         details: [
           {
             title: 'Debates',

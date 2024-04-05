@@ -76,10 +76,18 @@
                 color: $secondary;
               }
 
-              &__value {
-                font-size: 18px;
-                line-height: 100%;
-                color: $primary;
+              &__body {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+                gap: 8px;
+
+                &__value {
+                  font-size: 18px;
+                  line-height: 100%;
+                  color: $primary;
+                }
               }
             }
 

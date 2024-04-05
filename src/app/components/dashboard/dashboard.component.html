@@ -17,7 +17,16 @@
           <div class="dashboard__graphs__tabs__tab__details__detail" *ngFor="let statistic of statistics">
             <div class="dashboard__graphs__tabs__tab__details__detail__content">
               <div class="dashboard__graphs__tabs__tab__details__detail__content__title">{{ statistic.title }}</div>
-              <div class="dashboard__graphs__tabs__tab__details__detail__content__value">{{ statistic.value }}</div>
+              <div class="dashboard__graphs__tabs__tab__details__detail__content__body">
+                <nz-avatar
+                  *ngIf="statistic.img"
+                  class="dashboard__graphs__tabs__tab__details__detail__content__body__image"
+                  nzShape="square"
+                  [nzSize]="64"
+                  [nzSrc]="statistic.img"
+                ></nz-avatar>
+                <div class="dashboard__graphs__tabs__tab__details__detail__content__body__value">{{ statistic.value }}</div>
+              </div>
             </div>
             <div class="dashboard__graphs__tabs__tab__details__detail__details">
               <div class="dashboard__graphs__tabs__tab__details__detail__details__detail" *ngFor="let detail of statistic.details">

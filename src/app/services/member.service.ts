@@ -82,6 +82,10 @@ export class MemberService {
     return `/assets/pfps/${id}`;
   }
 
+  public async memberHasPfp(id: string) {
+    return await fetch(this.getMemberPfpUrl(id)).then((r) => r.ok);
+  }
+
   public async deleteMember(id: string) {
     const token = getToken();
 
