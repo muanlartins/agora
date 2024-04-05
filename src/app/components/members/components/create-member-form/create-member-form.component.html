@@ -3,29 +3,29 @@
     <label
       for="upload"
       class="form__avatars__avatar"
-      (mouseenter)="avatarIcon = 'upload'"
-      (mouseleave)="avatarIcon = 'user'"
+      (mouseenter)="avatarIconUrl = '/assets/upload.png'"
+      (mouseleave)="avatarIconUrl = '/assets/user.png'"
     >
       <input type='file' hidden id="upload" (change)="onFileSelected($event)" />
-      <nz-avatar [nzSize]="128" [nzIcon]="avatarIcon" [nzSrc]="avatarIconUrl"></nz-avatar>
+      <nz-avatar [nzSize]="128" [nzSrc]="useIcon ? avatarIconUrl : pfpUrl"></nz-avatar>
     </label>
     <label
       for="upload"
       class="form__avatars__avatar"
-      (mouseenter)="avatarIcon = 'upload'"
-      (mouseleave)="avatarIcon = 'user'"
+      (mouseenter)="avatarIconUrl = '/assets/upload.png'"
+      (mouseleave)="avatarIconUrl = '/assets/user.png'"
     >
       <input type='file' hidden id="upload" (change)="onFileSelected($event)" />
-      <nz-avatar [nzSize]="96" [nzIcon]="avatarIcon" [nzSrc]="avatarIconUrl"></nz-avatar>
+      <nz-avatar [nzSize]="96" [nzSrc]="useIcon ? avatarIconUrl : pfpUrl"></nz-avatar>
     </label>
     <label
       for="upload"
       class="form__avatars__avatar"
-      (mouseenter)="avatarIcon = 'upload'"
-      (mouseleave)="avatarIcon = 'user'"
+      (mouseenter)="avatarIconUrl = '/assets/upload.png'"
+      (mouseleave)="avatarIconUrl = '/assets/user.png'"
     >
       <input type='file' hidden id="upload" (change)="onFileSelected($event)" />
-      <nz-avatar [nzSize]="64" [nzIcon]="avatarIcon" [nzSrc]="avatarIconUrl"></nz-avatar>
+      <nz-avatar [nzSize]="64" [nzSrc]="useIcon ? avatarIconUrl : pfpUrl"></nz-avatar>
     </label>
   </div>
   <mat-form-field class="form__field">

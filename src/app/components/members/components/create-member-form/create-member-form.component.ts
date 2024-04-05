@@ -24,9 +24,11 @@ export class CreateMemberFormComponent implements OnInit {
 
   public loading: boolean = false;
 
-  public avatarIcon: string = 'user';
+  public avatarIconUrl: string = '/assets/user.png';
 
-  public avatarIconUrl: string;
+  public pfpUrl: string;
+
+  public useIcon: boolean = false;
 
   public avatarFile: File;
 
@@ -53,7 +55,14 @@ export class CreateMemberFormComponent implements OnInit {
       this.form.controls['society'].patchValue(this.member.society);
       this.form.controls['isTrainee'].patchValue(this.member.isTrainee);
 
-      this.avatarIconUrl = this.memberService.getMemberPfpUrl(this.member.id);
+      fetch(this.memberService.getMemberPfpUrl(this.member.id)).then(
+        (r) => {
+          if (r.ok)
+            this.pfpUrl = this.memberService.getMemberPfpUrl(this.member.id)
+          else
+            this.useIcon = true;
+        }
+      );
     }
   }
 
@@ -112,7 +121,7 @@ export class CreateMemberFormComponent implements OnInit {
     if(event.target.files.length > 0) {
       this.avatarFile = event.target.files[0];
 
-      this.avatarIconUrl = URL.createObjectURL(this.avatarFile);
+      this.pfpUrl = URL.createObjectURL(this.avatarFile);
     }
   }
 }
