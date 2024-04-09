@@ -1,5 +1,5 @@
 import { Component, Inject, Input } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-confirm-modal',
@@ -11,7 +11,11 @@ export class ConfirmModalComponent {
 
   public callback: () => {};
 
-  public constructor(@Inject(MAT_DIALOG_DATA) data: { text: string, callback: () => {} }, private dialog: MatDialog) {
+  public constructor(
+    @Inject(MAT_DIALOG_DATA) data: { text: string, callback: () => {} },
+    private dialog: MatDialog,
+    private dialogRef: MatDialogRef<ConfirmModalComponent>
+  ) {
     this.text = data.text;
 
     this.callback = data.callback;
@@ -20,6 +24,6 @@ export class ConfirmModalComponent {
   public async callCallback() {
     await this.callback();
 
-    this.dialog.closeAll();
+    this.dialogRef.close();
   }
 }

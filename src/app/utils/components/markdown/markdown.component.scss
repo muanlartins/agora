@@ -1,0 +1,110 @@
+@import 'src/variables.scss';
+
+::ng-deep .content {
+  h1 {
+    font-size: 32px;
+    color: $white;
+    margin-bottom: 12px;
+    font-weight: bold;
+    line-height: 125%;
+  }
+
+  h2 {
+    font-size: 24px;
+    color: $white;
+    margin-bottom: 12px;
+    font-weight: bold;
+    line-height: 125%;
+  }
+
+  h3 {
+    font-size: 20px;
+    color: $white;
+    margin-bottom: 12px;
+    font-weight: bold;
+    line-height: 125%;
+  }
+
+  p {
+    font-size: 16px;
+    color: $white;
+    margin-bottom: 24px;
+    line-height: 125%;
+  }
+
+  strong {
+    font-weight: bold;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  hr {
+    margin-bottom: 24px;
+  }
+
+  blockquote {
+    background: $brown;
+    border-left: 8px solid $secondary;
+
+    blockquote {
+      margin-left: 24px;
+    }
+
+    p, h1, h2, h3 {
+      &:first-child {
+        padding-top: 16px;
+      }
+
+      &:last-child {
+        padding-bottom: 16px;
+      }
+
+      padding-left: 12px;
+      color: $white;
+    }
+  }
+
+  ol, ul {
+    color: $white;
+    margin-left: 32px;
+    margin-bottom: 32px;
+
+    ol, ul {
+      margin-top: 8px;
+    }
+
+    li {
+      margin-bottom: 8px;
+
+      p:last-child {
+        margin-bottom: 0;
+      }
+
+      p:not(:last-child) {
+        margin-bottom: 8px;
+      }
+    }
+  }
+
+  ol {
+    list-style:decimal;
+
+    ol {
+      list-style: lower-alpha;
+    }
+  }
+
+  ul {
+    list-style: disc;
+
+    ul {
+      list-style: circle;
+    }
+  }
+
+  a {
+    color: #FFC040;
+  }
+}

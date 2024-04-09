@@ -1,4 +1,4 @@
-@import '/src/variables';
+@import 'src/variables.scss';
 
 .form {
   display: flex;
@@ -119,25 +119,6 @@
       &:hover {
         background: rgba(0,0,0,0.05);
       }
-    }
-  }
-}
-
-
-@media (width <= 1600px) {
-  table {
-    td, th {
-      font-size: 12px;
-      line-height: 125%;
-    }
-  }
-}
-
-@media (width < 1440px) {
-  table {
-    td, th {
-      font-size: 10px;
-      line-height: 125%;
     }
   }
 }

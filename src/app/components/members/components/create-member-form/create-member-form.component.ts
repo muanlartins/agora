@@ -26,11 +26,9 @@ export class CreateMemberFormComponent implements OnInit {
 
   public avatarIconUrl: string = '/assets/user.png';
 
-  public pfpUrl: string;
-
-  public useIcon: boolean = false;
-
   public avatarFile: File;
+
+  public pfpUrl?: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -55,14 +53,7 @@ export class CreateMemberFormComponent implements OnInit {
       this.form.controls['society'].patchValue(this.member.society);
       this.form.controls['isTrainee'].patchValue(this.member.isTrainee);
 
-      fetch(this.memberService.getMemberPfpUrl(this.member.id)).then(
-        (r) => {
-          if (r.ok)
-            this.pfpUrl = this.memberService.getMemberPfpUrl(this.member.id)
-          else
-            this.useIcon = true;
-        }
-      );
+      this.pfpUrl = this.member.hasPfp ? `/assets/pfps/${this.member.id}` : this.avatarIconUrl;
     }
   }
 
@@ -81,10 +72,12 @@ export class CreateMemberFormComponent implements OnInit {
     this.loading = true;
     let id: string;
     if (this.isEditing) {
+      const hasPfp = this.member.hasPfp;
       id = this.member.id;
-      await this.memberService.updateMember(id, name, society, isTrainee);
+      await this.memberService.updateMember(id, name, society, isTrainee, hasPfp);
     } else {
-      const member: Member = await this.memberService.createMember(name, society, isTrainee);
+      const hasPfp: boolean = !!this.avatarFile;
+      const member: Member = await this.memberService.createMember(name, society, isTrainee, hasPfp);
       id = member.id;
     }
     this.loading = false;
@@ -116,13 +109,15 @@ export class CreateMemberFormComponent implements OnInit {
     return 'Adicionar';
   }
 
-  onFileSelected(event: any) {
+  public onFileSelected(event: any) {
     if(event.target.files.length > 0) {
       this.avatarFile = event.target.files[0];
 
-      this.useIcon = false;
-
       this.pfpUrl = URL.createObjectURL(this.avatarFile);
     }
+  }
+
+  public getSrc() {
+    return this.pfpUrl ?? this.avatarIconUrl;
   }
 }

@@ -148,6 +148,7 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
 
   ngAfterContentChecked(): void {
     this.checkDebatersCheckboxDisable();
+    this.checkIronsCheckboxDisable();
   }
 
   public initForm() {
@@ -295,26 +296,7 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
           this.ironsFormArray.removeAt(uniqueSelectedDebaterIndex);
         }
 
-        this.ironSubscriptions.forEach((subscription) => subscription.unsubscribe());
-        this.ironSubscriptions = this.ironsFormArray.controls.map((control, ironsFormArrayIndex) =>
-          control.valueChanges.subscribe((ironSelected: boolean) => {
-            const ironDebater = this.uniqueSelectedDebaters[ironsFormArrayIndex];
-            if (ironSelected) {
-              this.selectedDebaters.push(ironDebater);
-              this.spsFormArray.push(
-                this.formBuilder.control('', [Validators.min(50), Validators.max(100)])
-              );
-            } else {
-              const ironDebaterIndex = this.selectedDebaters.lastIndexOf(ironDebater);
-              this.selectedDebaters.splice(ironDebaterIndex, 1);
-              this.spsFormArray.removeAt(ironDebaterIndex);
-            }
-
-            this.setCallHouses();
-            this.checkIronsCheckboxDisable();
-            this.checkDebatersCheckboxDisable();
-          })
-        );
+        this.subscribeToIronValueChanges();
 
         this.spSubscriptions.forEach((subscription) => subscription.unsubscribe());
         this.spSubscriptions = this.spsFormArray.controls.map((control) =>
@@ -343,6 +325,29 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
 
       this.filterJudgeOptions(filter);
     });
+  }
+
+  public subscribeToIronValueChanges() {
+    this.ironSubscriptions.forEach((subscription) => subscription.unsubscribe());
+    this.ironSubscriptions = this.ironsFormArray.controls.map((control, ironsFormArrayIndex) =>
+      control.valueChanges.subscribe((ironSelected: boolean) => {
+        const ironDebater = this.uniqueSelectedDebaters[ironsFormArrayIndex];
+        if (ironSelected) {
+          this.selectedDebaters.push(ironDebater);
+          this.spsFormArray.push(
+            this.formBuilder.control('', [Validators.min(50), Validators.max(100)])
+          );
+        } else {
+          const ironDebaterIndex = this.selectedDebaters.lastIndexOf(ironDebater);
+          this.selectedDebaters.splice(ironDebaterIndex, 1);
+          this.spsFormArray.removeAt(ironDebaterIndex);
+        }
+
+        this.setCallHouses();
+        this.checkIronsCheckboxDisable();
+        this.checkDebatersCheckboxDisable();
+      })
+    );
   }
 
   public setCallHouses() {
@@ -689,8 +694,6 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
   }
 
   public checkIsEditing() {
-    // TODO Luan Martins - Deal with Irons
-
     if (this.isEditing && !this.form.valid) {
       this.debateFormGroup.controls['date'].patchValue(this.debate.date);
       this.debateFormGroup.controls['time'].patchValue(this.debate.time);
@@ -703,9 +706,13 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
         this.debate.infoSlides.forEach((infoSlide) => this.infoSlidesFormArray.push(this.formBuilder.control(infoSlide)))
       if (this.debate.debaters) {
         this.selectedDebaters = this.debate.debaters;
+        this.uniqueSelectedDebaters = [... new Set(this.debate.debaters)];
         this.selectedDebaters.forEach(() => this.spsFormArray.push(
           this.formBuilder.control('', [Validators.min(50), Validators.max(100)])
         ));
+        const irons = this.selectedDebaters.filter((debater, index, debaters) => debaters.indexOf(debater) !== index);
+        this.uniqueSelectedDebaters.forEach(() => this.ironsFormArray.push(this.formBuilder.control(false)));
+        irons.forEach((iron) => this.ironsFormArray.controls[this.uniqueSelectedDebaters.findIndex((debater) => iron.id === debater.id)].patchValue(true));
       }
       if (this.debate.sps) this.spsFormArray.controls.forEach((control, index) => control.patchValue(this.debate.sps![index]));
       this.judgesFormGroup.controls['chair'].patchValue(this.debate.chair.id);
@@ -713,6 +720,7 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
       if (this.debate.tournament) this.debateFormGroup.controls['tournament'].patchValue(this.debate.tournament);
 
       this.setCallHouses();
+      this.subscribeToIronValueChanges();
     }
   }
 

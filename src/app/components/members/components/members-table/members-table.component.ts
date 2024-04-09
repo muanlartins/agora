@@ -13,12 +13,20 @@ import { DebateService } from 'src/app/services/debate.service';
 import { combineLatest } from 'rxjs';
 import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 import { isAdmin } from 'src/app/utils/auth';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-members-table',
   templateUrl: './members-table.component.html',
-  styleUrls: ['./members-table.component.scss']
+  styleUrls: ['./members-table.component.scss'],
+  animations: [
+    trigger('expandDetail', [
+      state('collapsed', style({height: '0', margin: '0'})),
+      state('expanded', style({height: '*', margin: '1rem 0'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class MembersTableComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator, { static: true })
@@ -50,6 +58,10 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   public debatesParticipations: { [id: string]: number } = {};
 
   public loading: boolean = false;
+
+  public get Society() {
+    return Society;
+  }
 
   public constructor(
     private formBuilder: FormBuilder,
@@ -141,7 +153,7 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   }
 
   public openCreateMemberModal() {
-    this.dialog.open(CreateMemberModalComponent, { width: '70%' });
+    this.dialog.open(CreateMemberModalComponent, { width: '70vw' });
   }
 
   public getColumnData(element: Member, column: string) {
@@ -152,14 +164,18 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
     return '';
   }
 
-  public editMember(id: string) {
-    this.dialog.open(CreateMemberModalComponent, { width: '70%', data: {
+  public editMember(id: string, event: Event) {
+    event.stopPropagation();
+
+    this.dialog.open(CreateMemberModalComponent, { width: '70vw', data: {
       isEditing: true,
       member: this.members.find((member) => member.id === id)
     }});
   }
 
-  public deleteMember(id: string) {
+  public deleteMember(id: string, event: Event) {
+    event.stopPropagation();
+
     const member = this.members.find((member) => member.id === id)!;
 
     this.dialog.open(ConfirmModalComponent, { data: {
@@ -195,5 +211,9 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
 
   public isAdmin() {
     return isAdmin();
+  }
+
+  public getMember(element: Member): Member {
+    return element;
   }
 }

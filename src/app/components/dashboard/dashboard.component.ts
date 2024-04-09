@@ -33,7 +33,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public charts: Chart[] = [];
 
-  public statistics: { title: string, value: string, img?: string, details?: { title: string, value: string }[] }[];
+  public statistics: { title: string, value: string, memberId?: string, hasPfp?: boolean, details?: { title: string, value: string }[] }[];
 
   public monthOptions: SelectOption[] = [];
 
@@ -72,7 +72,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public initOptions() {
-    this.monthOptions = MONTHS.map((viewValue, value) => ({ value, viewValue })).filter((option) => option.value < moment(Date.now()).month());
+    this.monthOptions = MONTHS.map((viewValue, value) => ({ value, viewValue })).filter((option) => option.value <= moment(Date.now()).month());
   }
 
   public subscribeToValueChanges() {
@@ -301,7 +301,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       !this.members ||
       !this.debates ||
       !this.topSpeakersByAverageSps ||
-      !this.topMembersByFrequency
+      !this.topMembersByFrequency ||
+      this.charts.length === 2
     ) return;
 
     this.generateTopSpeakersByAverageSpsGraph();
@@ -393,7 +394,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       {
         title: 'Debatedor com mais vitórias',
         value: `${winner.name} (${Society[winner.society]})`,
-        img: await this.memberService.memberHasPfp(winnerId) ? this.memberService.getMemberPfpUrl(winnerId) : undefined,
+        hasPfp: winner.hasPfp,
+        memberId: winnerId,
         details: [
           {
             title: 'Vitórias',
@@ -408,7 +410,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       {
         title: 'Debatedor com o maior speaker points',
         value: `${mostSps.name} (${Society[mostSps.society]})`,
-        img: await this.memberService.memberHasPfp(mostSpsId) ? this.memberService.getMemberPfpUrl(mostSpsId) : undefined,
+        hasPfp: mostSps.hasPfp,
+        memberId: mostSpsId,
         details: [
           {
             title: 'SP',
@@ -433,7 +436,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       {
         title: 'Juíz com mais participações',
         value: `${mostDebatesByJudge.name} (${Society[mostDebatesByJudge.society]})`,
-        img: await this.memberService.memberHasPfp(mostDebatesByJudgeId) ? this.memberService.getMemberPfpUrl(mostDebatesByJudgeId) : undefined,
+        hasPfp: mostDebatesByJudge.hasPfp,
+        memberId: mostDebatesByJudgeId,
         details: [
           {
             title: 'Debates',

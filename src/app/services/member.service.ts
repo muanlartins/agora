@@ -35,13 +35,14 @@ export class MemberService {
     return this.members$.asObservable();
   }
 
-  public async createMember(name: string, society: keyof typeof Society, isTrainee: boolean) {
+  public async createMember(name: string, society: keyof typeof Society, isTrainee: boolean, hasPfp: boolean) {
     const token = getToken();
 
     const member = await firstValueFrom(this.httpClient.post<Member>(BASE_URL + ENDPOINTS.createMember, {
       name,
       society,
-      isTrainee
+      isTrainee,
+      hasPfp
     }, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
     }));
@@ -51,21 +52,22 @@ export class MemberService {
     return member;
   }
 
-  public async updateMember(id: string, name: string, society: keyof typeof Society, isTrainee: boolean) {
+  public async updateMember(id: string, name: string, society: keyof typeof Society, isTrainee: boolean, hasPfp: boolean) {
     const token = getToken();
 
     await firstValueFrom(this.httpClient.put<boolean>(BASE_URL + ENDPOINTS.editMember, {
       id,
       name,
       society,
-      isTrainee
+      isTrainee,
+      hasPfp
     }, {
       headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
     }));
 
     const members = [...this.members$.value];
     members.splice(members.findIndex((member) => member.id === id), 1);
-    members.push({id, name, society, isTrainee});
+    members.push({id, name, society, isTrainee, hasPfp});
 
     this.members$.next(members);
   }
@@ -80,10 +82,6 @@ export class MemberService {
 
   public getMemberPfpUrl(id: string) {
     return `/assets/pfps/${id}`;
-  }
-
-  public async memberHasPfp(id: string) {
-    return await fetch(this.getMemberPfpUrl(id)).then((r) => r.ok);
   }
 
   public async deleteMember(id: string) {

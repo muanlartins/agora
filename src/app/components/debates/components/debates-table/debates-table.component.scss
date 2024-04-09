@@ -102,33 +102,41 @@
                 &__name {
                   font-size: 16px;
                   line-height: 100%;
-                  color: $secondary;
+                  color: $white;
                 }
               }
 
               &__debater {
                 display: flex;
-                flex-direction: column;
+                flex-direction: row;
                 justify-content: flex-start;
                 align-items: flex-start;
-                gap: 4px;
+                gap: 8px;
 
-                &__position {
-                  font-size: 12px;
-                  line-height: 100%;
-                  color: $secondary;
-                }
+                &__content {
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: flex-start;
+                  align-items: flex-start;
+                  gap: 4px;
 
-                &__name {
-                  font-size: 14px;
-                  line-height: 100%;
-                  color: $primary;
-                }
+                  &__position {
+                    font-size: 12px;
+                    line-height: 100%;
+                    color: $white;
+                  }
 
-                &__sps {
-                  font-size: 14px;
-                  line-height: 100%;
-                  color: $secondary;
+                  &__name {
+                    font-size: 14px;
+                    line-height: 100%;
+                    color: $primary;
+                  }
+
+                  &__sps {
+                    font-size: 14px;
+                    line-height: 100%;
+                    color: $white;
+                  }
                 }
               }
             }
@@ -169,7 +177,7 @@
               &__title {
                 font-size: 12px;
                 line-height: 100%;
-                color: $secondary;
+                color: $white;
               }
 
               &__value {

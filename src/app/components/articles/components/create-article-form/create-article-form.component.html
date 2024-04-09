@@ -1,0 +1,79 @@
+<button class="cancel" mat-flat-button color="primary" (click)="close()">Cancelar</button>
+<form class="article" [formGroup]="form">
+  <div class="article__title">
+    <mat-form-field
+      class="article__title__edit"
+    >
+      <mat-label>Digite o título</mat-label>
+      <textarea
+        matInput
+        cdkTextareaAutosize
+        #autosize="cdkTextareaAutosize"
+        cdkAutosizeMinRows="1"
+        formControlName="title"
+      ></textarea>
+    </mat-form-field>
+    <div class="article__title__markdown">{{ title }}</div>
+  </div>
+  <div class="article__content">
+    <mat-form-field
+      class="article__content__edit"
+    >
+      <mat-label>Digite a sua notícia</mat-label>
+      <textarea
+        matInput
+        cdkTextareaAutosize
+        #autosize="cdkTextareaAutosize"
+        cdkAutosizeMinRows="1"
+        formControlName="content"
+      ></textarea>
+    </mat-form-field>
+    <app-markdown
+      class="article__content__markdown"
+      [data]="markdown"
+    ></app-markdown>
+  </div>
+  <div class="article__footer">
+    <div class="article__footer__inputs">
+      <mat-form-field class="article__footer__inputs__input">
+        <mat-label>Tag</mat-label>
+        <mat-select formControlName="tag">
+          <mat-option>Nenhuma</mat-option>
+          <mat-option *ngFor="let tag of tagOptions" [value]="tag.value">
+            {{ tag.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field
+        *ngIf="showNewTagFormField()"
+        class="article__footer__inputs__input"
+      >
+        <mat-label>Nova Tag</mat-label>
+        <textarea
+          matInput
+          cdkTextareaAutosize
+          #autosize="cdkTextareaAutosize"
+          cdkAutosizeMinRows="1"
+          formControlName="newTag"
+        ></textarea>
+      </mat-form-field>
+      <mat-form-field class="article__footer__inputs__input">
+        <mat-label>Autor</mat-label>
+        <mat-select formControlName="authorId">
+          <mat-form-field style="width: 100%; padding: 8px;">
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="memberFilter" />
+          </mat-form-field>
+          <mat-option *ngFor="let author of filteredAuthorOptions" [value]="author.value">
+            {{ author.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="article__footer__buttons">
+      <button class="article__footer__buttons__button" mat-flat-button color="primary" (click)="close()">Cancelar</button>
+      <button class="article__footer__buttons__button" mat-flat-button color="primary" (click)="submit()">{{ getButtonText() }}</button>
+    </div>
+  </div>
+</form>
+<app-spinner [loading]="loading" [fullscreen]="true"></app-spinner>

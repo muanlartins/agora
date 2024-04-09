@@ -39,7 +39,7 @@ export class DebateService {
         ...debate,
         debaters: debate.debaters?.map((debater) => members.find((member) => member.id === debater.id)!),
         chair: members.find((member) => member.id === debate.chair.id)!,
-        wings: debate.debaters?.map((wing) => members.find((member) => member.id === wing.id)!),
+        wings: debate.wings?.map((wing) => members.find((member) => member.id === wing.id)!),
       }))
     ));
 

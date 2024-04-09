@@ -1,0 +1,28 @@
+<div class="article" *ngIf="article && member">
+  <div class="article__details">
+    <div class="article__details__detail">
+      <div class="article__details__detail__title">Criado em</div>
+      <div class="article__details__detail__value">{{ getDate(article.createdAt) }}</div>
+    </div>
+    <div class="article__details__detail">
+      <div class="article__details__detail__title">Autor</div>
+      <div class="article__details__detail__value">
+        <app-pfp [id]="article.authorId" [hasPfp]="member.hasPfp" [size]="32"></app-pfp>
+        {{ member.name }}
+      </div>
+    </div>
+    <div class="article__details__detail">
+      <div class="article__details__detail__title">Tag</div>
+      <div class="article__details__detail__value">{{ article.tag }}</div>
+    </div>
+    <div class="article__details__detail">
+      <div class="article__details__detail__title">Atualizado pela última vez em</div>
+      <div class="article__details__detail__value">{{ getDate(article.updatedAt) }}</div>
+    </div>
+  </div>
+  <div class="article__title">{{ article.title }}</div>
+  <app-markdown
+    class="article__content"
+    [data]="article.content"
+  ></app-markdown>
+</div>

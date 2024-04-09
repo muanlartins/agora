@@ -102,7 +102,7 @@ export class GoalsComponent implements OnInit {
         achieved: false,
       },
       {
-        title: 'Possui uma delegação em todo os campeonatos estaduais, regionais e nacional do ano',
+        title: 'Possuir uma delegação em todos os campeonatos estaduais, regionais e nacional do ano',
         currentCount: 0,
         totalCount: 1,
         achieved: false,

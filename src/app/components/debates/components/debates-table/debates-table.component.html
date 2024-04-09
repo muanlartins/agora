@@ -46,7 +46,7 @@
       >
         <ng-container *ngIf="getDebate(element) as debate">
           <div
-          class="table__body__tr__td__details"
+            class="table__body__tr__td__details"
             [@expandDetail]="element == expandedElement ? 'expanded' : 'collapsed'"
           >
             <div class="table__body__tr__td__details__call">
@@ -56,9 +56,12 @@
                   <div class="table__body__tr__td__details__call__house__header__name">{{ house.title }}</div>
                 </div>
                 <div class="table__body__tr__td__details__call__house__debater" *ngFor="let debater of house.debaters">
-                  <div class="table__body__tr__td__details__call__house__debater__position">{{ debater.position }}</div>
-                  <div class="table__body__tr__td__details__call__house__debater__name">{{ debater.debater.name }} ({{ Society[debater.debater.society] }})</div>
-                  <div class="table__body__tr__td__details__call__house__debater__sps">{{ debater.sps }}</div>
+                  <app-pfp class="table__body__tr__td__details__call__house__debater__pfp" [size]="32" [hasPfp]="debater.debater.hasPfp" [id]="debater.debater.id"></app-pfp>
+                  <div class="table__body__tr__td__details__call__house__debater__content">
+                    <div class="table__body__tr__td__details__call__house__debater__content__position">{{ debater.position }}</div>
+                    <div class="table__body__tr__td__details__call__house__debater__content__name">{{ debater.debater.name }} ({{ Society[debater.debater.society] }})</div>
+                    <div class="table__body__tr__td__details__call__house__debater__content__sps">{{ debater.sps }}</div>
+                  </div>
                 </div>
               </div>
             </div>

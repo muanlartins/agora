@@ -1,6 +1,6 @@
 import { registerLocaleData } from '@angular/common';
 import pt from '@angular/common/locales/pt';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, SecurityContext } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -42,10 +42,18 @@ import { SpinnerComponent } from './utils/components/spinner/spinner.component';
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { ConfirmModalComponent } from './components/members/components/confirm-modal/confirm-modal.component';
 import { GoalsComponent } from './components/goals/goals.component';
-import { NewsComponent } from './components/news/news.component';
+import { ArticlesComponent } from './components/articles/articles.component';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { MarkdownModule } from 'ngx-markdown';
+import { PfpComponent } from './utils/components/pfp/pfp.component';
+import { MarkdownComponent } from './utils/components/markdown/markdown.component';
+import { ArticlesTableComponent } from './components/articles/components/articles-table/articles-table.component';
+import { CreateArticleModalComponent } from './components/articles/components/create-article-modal/create-article-modal.component';
+import { CreateArticleFormComponent } from './components/articles/components/create-article-form/create-article-form.component';
+import { ArticleComponent } from './components/articles/components/article/article.component';
+import { ArticleModalComponent } from './components/articles/components/article-modal/article-modal.component';
 
 registerLocaleData(pt);
 
@@ -67,7 +75,14 @@ registerLocaleData(pt);
     LandingPageComponent,
     ConfirmModalComponent,
     GoalsComponent,
-    NewsComponent,
+    ArticlesComponent,
+    PfpComponent,
+    MarkdownComponent,
+    ArticlesTableComponent,
+    CreateArticleModalComponent,
+    CreateArticleFormComponent,
+    ArticleComponent,
+    ArticleModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -94,7 +109,10 @@ registerLocaleData(pt);
     MatProgressBarModule,
     NzAvatarModule,
     NzIconModule,
-    NzToolTipModule
+    NzToolTipModule,
+    MarkdownModule.forRoot({
+      sanitize: SecurityContext.NONE
+    }),
   ],
   exports: [
     NgxSpinnerModule
