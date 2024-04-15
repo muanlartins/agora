@@ -1,52 +1,110 @@
-<div class="dashboard">
-  <app-navbar class="dashboard__navbar"></app-navbar>
-  <div class="dashboard__graphs">
-    <mat-tab-group class="dashboard__graphs__tabs">
-      <mat-tab class="dashboard__graphs__tabs__tab" label="ESTATÍSTICAS">
-        <form [formGroup]="form" class="dashboard__graphs__tabs__tab__form">
-          <mat-form-field>
-            <mat-select formControlName="month">
-              <mat-option *ngFor="let month of monthOptions" [value]="month.value">
-                {{ month.viewValue }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </form>
-        <div class="dashboard__graphs__tabs__tab__title" *ngIf="statistics">Resumo do mês de {{ MONTHS[month].toLowerCase() }}</div>
-        <div class="dashboard__graphs__tabs__tab__details">
-          <div class="dashboard__graphs__tabs__tab__details__detail" *ngFor="let statistic of statistics">
-            <div class="dashboard__graphs__tabs__tab__details__detail__content">
-              <div class="dashboard__graphs__tabs__tab__details__detail__content__title">{{ statistic.title }}</div>
-              <div class="dashboard__graphs__tabs__tab__details__detail__content__body">
-                <app-pfp
-                  *ngIf="statistic.memberId && statistic.hasPfp !== undefined"
-                  [id]="statistic.memberId"
-                  [hasPfp]="statistic.hasPfp"
-                  [size]="64"
-                ></app-pfp>
-                <div class="dashboard__graphs__tabs__tab__details__detail__content__body__value">{{ statistic.value }}</div>
+<div class="page">
+  <app-navbar class="page__navbar"></app-navbar>
+  <div class="page__content">
+    <div class="page__content__header" [formGroup]="form">
+      <mat-form-field class="page__content__header__input">
+        <mat-label>Mês</mat-label>
+        <mat-select formControlName="month">
+          <mat-option>Nenhum</mat-option>
+          <mat-option *ngFor="let option of monthOptions" [value]="option.value">
+            {{ option.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="page__content__header__input">
+        <mat-label>Torneio</mat-label>
+        <mat-select formControlName="tournament">
+          <mat-option>Nenhum</mat-option>
+          <mat-option *ngFor="let option of tournamentOptions" [value]="option.value">
+            {{ option.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-checkbox
+        class="page__content__header__input"
+        color="primary"
+        formControlName="trainee"
+      >Trainees</mat-checkbox>
+    </div>
+    <div class="page__content__body" [style.opacity]="loading ? 0 : 1">
+      <div class="page__content__body__ranks">
+        <div *ngFor="let rank of ranks" class="page__content__body__ranks__rank">
+          <div class="page__content__body__ranks__rank__title" [innerHTML]="rank.title"></div>
+          <div class="page__content__body__ranks__rank__standings">
+            <div
+              *ngFor="let standing of rank.standings; index as index"
+              class="page__content__body__ranks__rank__standings__standing"
+              [ngClass]="'page__content__body__ranks__rank__standings__standing--' + index"
+            >
+              <img
+                class="page__content__body__ranks__rank__standings__standing__image"
+                [src]="getPlacementIconUrl(index)"
+              />
+              <div
+                class="page__content__body__ranks__rank__standings__standing__value"
+                [ngClass]="{'page__content__body__ranks__rank__standings__standing__value--big': standing.value.length > 2}"
+              >
+                {{ standing.value }}
               </div>
-            </div>
-            <div class="dashboard__graphs__tabs__tab__details__detail__details">
-              <div class="dashboard__graphs__tabs__tab__details__detail__details__detail" *ngFor="let detail of statistic.details">
-                <div class="dashboard__graphs__tabs__tab__details__detail__details__detail__title">{{ detail.title }}</div>
-                <div class="dashboard__graphs__tabs__tab__details__detail__details__detail__value">{{ detail.value }}</div>
+              <div class="page__content__body__ranks__rank__standings__standing__content">
+                <div class="page__content__body__ranks__rank__standings__standing__content__members">
+                  <div
+                    *ngFor="let member of standing.members"
+                    class="page__content__body__ranks__rank__standings__standing__content__members__member"
+                  >
+                    <app-pfp [id]="member.id" [hasPfp]="member.hasPfp" [size]="32"></app-pfp>
+                    <div
+                      class="page__content__body__ranks__rank__standings__standing__content__members__member__name"
+                    > {{ member.name }} </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </mat-tab>
-      <mat-tab class="dashboard__graphs__tabs__tab" label="MELHORES DEBATEDORES">
-        <div class="dashboard__graphs__tabs__tab__graph">
-          <canvas #topSpeakersByAverageSps></canvas>
+      </div>
+      <div class="page__content__body__statistics">
+        <div *ngFor="let statistic of statistics" class="page__content__body__statistics__statistic">
+          <div class="page__content__body__statistics__statistic__title" [innerHTML]="statistic.title"></div>
+          <div class="page__content__body__statistics__statistic__value">{{ statistic.value }}</div>
         </div>
-      </mat-tab>
-      <mat-tab class="dashboard__graphs__tabs__tab" label="MEMBROS MAIS ATIVOS">
-        <div class="dashboard__graphs__tabs__tab__graph">
-          <canvas #topMembersByFrequency></canvas>
+      </div>
+      <div class="page__content__body__charts" [style.opacity]="showCharts() ? 1 : 0">
+        <div class="page__content__body__charts__chart">
+          <div class="page__content__body__charts__chart__title">
+            Resultado das Casas
+          </div>
+          <div class="page__content__body__charts__chart__description">
+            Posição das casas nas calls dos debates
+          </div>
+          <div class="page__content__body__charts__chart__chart">
+            <canvas #chart0></canvas>
+          </div>
         </div>
-      </mat-tab>
-    </mat-tab-group>
+        <div class="page__content__body__charts__chart">
+          <div class="page__content__body__charts__chart__title">
+            Prefixos de Moções
+          </div>
+          <div class="page__content__body__charts__chart__description">
+            Proporção dos tipos das moções escolhidas nos debates
+          </div>
+          <div class="page__content__body__charts__chart__chart">
+            <canvas #chart1></canvas>
+          </div>
+        </div>
+        <div class="page__content__body__charts__chart">
+          <div class="page__content__body__charts__chart__title">
+            Temas de Moções
+          </div>
+          <div class="page__content__body__charts__chart__description">
+            Proporção dos temas das moções escolhidas nos debates
+          </div>
+          <div class="page__content__body__charts__chart__chart">
+            <canvas #chart2></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <app-spinner [loading]="loading" [fullscreen]="true"></app-spinner>
 </div>

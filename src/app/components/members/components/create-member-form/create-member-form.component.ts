@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SelectOption } from 'src/app/models/types/select-option';
-import { Society } from 'src/app/models/enums/society';
 import { MemberService } from 'src/app/services/member.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Member } from 'src/app/models/types/member';
@@ -45,39 +44,52 @@ export class CreateMemberFormComponent implements OnInit {
     this.form = this.formBuilder.group({
       name: ['', Validators.required],
       society: ['', Validators.required],
-      isTrainee: [false]
+      newSociety: [''],
+      isTrainee: [false],
+      blocked: [false]
     });
 
     if (this.isEditing) {
       this.form.controls['name'].patchValue(this.member.name);
       this.form.controls['society'].patchValue(this.member.society);
       this.form.controls['isTrainee'].patchValue(this.member.isTrainee);
+      this.form.controls['blocked'].patchValue(this.member.blocked);
 
       this.pfpUrl = this.member.hasPfp ? `/assets/pfps/${this.member.id}` : this.avatarIconUrl;
     }
   }
 
   public initOptions() {
-    const society = Object.entries(Society);
+    this.loading = true;
 
-    this.societyOptions = society.map(([value, viewValue]) => ({ value, viewValue }))
-      .sort((a, b) => a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase()));
+    this.memberService.getAllMembers().subscribe((members: Member[]) => {
+      this.loading = false;
+
+      this.societyOptions = [...new Set(members.map((member) => member.society))].map((society: string) => ({
+        value: society,
+        viewValue: society
+      })).sort((a, b) => a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase()));
+    });
   }
 
   public async onSubmit() {
     const name = this.form.controls['name'].value;
-    const society = this.form.controls['society'].value;
+    const society =
+      this.form.controls['newSociety'].value ?
+      this.form.controls['newSociety'].value :
+      this.form.controls['society'].value;
     const isTrainee = this.form.controls['isTrainee'].value;
+    const blocked = this.form.controls['blocked'].value;
 
     this.loading = true;
     let id: string;
     if (this.isEditing) {
       const hasPfp = this.member.hasPfp;
       id = this.member.id;
-      await this.memberService.updateMember(id, name, society, isTrainee, hasPfp);
+      await this.memberService.updateMember(id, name, society, isTrainee, hasPfp, blocked);
     } else {
       const hasPfp: boolean = !!this.avatarFile;
-      const member: Member = await this.memberService.createMember(name, society, isTrainee, hasPfp);
+      const member: Member = await this.memberService.createMember(name, society, isTrainee, hasPfp, blocked);
       id = member.id;
     }
     this.loading = false;
@@ -119,5 +131,9 @@ export class CreateMemberFormComponent implements OnInit {
 
   public getSrc() {
     return this.pfpUrl ?? this.avatarIconUrl;
+  }
+
+  public showNewSocietyFormField() {
+    return this.form.controls['society'].value === 'Nova Sociedade';
   }
 }

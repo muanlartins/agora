@@ -23,6 +23,7 @@
   position: relative;
   width: 100%;
   overflow-x: hidden;
+  table-layout: fixed;
 
   &__header {
     &__tr {
@@ -37,11 +38,19 @@
         }
 
         &--1 {
-          width: 60%;
+          width: auto;
         }
 
         &--2 {
           width: 20%;
+        }
+
+        &--3 {
+          width: 64px;
+        }
+
+        &--4 {
+          width: 64px;
         }
       }
     }
@@ -81,7 +90,7 @@
 
             &__name {
               font-size: 24px;
-              color: $white;
+              color: $primary;
             }
 
             &__society {
@@ -119,25 +128,6 @@
       &:hover {
         background: rgba(0,0,0,0.05);
       }
-    }
-  }
-}
-
-
-@media (width <= 1600px) {
-  table {
-    td, th {
-      font-size: 12px;
-      line-height: 125%;
-    }
-  }
-}
-
-@media (width < 1440px) {
-  table {
-    td, th {
-      font-size: 10px;
-      line-height: 125%;
     }
   }
 }

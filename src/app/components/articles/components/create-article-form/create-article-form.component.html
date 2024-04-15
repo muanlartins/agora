@@ -62,7 +62,7 @@
         <mat-select formControlName="authorId">
           <mat-form-field style="width: 100%; padding: 8px;">
             <mat-label>Nome</mat-label>
-            <input matInput formControlName="memberFilter" />
+            <input matInput formControlName="memberFilter" (keydown)="$event.stopPropagation()" />
           </mat-form-field>
           <mat-option *ngFor="let author of filteredAuthorOptions" [value]="author.value">
             {{ author.viewValue }}

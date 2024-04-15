@@ -7,9 +7,7 @@ import { DebatePosition } from 'src/app/models/enums/debate-position';
 import { DebateStyle } from 'src/app/models/enums/debate-style';
 import { DebateVenue } from 'src/app/models/enums/debate-venue';
 import { MotionTheme } from 'src/app/models/enums/motion-theme';
-import { MotionType } from 'src/app/models/enums/motion-type';
 import { SelectOption } from 'src/app/models/types/select-option';
-import { Society } from 'src/app/models/enums/society';
 import { Member } from 'src/app/models/types/member';
 import { MemberService } from 'src/app/services/member.service';
 import { DebateService } from 'src/app/services/debate.service';
@@ -33,6 +31,10 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
   public timeOptions: SelectOption[] = [];
 
   public tournamentOptions: SelectOption[] = [];
+
+  public motionTypeOptions: SelectOption[] = [];
+
+  public societyOptions: SelectOption[] = [];
 
   public maxDate: Date = new Date();
 
@@ -121,16 +123,8 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
     return DebateVenue;
   }
 
-  get motionType() {
-    return MotionType;
-  }
-
   get motionTheme() {
     return MotionTheme;
-  }
-
-  get society() {
-    return Society;
   }
 
   constructor(
@@ -142,7 +136,7 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
 
   async ngOnInit(): Promise<void> {
     this.initForm();
-    await this.initOptions();
+    this.initOptions();
     this.getAllMembers();
   }
 
@@ -159,6 +153,7 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
         style: ['bp', Validators.required],
         venue: ['remote', Validators.required],
         motionType: ['', Validators.required],
+        newMotionType: [''],
         motionTheme: ['', Validators.required],
         motion: ['', Validators.required],
         infoSlides: this.formBuilder.array([]),
@@ -182,7 +177,7 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
     });
   }
 
-  public async initOptions() {
+  public initOptions() {
     for (let m = 0; m < 1440; m += 30) {
       this.timeOptions.push(
         {
@@ -192,16 +187,45 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
       )
     }
 
-    const debates = await firstValueFrom(this.debateService.getAllDebates());
+    this.loading = true;
 
-    this.tournamentOptions = [...new Set(['Interno', ...debates.map((debate) => debate.tournament)]), 'Nova Ocasião']
+    this.debateService.getAllDebates().subscribe((debates: Debate[]) => {
+      this.loading = false;
+
+      this.tournamentOptions = [...new Set(['Interno', ...debates.map((debate) => debate.tournament)]), 'Nova Ocasião']
       .filter((tournament): tournament is string => tournament !== null)
-      .map((tournament) => {
-        return {
+      .map((tournament) => ({
           value: tournament,
           viewValue: tournament
-        }
+      })).sort((a, b) => {
+        if (a.value === 'Interno') return -1;
+        if (b.value === 'Nova Ocasião') return 1;
+
+        return a.value.toLowerCase().localeCompare(b.value.toLowerCase())
       });
+
+    this.motionTypeOptions = [...new Set(debates.map((debate) => debate.motionType))]
+      .filter((motionType) => motionType !== null)
+      .map((motionType) => ({
+        value: motionType,
+        viewValue: motionType
+      })).sort((a, b) => {
+        if (b.value === 'Novo Tipo') return 1;
+
+        return a.value.toLowerCase().localeCompare(b.value.toLowerCase())
+      });
+    });
+
+    this.loading = true;
+
+    this.memberService.getAllMembers().subscribe((members: Member[]) => {
+      this.loading = false;
+
+      this.societyOptions = [...new Set(members.map((member) => member.society))].map((society: string) => ({
+        value: society,
+        viewValue: society
+      })).sort((a, b) => a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase()));
+    });
   }
 
   public getAllMembers() {
@@ -627,7 +651,10 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
     const time: string = this.debateFormGroup.controls['time'].value;
     const style: keyof typeof DebateStyle = this.debateFormGroup.controls['style'].value;
     const venue: keyof typeof DebateVenue = this.debateFormGroup.controls['venue'].value;
-    const motionType: keyof typeof MotionType = this.debateFormGroup.controls['motionType'].value;
+    const motionType: string =
+      this.showNewMotionTypeFormField() ?
+      this.debateFormGroup.controls['newMotionType'].value :
+      this.debateFormGroup.controls['motionType'].value;
     const motionTheme: keyof typeof MotionTheme = this.debateFormGroup.controls['motionTheme'].value;
     const motion: string = this.debateFormGroup.controls['motion'].value;
     const infoSlides: string[] = this.infoSlidesFormArray.controls.map((control) => control.value);
@@ -732,5 +759,9 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
 
   public showNewTournamentFormField() {
     return this.debateFormGroup.controls['tournament'].value === 'Nova Ocasião';
+  }
+
+  public showNewMotionTypeFormField() {
+    return this.debateFormGroup.controls['motionType'].value === 'Novo Tipo';
   }
 }

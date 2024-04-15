@@ -54,6 +54,8 @@ import { CreateArticleModalComponent } from './components/articles/components/cr
 import { CreateArticleFormComponent } from './components/articles/components/create-article-form/create-article-form.component';
 import { ArticleComponent } from './components/articles/components/article/article.component';
 import { ArticleModalComponent } from './components/articles/components/article-modal/article-modal.component';
+import { ReportComponent } from './components/report/report.component';
+import { AdminGuard } from './guards/admin.guard';
 
 registerLocaleData(pt);
 
@@ -83,6 +85,7 @@ registerLocaleData(pt);
     CreateArticleFormComponent,
     ArticleComponent,
     ArticleModalComponent,
+    ReportComponent,
   ],
   imports: [
     BrowserModule,
@@ -119,6 +122,7 @@ registerLocaleData(pt);
   ],
   providers: [
     LoginGuard,
+    AdminGuard,
     DatePipe,
     { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {

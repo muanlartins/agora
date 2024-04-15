@@ -59,8 +59,10 @@
                   <app-pfp class="table__body__tr__td__details__call__house__debater__pfp" [size]="32" [hasPfp]="debater.debater.hasPfp" [id]="debater.debater.id"></app-pfp>
                   <div class="table__body__tr__td__details__call__house__debater__content">
                     <div class="table__body__tr__td__details__call__house__debater__content__position">{{ debater.position }}</div>
-                    <div class="table__body__tr__td__details__call__house__debater__content__name">{{ debater.debater.name }} ({{ Society[debater.debater.society] }})</div>
-                    <div class="table__body__tr__td__details__call__house__debater__content__sps">{{ debater.sps }}</div>
+                    <div class="table__body__tr__td__details__call__house__debater__content__name">{{ debater.debater.name }}
+                      <span class="table__body__tr__td__details__call__house__debater__content__name__society">{{ debater.debater.society }}</span></div>
+                    <div class="table__body__tr__td__details__call__house__debater__content__sps">{{ debater.sps }}
+                      <span class="table__body__tr__td__details__call__house__debater__content__sps__text">SPs</span></div>
                   </div>
                 </div>
               </div>
@@ -84,7 +86,8 @@
                 "
               >
                 <div class="table__body__tr__td__details__debate__detail__title">Chair</div>
-                <div class="table__body__tr__td__details__debate__detail__value">{{ debate.chair.name }} ({{ Society[debate.chair.society] }})</div>
+                <div class="table__body__tr__td__details__debate__detail__value">{{ debate.chair.name }}
+                  <span class="table__body__tr__td__details__debate__detail__value__detail">{{ debate.chair.society }}</span></div>
               </div>
               <div class="table__body__tr__td__details__debate__detail">
                 <div class="table__body__tr__td__details__debate__detail__title">Estilo</div>
@@ -96,7 +99,7 @@
               </div>
               <div class="table__body__tr__td__details__debate__detail">
                 <div class="table__body__tr__td__details__debate__detail__title">Tipo da Moção</div>
-                <div class="table__body__tr__td__details__debate__detail__value">{{ MotionType[debate.motionType] }}</div>
+                <div class="table__body__tr__td__details__debate__detail__value">{{ debate.motionType }}</div>
               </div>
               <div class="table__body__tr__td__details__debate__detail">
                 <div class="table__body__tr__td__details__debate__detail__title">Tema da Moção</div>

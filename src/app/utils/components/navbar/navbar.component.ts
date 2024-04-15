@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { isAdmin } from '../../auth';
 
 @Component({
   selector: 'app-navbar',
@@ -9,4 +10,8 @@ export class NavbarComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {}
+
+  public isAdmin() {
+    return isAdmin();
+  }
 }

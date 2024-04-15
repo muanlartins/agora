@@ -8,6 +8,8 @@ import { MembersComponent } from './components/members/members.component';
 import { LandingPageComponent } from './components/landing-page/landing-page.component';
 import { GoalsComponent } from './components/goals/goals.component';
 import { ArticlesComponent } from './components/articles/articles.component';
+import { AdminGuard } from './guards/admin.guard';
+import { ReportComponent } from './components/report/report.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: "full" },
@@ -17,6 +19,8 @@ const routes: Routes = [
   { path: 'members', component: MembersComponent, canActivate: [LoginGuard] },
   { path: 'goals', component: GoalsComponent, canActivate: [LoginGuard] },
   { path: 'articles', component: ArticlesComponent, canActivate: [LoginGuard] },
+  { path: 'member', component: ReportComponent, canActivate: [LoginGuard, AdminGuard] },
+  { path: 'member/:id', component: ReportComponent, canActivate: [LoginGuard, AdminGuard] },
 ];
 
 @NgModule({

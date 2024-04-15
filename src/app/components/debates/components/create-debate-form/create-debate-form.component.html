@@ -37,11 +37,27 @@
         <mat-form-field class="form__stepper__step__debate__input">
           <mat-label>Tipo de Moção</mat-label>
           <mat-select formControlName="motionType">
-            <ng-container *ngFor="let entry of motionType | keyvalue">
-              <mat-option [value]="entry.key">{{ entry.value }}</mat-option>
-            </ng-container>
+            <mat-option *ngFor="let option of motionTypeOptions" [value]="option.value">
+              {{ option.viewValue }}
+            </mat-option>
+            <mat-option value="Novo Tipo">
+              Novo Tipo
+            </mat-option>
           </mat-select>
           <mat-error>O tipo de moção é obrigatório</mat-error>
+        </mat-form-field>
+        <mat-form-field
+          *ngIf="showNewMotionTypeFormField()"
+          class="form__stepper__step__debate__input"
+        >
+          <mat-label>Novo Tipo de Moção</mat-label>
+          <textarea
+            matInput
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="1"
+            formControlName="newMotionType"
+          ></textarea>
         </mat-form-field>
         <mat-form-field class="form__stepper__step__debate__input">
           <mat-label>Tema da Moção</mat-label>
@@ -119,8 +135,8 @@
             <mat-label>Sociedade</mat-label>
             <mat-select formControlName="society">
               <mat-option>Remover Filtro</mat-option>
-              <ng-container *ngFor="let entry of society | keyvalue">
-                <mat-option [value]="entry.key">{{ entry.value }}</mat-option>
+              <ng-container *ngFor="let society of societyOptions">
+                <mat-option [value]="society">{{ society }}</mat-option>
               </ng-container>
             </mat-select>
           </mat-form-field>
@@ -244,9 +260,9 @@
         <mat-form-field>
           <mat-label>Chair</mat-label>
           <mat-select formControlName="chair">
-            <mat-form-field [formGroup]="judgesFormGroup" style="width: 100%">
+            <mat-form-field [formGroup]="judgesFormGroup" style="width: 100%; padding: 8px">
               <mat-label>Nome</mat-label>
-              <input matInput formControlName="filter" />
+              <input matInput formControlName="filter" (keydown)="$event.stopPropagation()" />
             </mat-form-field>
             <ng-container *ngIf="judgesFormGroup.controls['chair'].value">
               <mat-option *ngFor="let judge of judgeOptions" [value]="judge.value">
@@ -263,9 +279,9 @@
         <mat-form-field formArrayName="wings" *ngFor="let wing of wingsFormArray.controls; index as index">
           <mat-label>Wing {{ index+1 }}</mat-label>
           <mat-select [formControlName]="index">
-            <mat-form-field [formGroup]="judgesFormGroup" style="width: 100%">
+            <mat-form-field [formGroup]="judgesFormGroup" style="width: 100%; padding: 8px">
               <mat-label>Nome</mat-label>
-              <input matInput formControlName="filter" />
+              <input matInput formControlName="filter" (keydown)="$event.stopPropagation()" />
             </mat-form-field>
             <ng-container *ngIf="wing.value">
               <mat-option *ngFor="let judge of judgeOptions" [value]="judge.value">

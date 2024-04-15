@@ -29,14 +29,31 @@
   <mat-form-field class="form__field form__field--select">
     <mat-label>Sociedade</mat-label>
     <mat-select formControlName="society">
+      <mat-option value="Nova Sociedade">
+        Nova Sociedade
+      </mat-option>
       <mat-option *ngFor="let society of societyOptions" [value]="society.value">
         {{ society.viewValue }}
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-checkbox color="primary" formControlName="isTrainee">Trainee</mat-checkbox>
+  <mat-form-field
+    *ngIf="showNewSocietyFormField()"
+    class="form__field"
+  >
+    <mat-label>Nova Sociedade</mat-label>
+    <textarea
+      matInput
+      cdkTextareaAutosize
+      #autosize="cdkTextareaAutosize"
+      cdkAutosizeMinRows="1"
+      formControlName="newSociety"
+    ></textarea>
+  </mat-form-field>
+  <mat-checkbox class="form__field" color="primary" formControlName="isTrainee">Trainee</mat-checkbox>
+  <mat-checkbox class="form__field" color="primary" formControlName="blocked">Bloquear</mat-checkbox>
   <button
-    class="form__field__button"
+    class="form__button"
     mat-flat-button
     color="primary"
     [disabled]="!form.valid"

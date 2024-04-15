@@ -8,7 +8,12 @@
       class="form__filter__checkbox"
       color="primary"
       formControlName="active"
-    >Ativos em 2024</mat-checkbox>
+    >Ativos</mat-checkbox>
+    <mat-checkbox
+      class="form__filter__checkbox"
+      color="primary"
+      formControlName="inactive"
+    >Inativos</mat-checkbox>
     <mat-checkbox
       class="form__filter__checkbox"
       color="primary"
@@ -70,7 +75,7 @@
               class="table__body__tr__td__details__content"
             >
               <div class="table__body__tr__td__details__content__name">{{ member.name }}</div>
-              <div class="table__body__tr__td__details__content__society">{{ Society[member.society] }}</div>
+              <div class="table__body__tr__td__details__content__society">{{ member.society }}</div>
             </div>
           </div>
         </ng-container>

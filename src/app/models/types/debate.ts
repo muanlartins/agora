@@ -1,7 +1,6 @@
 import { DebateStyle } from "../enums/debate-style";
 import { DebateVenue } from "../enums/debate-venue";
 import { MotionTheme } from "../enums/motion-theme";
-import { MotionType } from "../enums/motion-type";
 import { Member } from "./member";
 
 export type Debate = {
@@ -10,12 +9,12 @@ export type Debate = {
   time: string;
   style: keyof typeof DebateStyle;
   venue: keyof typeof DebateVenue;
-  motionType: keyof typeof MotionType;
+  motionType: string;
   motionTheme: keyof typeof MotionTheme;
   motion: string;
   points: number[];
   infoSlides?: string[];
-  debaters?: Member[];
+  debaters: Member[];
   sps?: number[];
   chair: Member;
   wings?: Member[];

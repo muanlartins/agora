@@ -1,15 +1,20 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Chart } from 'chart.js';
+import { Chart, ChartType } from 'chart.js';
 import * as moment from 'moment';
-import { combineLatest, lastValueFrom } from 'rxjs';
-import { Society } from 'src/app/models/enums/society';
+import { combineLatest } from 'rxjs';
+import { Article } from 'src/app/models/types/article';
 import { Debate } from 'src/app/models/types/debate';
 import { Member } from 'src/app/models/types/member';
+import { Rank } from 'src/app/models/types/rank';
 import { SelectOption } from 'src/app/models/types/select-option';
+import { Statistic } from 'src/app/models/types/statistic';
+import { ArticleService } from 'src/app/services/article.service';
 import { DebateService } from 'src/app/services/debate.service';
 import { MemberService } from 'src/app/services/member.service';
 import { MONTHS } from 'src/app/utils/constants';
+import { GoalService } from 'src/app/services/goals.service';
+import { Goal } from 'src/app/models/types/goal';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,46 +24,55 @@ import { MONTHS } from 'src/app/utils/constants';
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public form: FormGroup;
 
-  public debates: Debate[];
+  public monthOptions: SelectOption[] = [];
 
-  public members: Member[];
-
-  public loading = false;
-
-  @ViewChild('topSpeakersByAverageSps')
-  public topSpeakersByAverageSps: ElementRef<HTMLCanvasElement>;
-
-  @ViewChild('topMembersByFrequency')
-  public topMembersByFrequency: ElementRef<HTMLCanvasElement>;
+  public tournamentOptions: SelectOption[] = [];
 
   public charts: Chart[] = [];
 
-  public statistics: { title: string, value: string, memberId?: string, hasPfp?: boolean, details?: { title: string, value: string }[] }[];
+  public members: Member[] = [];
 
-  public monthOptions: SelectOption[] = [];
+  public debates: Debate[] = [];
 
-  public month: number = moment(Date.now()).month()-1;
+  public filteredDebates: Debate[] = [];
 
-  public get MONTHS() {
+  public articles: Article[] = [];
+
+  public statistics: Statistic[] = [];
+
+  public ranks: Rank[] = [];
+
+  public loading: boolean = false;
+
+  @ViewChild('chart0')
+  public chart0Ref: ElementRef<Chart>;
+
+  @ViewChild('chart1')
+  public chart1Ref: ElementRef<Chart>;
+
+  @ViewChild('chart2')
+  public chart2Ref: ElementRef<Chart>;
+
+  public get months() {
     return MONTHS;
   }
 
   constructor(
     private memberService: MemberService,
     private debateService: DebateService,
+    private articleService: ArticleService,
+    private goalService: GoalService,
     private formBuilder: FormBuilder
   ) {
-    this.initForm();
-    this.initOptions();
   }
 
   ngOnInit(): void {
+    this.initForm();
     this.getData();
-    this.subscribeToValueChanges();
   }
 
   ngAfterViewInit(): void {
-    this.generateGraphs();
+    this.generateCharts();
   }
 
   ngOnDestroy(): void {
@@ -67,85 +81,351 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public initForm() {
     this.form = this.formBuilder.group({
-      month: [moment(Date.now()).month()-1],
+      month: [],
+      tournament: [''],
+      trainee: [false]
     });
+
+    this.subscribeToValueChanges();
+    this.filterDebates();
+  }
+
+  public subscribeToValueChanges() {
+    this.form.valueChanges.subscribe(() => {
+      this.filterDebates();
+    });
+  }
+
+  public filterDebates() {
+    const month = this.form.controls['month'].value;
+    const tournament = this.form.controls['tournament'].value;
+    const trainee = this.form.controls['trainee'].value;
+
+    this.filteredDebates = [...this.debates];
+
+    if (!!month || month === 0) this.filteredDebates = this.filteredDebates.filter((debate: Debate) =>
+      moment(debate.date).month() - 1 === month
+    );
+
+    if (!!tournament) this.filteredDebates = this.filteredDebates.filter((debate: Debate) =>
+      debate.tournament === tournament
+    );
+
+    if (trainee) this.filteredDebates = this.filteredDebates.filter((debate: Debate) =>
+      debate.debaters.some((debater: Member) => debater.isTrainee)
+    );
+
+    this.generateRanks();
+    this.generateStatistics();
+    this.generateCharts();
   }
 
   public initOptions() {
     this.monthOptions = MONTHS.map((viewValue, value) => ({ value, viewValue })).filter((option) => option.value <= moment(Date.now()).month());
+
+    this.tournamentOptions = [...new Set(this.debates.filter((debate: Debate) => debate.tournament).map((debate: Debate) => debate.tournament!))]
+      .map((tournament) =>({
+        value: tournament,
+        viewValue: tournament
+      }));
   }
 
-  public subscribeToValueChanges() {
-    this.form.controls['month'].valueChanges.subscribe((month: number) => {
-      this.month = month;
-      this.getStatistics();
-    });
-  }
-
-  public async getData() {
+  public getData() {
     this.loading = true;
 
     combineLatest([
+      this.memberService.getAllMembers(),
       this.debateService.getAllDebates(),
-      this.memberService.getAllMembers()
-    ]).subscribe(([debates, members]) => {
-      if (members && members.length && debates && debates.length) {
-        this.debates = debates.filter((debate) => debate.date.length > 10);
-        this.members = members;
+      this.articleService.getAllArticles()
+    ]).subscribe(([members, debates, articles]) => {
+      if (members && members.length && debates && debates.length && articles && articles.length) {
         this.loading = false;
 
-        this.generateGraphs();
-        this.getStatistics();
+        this.members = members;
+        this.debates = debates;
+        this.filteredDebates = debates;
+        this.articles = articles;
+        this.initOptions();
+
+        this.generateRanks();
+        this.generateStatistics();
+        this.generateCharts();
       }
     });
   }
 
-  public generateTopSpeakersByAverageSpsGraph() {
-    const sp: { [id: string]: number } = {};
-    const maxSp: { [id: string]: number } = {};
-    const minSp: { [id: string]: number } = {};
-    const participations: { [id: string]: number } = {};
+  public generateRanks() {
+    if (
+      !this.debates.length ||
+      !this.members.length ||
+      !this.articles.length
+    ) return;
 
-    this.members.forEach((member) => {
-      sp[member.id] = 0;
-      maxSp[member.id] = 0;
-      minSp[member.id] = Infinity;
+    this.ranks = [];
+
+    /*
+      Auxiliary Variables
+    */
+
+    const uniqueDebaters = [... new Set(this.filteredDebates.map((debate: Debate) => debate.debaters).flat())]
+      .filter((member: Member) => !member.blocked);
+
+    const uniqueActiveDebaters = uniqueDebaters.filter((uniqueDebater: Member) => this.filteredDebates.filter((debate: Debate) =>
+      debate.debaters.some((debater: Member) => debater.id === uniqueDebater.id) && debate.sps && debate.sps.length
+    ).length > 2);
+
+    const uniqueJudges = [... new Set(this.filteredDebates.map((debate: Debate) =>
+      debate.wings ? [...debate.wings, debate.chair] : [debate.chair]).flat())
+    ].filter((member: Member) => !member.blocked);
+
+    const sum = (a: number[]) => a.reduce((prev, curr) => prev + curr, 0)
+    const average = (a: number[]) => sum(a) / a.length;
+
+    const pointsIndexes = [0,1,0,1,2,3,2,3];
+
+    // Top Firsts by Debater
+
+    const debatersFirsts = uniqueDebaters.map((uniqueDebater: Member) => this.filteredDebates.filter((debate: Debate) => {
+      const debaterIndex = debate.debaters.findIndex((debater: Member) => debater.id === uniqueDebater.id);
+
+      if (debaterIndex === -1) return false;
+
+      return debate.points[pointsIndexes[debaterIndex]] === 3;
+    }).length).map((amount, index) => ({
+      member: uniqueDebaters[index],
+      amount
+    })).sort((a, b) => b.amount - a.amount);
+
+    const debatersFirstsUniqueAmounts = [... new Set(debatersFirsts.map(({ member, amount }) => amount))];
+
+    this.ranks.push({
+      title: 'Debatedores que mais <b>primeiraram</b>',
+      standings: debatersFirstsUniqueAmounts.slice(0, 3).map((uniqueAmount) => ({
+        members: debatersFirsts.filter(({ member, amount }) => uniqueAmount === amount)
+          .map(({ member, amount }) => member),
+        value: uniqueAmount
+      }))
     });
 
-    this.members.forEach((member) => {
-      let debatesParticipated = 0;
+    // Top Wins by Debater
 
-      this.debates.forEach((debate) => {
-        if (!debate.debaters) return;
-        const memberIndex = debate.debaters.findIndex((debater) => debater.id === member.id);
+    const debatersWins = uniqueDebaters.map((uniqueDebater: Member) => this.filteredDebates.filter((debate: Debate) => {
+      const debaterIndex = debate.debaters.findIndex((debater: Member) => debater.id === uniqueDebater.id);
 
-        if (memberIndex !== -1 && debate.sps) {
-          sp[member.id] += debate.sps[memberIndex];
-          maxSp[member.id] = Math.max(maxSp[member.id], debate.sps[memberIndex]);
-          minSp[member.id] = Math.min(minSp[member.id], debate.sps[memberIndex]);
-          debatesParticipated ++;
-        }
-      })
+      if (debaterIndex === -1) return false;
 
-      participations[member.id] = debatesParticipated;
+      return debate.points[pointsIndexes[debaterIndex]] >= 2;
+    }).length).map((amount, index) => ({
+      member: uniqueDebaters[index],
+      amount
+    })).sort((a, b) => b.amount - a.amount);
 
-      if (debatesParticipated) sp[member.id] /= debatesParticipated;
+    const debatersWinsUniqueAmounts = [... new Set(debatersWins.map(({ member, amount }) => amount))];
+
+    this.ranks.push({
+      title: 'Debatedores que mais <b>ganharam</b>',
+      standings: debatersWinsUniqueAmounts.slice(0, 3).map((uniqueAmount) => ({
+        members: debatersWins.filter(({ member, amount }) => uniqueAmount === amount)
+          .map(({ member, amount }) => member),
+        value: uniqueAmount
+      }))
     });
 
-    const topSpeakers =
-      Object.entries(sp).sort((a, b) => b[1] - a[1])
-        .filter(([id, sp]) => participations[id] >= 3)
-        .slice(0, 8);
+    // Top Active Debaters
 
-    const labels = topSpeakers.map(([id, sp]) =>
-      this.members.find((member) => member.id === id)!.name
-        .split(' ').slice(0, 3).join(' ')
-    );
-    const data = topSpeakers.map(([id, sp]) => sp);
-    const max = topSpeakers.map(([id, sp]) => maxSp[id]);
-    const min = topSpeakers.map(([id, sp]) => minSp[id]);
+    const debatersFrequency = uniqueDebaters.map((uniqueDebater: Member) => this.filteredDebates.filter((debate: Debate) =>
+      debate.debaters.some((debater: Member) => debater.id === uniqueDebater.id)
+    ).length).map((amount, index) => ({
+      member: uniqueDebaters[index],
+      amount
+    })).sort((a, b) => b.amount - a.amount);
 
-    this.charts.push(new Chart(this.topSpeakersByAverageSps.nativeElement, {
+    const debatersFrequencyUniqueAmounts = [... new Set(debatersFrequency.map(({ member, amount }) => amount))];
+
+    this.ranks.push({
+      title: 'Debatedores mais <b>ativos</b>',
+      standings: debatersFrequencyUniqueAmounts.slice(0, 3).map((uniqueAmount) => ({
+        members: debatersFrequency.filter(({ member, amount }) => uniqueAmount === amount)
+          .map(({ member, amount }) => member),
+        value: uniqueAmount
+      }))
+    });
+
+    // Best SPs Average
+
+    const spsAverages = uniqueActiveDebaters.map((uniqueActiveDebater: Member) => this.filteredDebates.filter((debate: Debate) =>
+      debate.debaters.some((debater: Member) => debater.id === uniqueActiveDebater.id) && debate.sps && debate.sps.length
+    ).map(
+      (debate: Debate) => debate.sps![debate.debaters.findIndex((debater: Member) => debater.id === uniqueActiveDebater.id)]
+    )).map((amount, index) => ({
+      member: uniqueActiveDebaters[index],
+      amount: average(amount)
+    })).sort((a, b) => b.amount - a.amount);
+
+    const uniqueSpsAverages = [... new Set(spsAverages.map(({ member, amount }) => amount))];
+
+    this.ranks.push({
+      title: 'Maiores <b>médias de SPs</b>',
+      standings: uniqueSpsAverages.slice(0, 3).map((uniqueAmount) => ({
+        members: spsAverages.filter(({ member, amount }) => uniqueAmount === amount)
+          .map(({ member, amount }) => member),
+        value: uniqueAmount.toFixed(2)
+      }))
+    });
+
+    // Best Absolute SPs
+
+    const sps = uniqueActiveDebaters.map((uniqueActiveDebater: Member) => this.filteredDebates.filter((debate: Debate) =>
+      debate.debaters.some((debater: Member) => debater.id === uniqueActiveDebater.id) && debate.sps && debate.sps.length
+    ).map(
+      (debate: Debate) => debate.sps![debate.debaters.findIndex((debater: Member) => debater.id === uniqueActiveDebater.id)]
+    )).map((amount, index) => ({
+      member: uniqueActiveDebaters[index],
+      amount: amount.sort((a, b) => b - a)[0]
+    })).sort((a, b) => b.amount - a.amount);
+
+    const uniqueSps = [... new Set(sps.map(({ member, amount }) => amount))];
+
+    this.ranks.push({
+      title: 'Maiores <b>SPs absolutos</b>',
+      standings: uniqueSps.slice(0, 3).map((uniqueAmount) => ({
+        members: sps.filter(({ member, amount }) => uniqueAmount === amount)
+          .map(({ member, amount }) => member),
+        value: uniqueAmount
+      }))
+    });
+
+    // Top Active Judges
+
+    const judgesFrequency = uniqueJudges.map((uniqueJudge: Member) => this.filteredDebates.filter((debate: Debate) =>
+      (debate.wings && debate.wings.some((debater: Member) => debater.id === uniqueJudge.id)) ||
+      debate.chair.id === uniqueJudge.id
+    ).length).map((amount, index) => ({
+      member: uniqueJudges[index],
+      amount
+    })).sort((a, b) => b.amount - a.amount);
+
+    const judgesFrequencyUniqueAmounts = [... new Set(judgesFrequency.map(({ member, amount }) => amount))];
+
+    this.ranks.push({
+      title: 'Juízes mais <b>ativos</b>',
+      standings: judgesFrequencyUniqueAmounts.slice(0, 3).map((uniqueAmount) => ({
+        members: judgesFrequency.filter(({ member, amount }) => uniqueAmount === amount)
+          .map(({ member, amount }) => member),
+        value: uniqueAmount
+      }))
+    });
+  }
+
+  public generateStatistics() {
+    if (
+      !this.debates.length ||
+      !this.members.length ||
+      !this.articles.length
+    ) return;
+
+    this.statistics = [];
+
+    /*
+      Auxiliary Variables
+    */
+
+    const uniqueActiveMembers = [... new Set(
+      this.filteredDebates.map((debate: Debate) => debate.debaters).flat().concat(
+        this.filteredDebates.filter((debate: Debate) => debate.wings && debate.wings.length).map((debate: Debate) => debate.wings!).flat()
+      ).concat (
+        this.filteredDebates.map((debate: Debate) => debate.chair).flat()
+      )
+    )]
+    .filter((member: Member) => !member.blocked);
+
+    const uniqueSocieties = [... new Set(uniqueActiveMembers.map((member: Member) => member.society))];
+
+    // Total Debates
+
+    this.statistics.push({
+      title: 'Total de <b>Treinos</b>',
+      value: this.filteredDebates.length
+    });
+
+    // Total Active Debaters
+
+    this.statistics.push({
+      title: 'Total de <b>Membros Ativos</b>',
+      value: uniqueActiveMembers.length,
+    });
+
+    // Total Goals Achieved
+
+    this.statistics.push({
+      title: 'Total de <b>Metas Atingidas</b>',
+      value: this.goalService.getAllGoals().filter((goal: Goal) => goal.achieved).length,
+    });
+
+    // Total Articles Written
+
+    this.statistics.push({
+      title: 'Total de <b>Artigos Escritos</b>',
+      value: this.articles.length,
+    });
+
+    // Partner Society
+
+    this.statistics.push({
+      title: 'Sociedade <b>Parceira</b>',
+      value: uniqueSocieties.filter((society: string) => society !== 'sdufrj').map((uniqueSociety: string) => ({
+        society: uniqueSociety,
+        amount: uniqueActiveMembers.filter((member: Member) => member.society === uniqueSociety).length
+      })).sort((a, b) => b.amount - a.amount)[0].society
+    })
+  }
+
+  public generateCharts() {
+    if (
+      !this.chart0Ref ||
+      !this.chart1Ref ||
+      !this.chart2Ref ||
+      !this.members ||
+      !this.debates ||
+      !this.articles
+    )
+      return;
+
+    this.charts;
+
+    if (this.charts.length) {
+      this.charts.forEach((chart) => chart.destroy());
+      this.charts = [];
+    }
+
+    /*
+      Auxiliary Variables
+    */
+
+    const max = (a: number[]) => Math.max(...a);
+    const sum = (a: number[]) => a.reduce((prev, curr) => prev + curr, 0);
+
+    const motionTypes = this.filteredDebates.map((debate) => debate.motionType);
+    const uniqueMotionTypes: string[] = [... new Set(motionTypes)];
+
+    const motionThemes = this.filteredDebates.map((debate) => debate.motionTheme);
+    const uniqueMotionThemes: string[] = [... new Set(motionThemes)];
+
+    // Performance By House
+
+    const og = [0, 0, 0, 0];
+    const oo = [0, 0, 0, 0];
+    const cg = [0, 0, 0, 0];
+    const co = [0, 0, 0, 0];
+
+    this.filteredDebates.forEach((debate) => {
+      og[3 - debate.points[0]] ++;
+      oo[3 - debate.points[1]] ++;
+      cg[3 - debate.points[2]] ++;
+      co[3 - debate.points[3]] ++;
+    });
+
+    this.charts.push(new Chart(this.chart0Ref.nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -154,8 +434,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           }
         },
+        maintainAspectRatio: false,
         scales: {
           x: {
+            stacked: true,
             grid: {
               color: '#D9D9D920'
             },
@@ -164,305 +446,114 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             }
           },
           y: {
-            min: 60,
-            max: 84,
+            min: 0,
+            max: max([sum(og), sum(oo), sum(cg), sum(co)]) + 1,
+            stacked: true,
             grid: {
               color: '#D9D9D920'
             },
             ticks: {
               color: '#D9D9D9',
-              stepSize: 2
+              stepSize: 1
             }
           }
         },
       },
       data: {
-        labels,
+        labels: ['Primeiro', 'Segundo', 'Terceiro', 'Quarto'],
         datasets: [
           {
-            type: 'line',
-            label: 'Maior SPs',
-            data: max,
-            backgroundColor: data.map(() => '#fb9344'),
-            borderColor: data.map(() => '#fb9344')
-          },
-          {
-            type: 'line',
-            label: 'Menor SPs',
-            data: min,
-            backgroundColor: data.map(() => '#fbb394'),
-            borderColor: data.map(() => '#fbb394')
+            type: 'bar',
+            label: '1G',
+            data: og,
           },
           {
             type: 'bar',
-            label: 'Média de SPs',
-            data: data,
-            backgroundColor: data.map(() => '#fbb34460'),
-            borderColor: data.map(() => '#fbb34460')
+            label: '1O',
+            data: oo,
+          },
+          {
+            type: 'bar',
+            label: '2G',
+            data: cg,
+          },
+          {
+            type: 'bar',
+            label: '2O',
+            data: co,
+          },
+        ],
+      }
+    }));
+
+    // Motion Types Frequency
+
+    const motionTypesFrequency = uniqueMotionTypes.map((uniqueMotionType) =>
+      motionTypes.filter((motionType) => motionType === uniqueMotionType).length
+    );
+
+    this.charts.push(new Chart(this.chart1Ref.nativeElement, {
+      type: 'doughnut' as ChartType,
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: '#D9D9D9'
+            }
+          }
+        },
+        maintainAspectRatio: false,
+      },
+      data: {
+        labels: uniqueMotionTypes,
+        datasets: [
+          {
+            label: 'Frequência em Debates',
+            data: motionTypesFrequency,
+          },
+        ],
+      }
+    }));
+
+    // Motion Themes Frequency
+
+    const motionThemesFrequency = uniqueMotionThemes.map((uniqueMotionTheme) =>
+      motionThemes.filter((motionTheme) => motionTheme === uniqueMotionTheme).length
+    );
+
+    this.charts.push(new Chart(this.chart2Ref.nativeElement, {
+      type: 'doughnut' as ChartType,
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: '#D9D9D9'
+            }
+          }
+        },
+        maintainAspectRatio: false,
+      },
+      data: {
+        labels: uniqueMotionThemes,
+        datasets: [
+          {
+            label: 'Frequência em Debates',
+            data: motionThemesFrequency,
           },
         ],
       }
     }));
   }
 
-  public generateTopMembersByFrequencyGraph() {
-    const debatesParticipated: { [id: string]: number } = {};
-    const debatesParticipatedAsDebater: { [id: string]: number } = {};
-    const debatesParticipatedAsJudge: { [id: string]: number } = {};
+  public getPlacementIconUrl(index: number) {
+    if (index === 0) return 'assets/first.png';
+    if (index === 1) return 'assets/second.png';
+    if (index === 2) return 'assets/third.png';
 
-    this.members.forEach((member) => {
-      let debatesParticipatedByMemberAsDebater = 0;
-      let debatesParticipatedByMemberAsJudge = 0;
-
-      this.debates.forEach((debate) => {
-        if (!debate.debaters) return;
-        const memberIndex = debate.debaters.findIndex((debater) => debater.id === member.id);
-        if (memberIndex !== -1) debatesParticipatedByMemberAsDebater ++;
-      });
-
-      this.debates.forEach((debate) => {
-        if (member.id === debate.chair.id) debatesParticipatedByMemberAsJudge ++;
-
-        if (!debate.wings) return;
-        const memberIndex = debate.wings.findIndex((judge) => judge.id === member.id);
-        if (memberIndex !== -1) debatesParticipatedByMemberAsJudge ++;
-      })
-
-      debatesParticipatedAsDebater[member.id] = debatesParticipatedByMemberAsDebater;
-      debatesParticipatedAsJudge[member.id] = debatesParticipatedByMemberAsJudge;
-      debatesParticipated[member.id] = debatesParticipatedByMemberAsDebater + debatesParticipatedByMemberAsJudge;
-    });
-
-    const topMembers = Object.entries(debatesParticipated).sort((a, b) => b[1] - a[1]).slice(0, 8);
-
-    const labels = topMembers.map(([id, debatesParticipated]) =>
-      this.members.find((member) => member.id === id)!.name
-        .split(' ').slice(0, 3).join(' ')
-    );
-    const debaterFrequency = topMembers.map(([id, debatesParticipated]) => debatesParticipatedAsDebater[id]);
-    const judgeFrequency = topMembers.map(([id, debatesParticipated]) => debatesParticipatedAsJudge[id]);
-
-    this.charts.push(new Chart(this.topMembersByFrequency.nativeElement, {
-      options: {
-        scales: {
-          x: {
-            stacked: true,
-            ticks: {
-              color: '#D9D9D9'
-            },
-            grid: {
-              color: '#D9D9D920'
-            }
-          },
-          y: {
-            ticks: {
-              stepSize: 1,
-              color: '#D9D9D9'
-
-            },
-            stacked: true,
-            grid: {
-              color: '#D9D9D920'
-            }
-          }
-        },
-        plugins: {
-          legend: {
-            labels: {
-              color: '#D9D9D9'
-            }
-          }
-        }
-      },
-      data: {
-        labels,
-        datasets: [
-          {
-            type: 'bar',
-            label: 'Frequência em Debates (como debatedor)',
-            data: debaterFrequency,
-            backgroundColor: debaterFrequency.map(() => '#fbb394'),
-            borderColor: debaterFrequency.map(() => '#fbb394'),
-          },
-          {
-            type: 'bar',
-            label: 'Frequência em Debates (como juíz)',
-            data: judgeFrequency,
-            backgroundColor: judgeFrequency.map(() => '#fb9344'),
-            borderColor: judgeFrequency.map(() => '#fb9344')
-          },
-        ]
-      }
-    }));
+    return '';
   }
 
-  public generateGraphs() {
-    if (
-      !this.members ||
-      !this.debates ||
-      !this.topSpeakersByAverageSps ||
-      !this.topMembersByFrequency ||
-      this.charts.length === 2
-    ) return;
-
-    this.generateTopSpeakersByAverageSpsGraph();
-    this.generateTopMembersByFrequencyGraph();
-  }
-
-  public async getStatistics() {
-    const debates = this.debates.filter((debate) => moment(debate.date).month() === this.form.controls['month'].value);
-
-    const winsByDebater: { [id: string]: number } = {};
-    const duosByDebater: { [id: string]: string[]} = {};
-    const bestSpByDebater: { [id: string]: { sp: number, debate: Debate } } = {}
-    const debatesByJudge: { [id: string]: number } = {}
-    const societyParticipations: { [society: string]: number } = {}
-    const societyParticipants: { [society: string]: string[] } = {}
-
-    this.members.forEach((member) => {
-      winsByDebater[member.id] = 0;
-      duosByDebater[member.id] = [];
-      bestSpByDebater[member.id] = {
-        sp: 0,
-        debate: {} as Debate
-      };
-      debatesByJudge[member.id] = 0;
-    });
-
-    Object.entries(Society).forEach(([key, society]) => {
-      societyParticipations[key] = 0;
-      societyParticipants[key] = [];
-    });
-
-    debates.forEach((debate) => {
-      debate.debaters?.forEach((debater) => {
-        societyParticipations[debater.society] ++;
-        societyParticipants[debater.society].push(debater.name);
-      });
-      societyParticipations[debate.chair.society] ++;
-      societyParticipants[debate.chair.society].push(debate.chair.name);
-      debate.wings?.forEach((wing) => {
-        societyParticipations[wing.society] ++;
-        societyParticipants[wing.society].push(wing.name);
-      });
-    });
-
-    debates.forEach((debate) => {
-      const winnerIndex = debate.points.findIndex((points) => points === 3);
-
-      debate.debaters?.forEach((debater, index) => {
-        if (bestSpByDebater[debater.id].sp < (debate.sps?.[index] ?? 0)) {
-          bestSpByDebater[debater.id].sp = debate.sps?.[index] ?? 0;
-          bestSpByDebater[debater.id].debate = debate;
-        }
-      });
-
-      [0,1,4,5].forEach((i) => {
-        if (winnerIndex === Math.floor(i/3) + (i%3)) {
-          winsByDebater[debate.debaters![i].id]++;
-          duosByDebater[debate.debaters![i].id].push(debate.debaters![i+2].name);
-
-          if (debate.debaters![i].id !== debate.debaters![i+2].id){
-            winsByDebater[debate.debaters![i+2].id]++;
-            duosByDebater[debate.debaters![i+2].id].push(debate.debaters![i].name);
-          }
-        }
-      });
-
-      debatesByJudge[debate.chair.id] ++;
-      debate.wings?.forEach((wing) => debatesByJudge[wing.id] ++);
-    });
-
-    const winnerId = Object.entries(winsByDebater).sort((a, b) => b[1] - a[1])[0][0];
-    const winnerDebates = Object.entries(winsByDebater).sort((a, b) => b[1] - a[1])[0][1];
-    const winner = this.members.find((member) => member.id === winnerId)!;
-
-    const mostSpsId = Object.entries(bestSpByDebater).sort((a, b) => b[1].sp - a[1].sp)[0][0];
-    const mostSpsDebate = Object.entries(bestSpByDebater).sort((a, b) => b[1].sp - a[1].sp)[0][1].debate;
-    const mostSpsSp = Object.entries(bestSpByDebater).sort((a, b) => b[1].sp - a[1].sp)[0][1].sp;
-    const mostSps = this.members.find((member) => member.id === mostSpsId)!;
-
-    const mostDebatesByJudgeId = Object.entries(debatesByJudge).sort((a, b) => b[1] - a[1])[0][0];
-    const mostDebatesByJudgeAmount = Object.entries(debatesByJudge).sort((a, b) => b[1] - a[1])[0][1];
-    const mostDebatesByJudge = this.members.find((member) => member.id === mostDebatesByJudgeId)!;
-
-    const mostParticipationsSociety = Object.entries(societyParticipations).sort((a, b) => b[1] - a[1])[1][0];
-    const mostParticipationsParticipations = Object.entries(societyParticipations).sort((a, b) => b[1] - a[1])[1][1];
-    const mostParticipationsParticipants = societyParticipants[mostParticipationsSociety];
-
-    this.statistics = [
-      {
-        title: 'Debatedor com mais vitórias',
-        value: `${winner.name} (${Society[winner.society]})`,
-        hasPfp: winner.hasPfp,
-        memberId: winnerId,
-        details: [
-          {
-            title: 'Vitórias',
-            value: winnerDebates.toString(),
-          },
-          {
-            title: 'Duplas',
-            value: duosByDebater[winnerId].join(', '),
-          }
-        ]
-      },
-      {
-        title: 'Debatedor com o maior speaker points',
-        value: `${mostSps.name} (${Society[mostSps.society]})`,
-        hasPfp: mostSps.hasPfp,
-        memberId: mostSpsId,
-        details: [
-          {
-            title: 'SP',
-            value: `${mostSpsSp}`
-          },
-          {
-            title: 'Data',
-            value: `${
-                moment(mostSpsDebate?.date)
-                  .hour(Number(mostSpsDebate.time.split(':')[0]))
-                  .minute(Number(mostSpsDebate.time.split(':')[1]))
-                  .locale('pt-br')
-                  .format(`LLL`)
-            }`
-          },
-          {
-            title: 'Juíz',
-            value: `${mostSpsDebate?.chair.name}`
-          }
-        ]
-      },
-      {
-        title: 'Juíz com mais participações',
-        value: `${mostDebatesByJudge.name} (${Society[mostDebatesByJudge.society]})`,
-        hasPfp: mostDebatesByJudge.hasPfp,
-        memberId: mostDebatesByJudgeId,
-        details: [
-          {
-            title: 'Debates',
-            value: `${mostDebatesByJudgeAmount}`
-          }
-        ]
-      },
-      {
-        title: 'Sociedade parceira',
-        value: `${Society[mostParticipationsSociety as keyof typeof Society]}`,
-        details: [
-          {
-            title: 'Participações',
-            value: `${mostParticipationsParticipations}`,
-          },
-          {
-            title: 'Participantes',
-            value: `${[...new Set(mostParticipationsParticipants)].join(', ')}`
-          }
-        ]
-      },
-      {
-        title: 'Treinos',
-        value: `${debates.length}`
-      }
-    ];
+  public showCharts() {
+    return this.charts && this.charts.length;
   }
 }

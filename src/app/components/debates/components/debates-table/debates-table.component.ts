@@ -11,10 +11,8 @@ import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment';
 import { DebateStyle } from 'src/app/models/enums/debate-style';
 import { DebateVenue } from 'src/app/models/enums/debate-venue';
-import { MotionType } from 'src/app/models/enums/motion-type';
 import { MotionTheme } from 'src/app/models/enums/motion-theme';
 import { DebatePosition } from 'src/app/models/enums/debate-position';
-import { Society } from 'src/app/models/enums/society';
 import { ConfirmModalComponent } from 'src/app/components/members/components/confirm-modal/confirm-modal.component';
 import { isAdmin } from 'src/app/utils/auth';
 
@@ -64,16 +62,8 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
     return DebateVenue;
   }
 
-  public get MotionType() {
-    return MotionType;
-  }
-
   public get MotionTheme() {
     return MotionTheme;
-  }
-
-  public get Society() {
-    return Society;
   }
 
   public constructor(
@@ -216,12 +206,12 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
           debaters: [
             {
               position: DebatePosition.mg,
-              debater: debate.debaters?.[4],
+              debater: debate.debaters[4],
               sps: debate.sps?.[4]
             },
             {
               position: DebatePosition.gw,
-              debater: debate.debaters?.[6],
+              debater: debate.debaters[6],
               sps: debate.sps?.[6]
             }
           ],
@@ -235,12 +225,12 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
           debaters: [
             {
               position: DebatePosition.mo,
-              debater: debate.debaters?.[5],
+              debater: debate.debaters[5],
               sps: debate.sps?.[5]
             },
             {
               position: DebatePosition.ow,
-              debater: debate.debaters?.[7],
+              debater: debate.debaters[7],
               sps: debate.sps?.[7]
             }
           ],
@@ -276,9 +266,9 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
         .hour(Number(debate.time.split(':')[0]))
         .minute(Number(debate.time.split(':')[1]))
         .locale('pt-br')
-        .format(`LLL`)}</b>, moção <b>${debate.motion} (${MotionType[debate.motionType]},
-        ${MotionTheme[debate.motionTheme]})</b>, chair <b>${debate.chair.name} (${Society[debate.chair.society]})</b> e debatedores
-        <b>${debate.debaters?.map((member) => `${member.name} (${Society[member.society]})`).join(', ')}</b>?`,
+        .format(`LLL`)}</b>, moção <b>${debate.motion}
+        (${MotionTheme[debate.motionTheme]})</b>, chair <b>${debate.chair.name} (${debate.chair.society})</b> e debatedores
+        <b>${debate.debaters.map((member) => `${member.name} (${member.society})`).join(', ')}</b>?`,
       callback: async () => {
         this.loading = true;
         await this.debateService.deleteDebate(id);

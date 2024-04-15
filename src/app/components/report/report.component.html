@@ -1,0 +1,175 @@
+<div class="page">
+  <app-navbar class="page__navbar"></app-navbar>
+  <div class="page__content" [formGroup]="form">
+    <div class="page__content__header">
+      <mat-form-field class="page__content__header__input">
+        <mat-label>Membro</mat-label>
+        <mat-select formControlName="member">
+          <mat-form-field style="width: 100%; padding: 8px;" >
+            <mat-label>Nome</mat-label>
+            <input matInput formControlName="memberFilter"
+            (keydown)="$event.stopPropagation()" />
+          </mat-form-field>
+          <mat-option>Nenhum</mat-option>
+          <mat-option *ngFor="let option of memberOptions" [value]="option.value">
+            {{ option.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="page__content__body">
+      <div class="page__content__body__upper" *ngIf="member">
+        <div class="page__content__body__upper__member">
+          <app-pfp class="page__content__body__upper__member__pfp" [id]="member.id" [size]="192" [hasPfp]="member.hasPfp" shape="square"></app-pfp>
+          <div class="page__content__body__upper__member__name">{{ member.name }}
+            <span class="page__content__body__upper__member__name__society">{{ member.society }}</span>
+          </div>
+        </div>
+        <div class="page__content__body__upper__statistics">
+          <div class="page__content__body__upper__statistics__statistic page__content__body__upper__statistics__statistic--100">Como debatedor(a)</div>
+          <div *ngFor="let statistic of debaterStatistics" class="page__content__body__upper__statistics__statistic">
+            <div class="page__content__body__upper__statistics__statistic__title">{{ statistic.title }}</div>
+            <div class="page__content__body__upper__statistics__statistic__value">{{ statistic.value }}</div>
+          </div>
+        </div>
+        <div class="page__content__body__upper__statistics">
+          <div class="page__content__body__upper__statistics__statistic page__content__body__upper__statistics__statistic--100">Como juíz(a)</div>
+          <div *ngFor="let statistic of judgeStatistics" class="page__content__body__upper__statistics__statistic">
+            <div class="page__content__body__upper__statistics__statistic__title">{{ statistic.title }}</div>
+            <div class="page__content__body__upper__statistics__statistic__value">{{ statistic.value }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="page__content__body__lower" [style.opacity]="member ? 1 : 0">
+        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__section">
+          Como debatedor(a)
+        </div>
+        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__graph">
+          <div class="page__content__body__lower__graph__title">
+            Speaker Points
+          </div>
+          <div class="page__content__body__lower__graph__description">
+            Speaker points obtidos pelo membro como debatedor
+          </div>
+          <div class="page__content__body__lower__graph__graph">
+            <canvas #sps></canvas>
+          </div>
+        </div>
+        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__graph">
+          <div class="page__content__body__lower__graph__title">
+            Colocações
+          </div>
+          <div class="page__content__body__lower__graph__description">
+            Resultado do membro como debatedor nos debates
+          </div>
+          <div class="page__content__body__lower__graph__graph">
+            <canvas #placements></canvas>
+          </div>
+        </div>
+        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__graph">
+          <div class="page__content__body__lower__graph__title">
+            Duplas
+          </div>
+          <div class="page__content__body__lower__graph__description">
+            Frequência com as diferentes duplas do membro
+          </div>
+          <div class="page__content__body__lower__graph__graph">
+            <canvas #duosFrequency></canvas>
+          </div>
+        </div>
+        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__graph">
+          <div class="page__content__body__lower__graph__title">
+            Performance por Casas
+          </div>
+          <div class="page__content__body__lower__graph__description">
+            Performance do membro como debatedor nas quatro casas
+          </div>
+          <div class="page__content__body__lower__graph__graph">
+            <canvas #houses></canvas>
+          </div>
+        </div>
+        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__graph">
+          <div class="page__content__body__lower__graph__title">
+            Performance por Dupla
+          </div>
+          <div class="page__content__body__lower__graph__description">
+            Performance do membro com as diferentes duplas
+          </div>
+          <div class="page__content__body__lower__graph__graph">
+            <canvas #duosPerformance></canvas>
+          </div>
+        </div>
+        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__graph">
+          <div class="page__content__body__lower__graph__title">
+            Performance por Tipo de Moção
+          </div>
+          <div class="page__content__body__lower__graph__description">
+            Performance do membro com diferentes tipos de moção
+          </div>
+          <div class="page__content__body__lower__graph__graph">
+            <canvas #motionTypesPerformance></canvas>
+          </div>
+        </div>
+        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__graph">
+          <div class="page__content__body__lower__graph__title">
+            Performance por Tema de Moção
+          </div>
+          <div class="page__content__body__lower__graph__description">
+            Performance do membro com diferentes temas de moção
+          </div>
+          <div class="page__content__body__lower__graph__graph">
+            <canvas #motionThemesPerformance></canvas>
+          </div>
+        </div>
+        <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__lower__section">
+          Como juíz(a)
+        </div>
+        <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__lower__graph">
+          <div class="page__content__body__lower__graph__title">
+            Speaker Points
+          </div>
+          <div class="page__content__body__lower__graph__description">
+            Speaker points concedidos pelo membro como juíz
+          </div>
+          <div class="page__content__body__lower__graph__graph">
+            <canvas #spsAsJudge></canvas>
+          </div>
+        </div>
+        <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__lower__graph">
+          <div class="page__content__body__lower__graph__title">
+            Calls
+          </div>
+          <div class="page__content__body__lower__graph__description">
+            Posição das casas nas calls dadas pelo membro como juíz
+          </div>
+          <div class="page__content__body__lower__graph__graph">
+            <canvas #calls></canvas>
+          </div>
+        </div>
+        <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__lower__graph">
+          <div class="page__content__body__lower__graph__title">
+            Prefixos de Moções
+          </div>
+          <div class="page__content__body__lower__graph__description">
+            Proporção dos tipos das moções escolhidas pelo membro como juíz
+          </div>
+          <div class="page__content__body__lower__graph__graph">
+            <canvas #motionTypesAsJudge></canvas>
+          </div>
+        </div>
+        <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__lower__graph">
+          <div class="page__content__body__lower__graph__title">
+            Temas de Moções
+          </div>
+          <div class="page__content__body__lower__graph__description">
+            Proporção dos temas das moções escolhidas pelo membro como juíz
+          </div>
+          <div class="page__content__body__lower__graph__graph">
+            <canvas #motionThemesAsJudge></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <app-spinner [loading]="loading" [fullscreen]="true"></app-spinner>
+</div>

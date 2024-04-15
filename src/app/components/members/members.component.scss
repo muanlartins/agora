@@ -12,28 +12,10 @@
 
   &__body {
     width: calc(100% - 256px);
-    margin: 64px 128px;
+    margin: 0 128px;
 
     &__table {
       width: 100%;
-    }
-  }
-}
-
-@media (width <= 1600px) {
-  .page {
-    &__body {
-      width: calc(100% - 192px);
-      margin: 48px 96px;
-    }
-  }
-}
-
-@media (width < 1440px) {
-  .page {
-    &__body {
-      width: calc(100% - 128px);
-      margin: 36px 64px;
     }
   }
 }

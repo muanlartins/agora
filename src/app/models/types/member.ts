@@ -1,9 +1,8 @@
-import { Society } from "../enums/society";
-
 export type Member = {
   id: string;
   name: string;
-  society: keyof typeof Society;
+  society: string;
   isTrainee: boolean;
   hasPfp: boolean;
+  blocked: boolean;
 }

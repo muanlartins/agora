@@ -19,5 +19,8 @@
     <li class="navbar__menu__option" routerLink="/members" routerLinkActive="navbar__menu__option--active">
       Membros
     </li>
+    <li *ngIf="isAdmin()" class="navbar__menu__option" routerLink="/member" routerLinkActive="navbar__menu__option--active">
+      Relatório
+    </li>
   </ul>
 </div>

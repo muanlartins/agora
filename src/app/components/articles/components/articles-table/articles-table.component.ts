@@ -114,14 +114,15 @@ export class ArticlesTableComponent implements OnInit, AfterViewInit {
       this.articleService.getAllArticles(),
       this.memberService.getAllMembers()
     ]).subscribe(([articles, members]) => {
-      if (!articles || !members) return;
-      this.loading = false;
-      this.articles = articles;
-      this.members = members;
-      this.filteredArticles = articles;
+      if (articles && articles.length && members && members.length) {
+        this.loading = false;
+        this.articles = articles;
+        this.members = members;
+        this.filteredArticles = articles;
 
-      this.initOptions();
-      this.setDataSource();
+        this.initOptions();
+        this.setDataSource();
+      }
     });
   }
 

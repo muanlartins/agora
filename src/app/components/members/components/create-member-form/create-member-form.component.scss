@@ -1,32 +1,30 @@
 @import './src/variables.scss';
 
 :host {
-  --mat-form-field-width: calc(calc(100% - 4rem) / 3);
   --button-height: 3.2rem;
 }
 
 .form {
   display: flex;
   justify-content: flex-start;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 64px;
+  gap: 32px;
   padding: 32px;
 
   &__field {
     position: relative;
-    width: var(--mat-form-field-width);
+  }
 
-    &__button {
-      width: var(--mat-form-field-width);
-      height: var(--button-height);
-    }
+  &__button {
+    height: var(--button-height);
   }
 
   &__avatars {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 32px;
+    gap: 16px;
 
     &__avatar {
       position: relative;

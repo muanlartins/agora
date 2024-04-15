@@ -6,7 +6,6 @@ import { Debate } from "../models/types/debate";
 import { getToken } from "../utils/token";
 import { DebateStyle } from "../models/enums/debate-style";
 import { DebateVenue } from "../models/enums/debate-venue";
-import { MotionType } from "../models/enums/motion-type";
 import { MotionTheme } from "../models/enums/motion-theme";
 import { Member } from "../models/types/member";
 import { MemberService } from "./member.service";
@@ -37,7 +36,7 @@ export class DebateService {
     }), this.memberService.getAllMembers()]).subscribe(([debates, members]) => this.debates$.next(debates
       .map((debate) => ({
         ...debate,
-        debaters: debate.debaters?.map((debater) => members.find((member) => member.id === debater.id)!),
+        debaters: debate.debaters.map((debater) => members.find((member) => member.id === debater.id)!),
         chair: members.find((member) => member.id === debate.chair.id)!,
         wings: debate.wings?.map((wing) => members.find((member) => member.id === wing.id)!),
       }))
@@ -51,7 +50,7 @@ export class DebateService {
     time: string,
     style: keyof typeof DebateStyle,
     venue: keyof typeof DebateVenue,
-    motionType: keyof typeof MotionType,
+    motionType: string,
     motionTheme: keyof typeof MotionTheme,
     motion: string,
     infoSlides: string[],
@@ -92,7 +91,7 @@ export class DebateService {
     time: string,
     style: keyof typeof DebateStyle,
     venue: keyof typeof DebateVenue,
-    motionType: keyof typeof MotionType,
+    motionType: string,
     motionTheme: keyof typeof MotionTheme,
     motion: string,
     infoSlides: string[],

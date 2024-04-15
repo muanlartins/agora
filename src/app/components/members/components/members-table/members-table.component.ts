@@ -7,7 +7,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Member } from 'src/app/models/types/member';
 import { MemberService } from 'src/app/services/member.service';
 import { CreateMemberModalComponent } from '../create-member-modal/create-member-modal.component';
-import { Society } from 'src/app/models/enums/society';
 import { Debate } from 'src/app/models/types/debate';
 import { DebateService } from 'src/app/services/debate.service';
 import { combineLatest } from 'rxjs';
@@ -59,10 +58,6 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
 
   public loading: boolean = false;
 
-  public get Society() {
-    return Society;
-  }
-
   public constructor(
     private formBuilder: FormBuilder,
     private memberService: MemberService,
@@ -97,7 +92,8 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
     this.form = this.formBuilder.group({
       name: [''],
       active: [false],
-      trainee: [false]
+      trainee: [false],
+      inactive: [false]
     });
 
     this.subscribeToValueChanges();
@@ -113,6 +109,10 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
     });
 
     this.form.controls['trainee'].valueChanges.subscribe(() => {
+      this.setFilters();
+    });
+
+    this.form.controls['inactive'].valueChanges.subscribe(() => {
       this.setFilters();
     });
   }
@@ -134,31 +134,33 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
       this.debateService.getAllDebates(),
       this.memberService.getAllMembers()
     ]).subscribe(([debates, members]) => {
-      this.loading = false;
-      this.debates = debates;
-      this.members = members;
-      this.members.forEach((member) => {
-        const debatesParticipations = this.debates.filter((debate) =>
-          debate.chair.id === member.id ||
-          debate.wings?.some((wing) => wing.id === member.id) ||
-          debate.debaters?.some((debater) => debater.id === member.id)
-        ).length;
+      if (debates && debates.length && members && members.length) {
+        this.loading = false;
+        this.debates = debates;
+        this.members = members;
+        this.members.forEach((member) => {
+          const debatesParticipations = this.debates.filter((debate) =>
+            debate.chair.id === member.id ||
+            debate.wings?.some((wing) => wing.id === member.id) ||
+            debate.debaters.some((debater) => debater.id === member.id)
+          ).length;
 
-        this.debatesParticipations[member.id] = debatesParticipations;
-      });
-      this.filteredMembers = members;
+          this.debatesParticipations[member.id] = debatesParticipations;
+        });
+        this.filteredMembers = members;
 
-      this.setDataSource();
+        this.setDataSource();
+      }
     });
   }
 
   public openCreateMemberModal() {
-    this.dialog.open(CreateMemberModalComponent, { width: '70vw' });
+    this.dialog.open(CreateMemberModalComponent, { width: '80vw' });
   }
 
   public getColumnData(element: Member, column: string) {
     if (column === 'name') return element.name;
-    if (column === 'society') return Society[element.society];
+    if (column === 'society') return element.society;
     if (column === 'debates') return this.debatesParticipations[element.id];
 
     return '';
@@ -167,7 +169,7 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   public editMember(id: string, event: Event) {
     event.stopPropagation();
 
-    this.dialog.open(CreateMemberModalComponent, { width: '70vw', data: {
+    this.dialog.open(CreateMemberModalComponent, { width: '80vw', data: {
       isEditing: true,
       member: this.members.find((member) => member.id === id)
     }});
@@ -179,7 +181,7 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
     const member = this.members.find((member) => member.id === id)!;
 
     this.dialog.open(ConfirmModalComponent, { data: {
-      text: `Você tem certeza que quer deletar o membro <b>${member.name} (${Society[member.society]})</b>?`,
+      text: `Você tem certeza que quer deletar o membro <b>${member.name} (${member.society})</b>?`,
       callback: async () => {
         this.loading = true;
         await this.memberService.deleteMember(id);
@@ -191,6 +193,7 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   public setFilters() {
     const active = this.form.controls['active'].value;
     const trainee = this.form.controls['trainee'].value;
+    const inactive = this.form.controls['inactive'].value;
 
     this.filteredMembers = this.members;
 
@@ -199,12 +202,21 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
         this.debates.some((debate) =>
           debate.chair.id === member.id ||
           debate.wings?.some((wing) => wing.id === member.id) ||
-          debate.debaters?.some((debater) => debater.id === member.id)
+          debate.debaters.some((debater) => debater.id === member.id)
         )
       );
 
     if (trainee)
       this.filteredMembers = this.filteredMembers.filter((member) => member.isTrainee);
+
+    if (inactive)
+      this.filteredMembers = this.filteredMembers.filter((member) =>
+        !this.debates.some((debate) =>
+          debate.chair.id === member.id ||
+          debate.wings?.some((wing) => wing.id === member.id) ||
+          debate.debaters.some((debater) => debater.id === member.id)
+        )
+      )
 
     this.setDataSource();
   }

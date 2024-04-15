@@ -15,27 +15,11 @@
   }
 
   &__content {
-    margin: 64px 128px;
+    margin: 0 128px;
     width: calc(100% - 256px);
 
     &__table {
       width: 100%;
-    }
-  }
-}
-
-@media (width <= 1600px) {
-  .page {
-    &__content {
-      margin: 48px 96px;
-    }
-  }
-}
-
-@media (width < 1440px) {
-  .page {
-    &__content {
-      margin: 36px 64px;
     }
   }
 }
