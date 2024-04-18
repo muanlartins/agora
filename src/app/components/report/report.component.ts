@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Chart, ChartType } from 'chart.js';
+import * as removeAccents from 'remove-accents';
 import { combineLatest } from 'rxjs';
 import { MotionTheme } from 'src/app/models/enums/motion-theme';
 import { Article } from 'src/app/models/types/article';
@@ -131,7 +132,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.form.controls['memberFilter'].valueChanges.subscribe((name: string) => {
       this.filteredMembers = this.members.filter((member: Member) =>
-        member.name.toLowerCase().includes(name.toLowerCase())
+        removeAccents(member.name.toLowerCase()).includes(removeAccents(name.toLowerCase()))
       );
 
       this.initOptions();

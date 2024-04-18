@@ -1,6 +1,7 @@
 import { Component, ElementRef, HostListener, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import * as removeAccents from 'remove-accents';
 import { firstValueFrom } from 'rxjs';
 import { ConfirmModalComponent } from 'src/app/components/members/components/confirm-modal/confirm-modal.component';
 import { Article } from 'src/app/models/types/article';
@@ -69,7 +70,7 @@ export class CreateArticleFormComponent implements OnInit {
     }
 
     this.form.controls['memberFilter'].valueChanges.subscribe((name: string) =>
-      this.filteredAuthorOptions = this.authorOptions.filter((option) => option.viewValue.toLowerCase().includes(name.toLowerCase()))
+      this.filteredAuthorOptions = this.authorOptions.filter((option) => removeAccents(option.viewValue.toLowerCase()).includes(removeAccents(name.toLowerCase())))
     );
   }
 

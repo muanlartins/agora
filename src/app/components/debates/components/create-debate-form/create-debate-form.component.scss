@@ -75,13 +75,13 @@
         }
 
         &__all {
-          display: flex;
-          align-items: center;
-          flex-direction: row;
-          flex-wrap: wrap;
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 8px;
 
           &__label {
             font-weight: 500;
+            grid-column: 1 / span 6;
           }
         }
 
@@ -192,28 +192,29 @@
               flex-direction: column;
               justify-content: flex-start;
               align-items: flex-start;
+              gap: 8px;
 
               &__name {
-                font-size: 16px;
+                font-size: 14px;
+                line-height: 100%;
               }
 
               &__position {
-                font-size: 12px;
+                font-size: 10px;
                 font-weight: 500;
+                line-height: 100%;
               }
             }
           }
         }
 
         &__iron {
-          margin-top: 1rem;
-          display: flex;
-          flex-direction: row;
-          justify-content: flex-start;
-          align-items: center;
-          gap: 1rem;
+          margin-top: 16px;
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
 
           &__label {
+            grid-column: 1 / span 6;
             font-weight: 500;
           }
         }
@@ -291,12 +292,7 @@
               align-items: flex-start;
 
               &__name {
-                font-size: 16px;
-              }
-
-              &__position {
-                font-size: 12px;
-                font-weight: 500;
+                font-size: 14px;
               }
             }
           }

@@ -39,12 +39,10 @@
       margin-bottom: 64px;
 
       &__ranks {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
         gap: 64px;
-        padding-bottom: 32px;
+        padding-bottom: 64px;
         border-bottom: 1px solid $secondary;
 
         &__rank {
@@ -52,7 +50,6 @@
           flex-direction: column;
           justify-content: flex-start;
           gap: 32px;
-          width: calc(calc(100% - 256px) / 3);
 
           &__title {
             font-size: 32px;
@@ -182,16 +179,13 @@
       &__charts {
         padding: 64px 0;
         border-top: 1px solid $secondary;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: flex-start;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 80px 64px;
 
         &__chart {
           display: flex;
           flex-direction: column;
-          width: calc(50% - 32px);
           height: 640px;
 
           &__title {

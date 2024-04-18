@@ -282,4 +282,12 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
   public isAdmin() {
     return isAdmin();
   }
+
+  public showEdit(column: string) {
+    return column === 'edit' && isAdmin();
+  }
+
+  public showDelete(column: string) {
+    return column === 'delete' && isAdmin();
+  }
 }

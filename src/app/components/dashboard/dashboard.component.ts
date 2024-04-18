@@ -53,6 +53,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('chart2')
   public chart2Ref: ElementRef<Chart>;
 
+  @ViewChild('chart3')
+  public chart3Ref: ElementRef<Chart>;
+
   public get months() {
     return MONTHS;
   }
@@ -486,13 +489,81 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }));
 
+    // Performance By House
+
+    const firsts = [og[0], oo[0], cg[0], co[0]];
+    const seconds = [og[1], oo[1], cg[1], co[1]];
+    const thirds = [og[2], oo[2], cg[2], co[2]];
+    const fourths = [og[3], oo[3], cg[3], co[3]];
+
+    this.charts.push(new Chart(this.chart1Ref.nativeElement, {
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: '#D9D9D9'
+            }
+          }
+        },
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: true,
+            grid: {
+              color: '#D9D9D920'
+            },
+            ticks: {
+              color: '#D9D9D9'
+            }
+          },
+          y: {
+            min: 0,
+            max: max([sum(firsts), sum(seconds), sum(thirds), sum(fourths)]) + 1,
+            stacked: true,
+            grid: {
+              color: '#D9D9D920'
+            },
+            ticks: {
+              color: '#D9D9D9',
+              stepSize: 1
+            }
+          }
+        },
+      },
+      data: {
+        labels: ['1G', '1O', '2G', '2O'],
+        datasets: [
+          {
+            type: 'bar',
+            label: 'Primeiros',
+            data: firsts,
+          },
+          {
+            type: 'bar',
+            label: 'Segundos',
+            data: seconds,
+          },
+          {
+            type: 'bar',
+            label: 'Terceiros',
+            data: thirds,
+          },
+          {
+            type: 'bar',
+            label: 'Quartos',
+            data: fourths,
+          },
+        ],
+      }
+    }));
+
     // Motion Types Frequency
 
     const motionTypesFrequency = uniqueMotionTypes.map((uniqueMotionType) =>
       motionTypes.filter((motionType) => motionType === uniqueMotionType).length
     );
 
-    this.charts.push(new Chart(this.chart1Ref.nativeElement, {
+    this.charts.push(new Chart(this.chart2Ref.nativeElement, {
       type: 'doughnut' as ChartType,
       options: {
         plugins: {
@@ -521,7 +592,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       motionThemes.filter((motionTheme) => motionTheme === uniqueMotionTheme).length
     );
 
-    this.charts.push(new Chart(this.chart2Ref.nativeElement, {
+    this.charts.push(new Chart(this.chart3Ref.nativeElement, {
       type: 'doughnut' as ChartType,
       options: {
         plugins: {

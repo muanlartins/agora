@@ -1,20 +1,13 @@
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import jwtDecode from "jwt-decode";
-import { Role } from "../models/enums/role";
+import { isAdmin } from "../utils/auth";
 
 @Injectable()
 export class AdminGuard  {
   public constructor (private router: Router) {}
 
   public canActivate() {
-    const token = localStorage.getItem('token');
-
-    if (token) {
-      const decryptedToken: any = jwtDecode(token);
-
-      return decryptedToken.role === Role.admin;
-    }
+    if (isAdmin()) return true;
 
     this.router.navigate(['']);
 

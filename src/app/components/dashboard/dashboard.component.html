@@ -52,7 +52,7 @@
                     *ngFor="let member of standing.members"
                     class="page__content__body__ranks__rank__standings__standing__content__members__member"
                   >
-                    <app-pfp [id]="member.id" [hasPfp]="member.hasPfp" [size]="32"></app-pfp>
+                    <app-pfp [id]="member.id" [hasPfp]="member.hasPfp" [size]="48"></app-pfp>
                     <div
                       class="page__content__body__ranks__rank__standings__standing__content__members__member__name"
                     > {{ member.name }} </div>
@@ -72,13 +72,24 @@
       <div class="page__content__body__charts" [style.opacity]="showCharts() ? 1 : 0">
         <div class="page__content__body__charts__chart">
           <div class="page__content__body__charts__chart__title">
-            Resultado das Casas
+            Resultado dos debates (por posição)
           </div>
           <div class="page__content__body__charts__chart__description">
-            Posição das casas nas calls dos debates
+            Proporção das casas nos resultados dos debates para cada posição
           </div>
           <div class="page__content__body__charts__chart__chart">
             <canvas #chart0></canvas>
+          </div>
+        </div>
+        <div class="page__content__body__charts__chart">
+          <div class="page__content__body__charts__chart__title">
+            Resultado dos debates (por casa)
+          </div>
+          <div class="page__content__body__charts__chart__description">
+            Proporção de posições nos resultados dos debates para cada casa
+          </div>
+          <div class="page__content__body__charts__chart__chart">
+            <canvas #chart1></canvas>
           </div>
         </div>
         <div class="page__content__body__charts__chart">
@@ -89,7 +100,7 @@
             Proporção dos tipos das moções escolhidas nos debates
           </div>
           <div class="page__content__body__charts__chart__chart">
-            <canvas #chart1></canvas>
+            <canvas #chart2></canvas>
           </div>
         </div>
         <div class="page__content__body__charts__chart">
@@ -100,7 +111,7 @@
             Proporção dos temas das moções escolhidas nos debates
           </div>
           <div class="page__content__body__charts__chart__chart">
-            <canvas #chart2></canvas>
+            <canvas #chart3></canvas>
           </div>
         </div>
       </div>

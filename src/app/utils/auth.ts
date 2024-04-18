@@ -7,5 +7,13 @@ export function isAdmin(): boolean {
 
   const decodedToken: any = jwtDecode(token);
 
-  return decodedToken.role === Role.admin;
+  return decodedToken.role === Role.admin || decodedToken.role === Role.superadmin;
+}
+
+export function isSuperAdmin(): boolean {
+  const token = getToken();
+
+  const decodedToken: any = jwtDecode(token);
+
+  return decodedToken.role === Role.superadmin;
 }

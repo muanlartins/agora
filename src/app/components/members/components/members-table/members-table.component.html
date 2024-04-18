@@ -1,7 +1,7 @@
 <form [formGroup]="form" class="form">
   <div class="form__filter">
     <mat-form-field class="form__filter__input">
-      <mat-label>Nome</mat-label>
+      <mat-label>Nome ou Sociedade</mat-label>
       <input matInput formControlName="name" />
     </mat-form-field>
     <mat-checkbox
@@ -49,10 +49,10 @@
         *matCellDef="let element"
       >
         {{ getColumnData(element, column) }}
-        <ng-container *ngIf="column === 'edit' && isAdmin()">
+        <ng-container *ngIf="showEdit(column)">
           <img (click)="editMember(element.id, $event)" src="assets/edit-text.png" class="table__body__tr__td__img" />
         </ng-container>
-        <ng-container *ngIf="column === 'delete' && debatesParticipations[element.id] === 0 && isAdmin()">
+        <ng-container *ngIf="showDelete(column, element.id)">
           <img (click)="deleteMember(element.id, $event)" src="assets/delete.png" class="table__body__tr__td__img" />
         </ng-container>
       </td>

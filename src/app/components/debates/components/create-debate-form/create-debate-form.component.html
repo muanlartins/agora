@@ -136,7 +136,7 @@
             <mat-select formControlName="society">
               <mat-option>Remover Filtro</mat-option>
               <ng-container *ngFor="let society of societyOptions">
-                <mat-option [value]="society">{{ society }}</mat-option>
+                <mat-option [value]="society.value">{{ society.viewValue }}</mat-option>
               </ng-container>
             </mat-select>
           </mat-form-field>

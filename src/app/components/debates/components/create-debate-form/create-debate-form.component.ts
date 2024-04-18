@@ -13,6 +13,7 @@ import { MemberService } from 'src/app/services/member.service';
 import { DebateService } from 'src/app/services/debate.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Debate } from 'src/app/models/types/debate';
+import * as removeAccents from 'remove-accents';
 
 @Component({
   selector: 'app-create-debate-form',
@@ -225,6 +226,8 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
         value: society,
         viewValue: society
       })).sort((a, b) => a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase()));
+
+      console.log(this.societyOptions);
     });
   }
 
@@ -269,7 +272,7 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
   public filterJudgeOptions(filter?: string) {
     if (filter) {
       this.filteredJudgeOptions = this.judgeOptions
-        .filter((judge) => judge.viewValue.toLowerCase().includes(filter.toLowerCase()));
+        .filter((judge) => removeAccents(judge.viewValue.toLowerCase()).includes(removeAccents(filter.toLowerCase())));
     } else this.filteredJudgeOptions = this.judgeOptions;
 
     this.selectedJudges.forEach((selectedJudge) => {
@@ -431,7 +434,7 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
 
     if (this.debatersFilterFormGroup.controls['name'].value) {
       const filter = this.debatersFilterFormGroup.controls['name'].value;
-      this.filteredDebaters = this.filteredDebaters.filter((debater: Member) => debater.name.toLowerCase().match(filter.toLowerCase()))
+      this.filteredDebaters = this.filteredDebaters.filter((debater: Member) => removeAccents(debater.name.toLowerCase()).includes(removeAccents(filter.toLowerCase())))
     }
 
     if (this.debatersFilterFormGroup.controls['society'].value) {

@@ -13,6 +13,7 @@ import { combineLatest } from 'rxjs';
 import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
 import { isAdmin } from 'src/app/utils/auth';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import * as removeAccents from 'remove-accents';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -74,6 +75,10 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   }
 
   public ngAfterViewInit(): void {
+    this.dataSource.filterPredicate = ((data: Member, filter: string) =>
+      removeAccents(data.name).toLowerCase().includes(removeAccents(filter).toLowerCase()) ||
+      removeAccents(data.society).toLowerCase().includes(removeAccents(filter).toLowerCase())
+    );
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
@@ -227,5 +232,13 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
 
   public getMember(element: Member): Member {
     return element;
+  }
+
+  public showEdit(column: string) {
+    return column === 'edit' && isAdmin();
+  }
+
+  public showDelete(column: string, id: string) {
+    return column === 'delete' && this.debatesParticipations[id] === 0 && isAdmin();
   }
 }

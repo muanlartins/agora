@@ -202,4 +202,12 @@ export class ArticlesTableComponent implements OnInit, AfterViewInit {
       member: member,
     } });
   }
+
+  public showEdit(column: string) {
+    return column === 'edit' && isAdmin();
+  }
+
+  public showDelete(column: string) {
+    return column === 'delete' && isAdmin();
+  }
 }

@@ -15,33 +15,25 @@
   width: 100%;
   overflow-x: hidden;
   margin-top: 32px;
-  table-layout: fixed;
 
   &__header {
     &__tr {
       &__th {
+        width: 0;
         padding-right: 16px;
         overflow: hidden;
 
         &--0 {
-          width: 320px;
+          width: 20%;
           white-space: normal;
         }
 
         &--1 {
-          width: auto;
+          width: 60%;
         }
 
         &--2 {
-          width: 300px;
-        }
-
-        &--3 {
-          width: 64px;
-        }
-
-        &--4 {
-          width: 64px;
+          width: 20%;
         }
       }
     }
@@ -70,6 +62,7 @@
           filter: $filter;
           width: 24px;
           height: 24px;
+          padding: 8px 16px;
         }
 
         &__details {
@@ -183,7 +176,7 @@
               flex-direction: column;
               justify-content: flex-start;
               align-items: flex-start;
-              gap: 4px;
+              gap: 8px;
 
               &--100 {
                 width: 100%;
@@ -215,6 +208,10 @@
                 font-size: 14px;
                 line-height: 100%;
                 color: $primary;
+                display: flex;
+                gap: 8px;
+                justify-content: flex-start;
+                align-items: center;
 
                 &__detail {
                   font-size: 12px;
