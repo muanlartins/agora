@@ -126,7 +126,7 @@
         border-top: 1px solid $secondary;
         padding-top: 64px;
 
-        &__graph {
+        &__chart {
           display: flex;
           flex-direction: column;
           width: calc(50% - 32px);
@@ -147,7 +147,7 @@
             margin-bottom: 32px;
           }
 
-          &__graph {
+          &__chart {
             height: 100%;
           }
         }

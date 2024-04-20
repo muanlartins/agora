@@ -72,7 +72,7 @@
     </div>
     <div class="article__footer__buttons">
       <button class="article__footer__buttons__button" mat-flat-button color="primary" (click)="close()">Cancelar</button>
-      <button class="article__footer__buttons__button" mat-flat-button color="primary" (click)="submit()">{{ getButtonText() }}</button>
+      <button [disabled]="!form.valid" class="article__footer__buttons__button" mat-flat-button color="primary" (click)="submit()">{{ getButtonText() }}</button>
     </div>
   </div>
 </form>

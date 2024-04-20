@@ -6,6 +6,7 @@ import { sha256 } from 'js-sha256';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Token } from 'src/app/models/types/token';
 import { AuthService } from 'src/app/services/auth.service';
+import { getToken } from 'src/app/utils/token';
 
 @Component({
   selector: 'app-login',
@@ -60,6 +61,6 @@ export class LoginComponent implements OnInit {
   }
 
   public checkLogin() {
-    if (localStorage.getItem("token")) this.router.navigate(["/dashboard"]);
+    if (getToken()) this.router.navigate(["/dashboard"]);
   }
 }

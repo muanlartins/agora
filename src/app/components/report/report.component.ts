@@ -13,6 +13,7 @@ import { Statistic } from 'src/app/models/types/statistic';
 import { ArticleService } from 'src/app/services/article.service';
 import { DebateService } from 'src/app/services/debate.service';
 import { MemberService } from 'src/app/services/member.service';
+import { housesColors, placementColors } from 'src/app/utils/constants';
 
 @Component({
   selector: 'app-report',
@@ -42,38 +43,41 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public charts: Chart[] = [];
 
-  @ViewChild('sps')
-  public spsRef: ElementRef<HTMLCanvasElement>;
+  @ViewChild('chart0')
+  public chart0Ref: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('houses')
-  public housesRef: ElementRef<HTMLCanvasElement>;
+  @ViewChild('chart1')
+  public chart1Ref: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('placements')
-  public placementsRef: ElementRef<HTMLCanvasElement>;
+  @ViewChild('chart2')
+  public chart2Ref: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('duosFrequency')
-  public duosFrequencyRef: ElementRef<HTMLCanvasElement>;
+  @ViewChild('chart3')
+  public chart3Ref: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('duosPerformance')
-  public duosPerformanceRef: ElementRef<HTMLCanvasElement>;
+  @ViewChild('chart4')
+  public chart4Ref: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('motionTypesPerformance')
-  public motionTypesPerformanceRef: ElementRef<HTMLCanvasElement>;
+  @ViewChild('chart5')
+  public chart5Ref: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('motionThemesPerformance')
-  public motionThemesPerformanceRef: ElementRef<HTMLCanvasElement>;
+  @ViewChild('chart6')
+  public chart6Ref: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('spsAsJudge')
-  public spsAsJudgeRef: ElementRef<HTMLCanvasElement>;
+  @ViewChild('chart7')
+  public chart7Ref: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('calls')
-  public callsRef: ElementRef<HTMLCanvasElement>;
+  @ViewChild('chart8')
+  public chart8Ref: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('motionTypesAsJudge')
-  public motionTypesAsJudgeRef: ElementRef<HTMLCanvasElement>;
+  @ViewChild('chart9')
+  public chart9Ref: ElementRef<HTMLCanvasElement>;
 
-  @ViewChild('motionThemesAsJudge')
-  public motionThemesAsJudgeRef: ElementRef<HTMLCanvasElement>;
+  @ViewChild('chart10')
+  public chart10Ref: ElementRef<HTMLCanvasElement>;
+
+  @ViewChild('chart11')
+  public chart11Ref: ElementRef<HTMLCanvasElement>;
 
   public get id() {
     return this.form.controls['member'].value;
@@ -272,17 +276,18 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public generateGraphs() {
     if (
-      !this.spsRef ||
-      !this.housesRef ||
-      !this.placementsRef ||
-      !this.duosFrequencyRef ||
-      !this.duosPerformanceRef ||
-      !this.motionTypesPerformanceRef ||
-      !this.motionThemesPerformanceRef ||
-      !this.spsAsJudgeRef ||
-      !this.callsRef ||
-      !this.motionTypesAsJudgeRef ||
-      !this.motionThemesAsJudgeRef ||
+      !this.chart0Ref ||
+      !this.chart1Ref ||
+      !this.chart2Ref ||
+      !this.chart3Ref ||
+      !this.chart4Ref ||
+      !this.chart5Ref ||
+      !this.chart6Ref ||
+      !this.chart7Ref ||
+      !this.chart8Ref ||
+      !this.chart9Ref ||
+      !this.chart10Ref ||
+      !this.chart11Ref ||
       !this.members ||
       !this.debates ||
       !this.articles ||
@@ -384,7 +389,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     const minSp = min(sps);
     const spAverage = average(sps);
 
-    this.charts.push(new Chart(this.spsRef.nativeElement, {
+    this.charts.push(new Chart(this.chart0Ref.nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -454,7 +459,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debatesAsCo.filter((debate: Debate) => debate.points[3] <= 1).length,
     ];
 
-    this.charts.push(new Chart(this.housesRef.nativeElement, {
+    this.charts.push(new Chart(this.chart1Ref.nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -529,7 +534,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debatesAsCo.filter((debate: Debate) => debate.points[3] == 0).length,
     ];
 
-    this.charts.push(new Chart(this.placementsRef.nativeElement, {
+    this.charts.push(new Chart(this.chart2Ref.nativeElement, {
       type: 'doughnut' as ChartType,
       options: {
         plugins: {
@@ -557,7 +562,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     const duosNames = uniqueDuos.map((duo) => duo.name);
     const duosAmounts = uniqueDuos.map((uniqueDuo) => duos.filter((duo) => duo.id === uniqueDuo.id).length);
 
-    this.charts.push(new Chart(this.duosFrequencyRef.nativeElement, {
+    this.charts.push(new Chart(this.chart3Ref.nativeElement, {
       type: 'doughnut' as ChartType,
       options: {
         plugins: {
@@ -590,7 +595,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debate.points[pointsIndexes[debate.debaters.findIndex((debater: Member) => debater.id === duo.id)]] <= 1
     ).length);
 
-    this.charts.push(new Chart(this.duosPerformanceRef.nativeElement, {
+    this.charts.push(new Chart(this.chart4Ref.nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -653,7 +658,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debate.points[pointsIndexes[debate.debaters.findIndex((debater: Member) => debater.id === this.member.id)]] <= 1
     ).length);
 
-    this.charts.push(new Chart(this.motionTypesPerformanceRef.nativeElement, {
+    this.charts.push(new Chart(this.chart5Ref.nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -716,7 +721,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debate.points[pointsIndexes[debate.debaters.findIndex((debater: Member) => debater.id === this.member.id)]] <= 1
     ).length);
 
-    this.charts.push(new Chart(this.motionThemesPerformanceRef.nativeElement, {
+    this.charts.push(new Chart(this.chart6Ref.nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -777,7 +782,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const spAverageAsJudge = Number(average(sps).toFixed(2));
 
-    this.charts.push(new Chart(this.spsAsJudgeRef.nativeElement, {
+    this.charts.push(new Chart(this.chart7Ref.nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -833,6 +838,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // Placements as Judge
 
+    // Performance By House
+
     const og = [0, 0, 0, 0];
     const oo = [0, 0, 0, 0];
     const cg = [0, 0, 0, 0];
@@ -845,7 +852,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       co[3 - debate.points[3]] ++;
     });
 
-    this.charts.push(new Chart(this.callsRef.nativeElement, {
+    this.charts.push(new Chart(this.chart8Ref.nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -886,21 +893,97 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
             type: 'bar',
             label: '1G',
             data: og,
+            backgroundColor: housesColors[0]
           },
           {
             type: 'bar',
             label: '1O',
             data: oo,
+            backgroundColor: housesColors[1]
           },
           {
             type: 'bar',
             label: '2G',
             data: cg,
+            backgroundColor: housesColors[2]
           },
           {
             type: 'bar',
             label: '2O',
             data: co,
+            backgroundColor: housesColors[3]
+          },
+        ],
+      }
+    }));
+
+    // Performance By House
+
+    const firsts = [og[0], oo[0], cg[0], co[0]];
+    const seconds = [og[1], oo[1], cg[1], co[1]];
+    const thirds = [og[2], oo[2], cg[2], co[2]];
+    const fourths = [og[3], oo[3], cg[3], co[3]];
+
+    this.charts.push(new Chart(this.chart9Ref.nativeElement, {
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: '#D9D9D9'
+            }
+          }
+        },
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: true,
+            grid: {
+              color: '#D9D9D920'
+            },
+            ticks: {
+              color: '#D9D9D9'
+            }
+          },
+          y: {
+            min: 0,
+            max: max([sum(firsts), sum(seconds), sum(thirds), sum(fourths)]) + 1,
+            stacked: true,
+            grid: {
+              color: '#D9D9D920'
+            },
+            ticks: {
+              color: '#D9D9D9',
+              stepSize: 1
+            }
+          }
+        },
+      },
+      data: {
+        labels: ['1G', '1O', '2G', '2O'],
+        datasets: [
+          {
+            type: 'bar',
+            label: 'Primeiros',
+            data: firsts,
+            backgroundColor: placementColors[0]
+          },
+          {
+            type: 'bar',
+            label: 'Segundos',
+            data: seconds,
+            backgroundColor: placementColors[1]
+          },
+          {
+            type: 'bar',
+            label: 'Terceiros',
+            data: thirds,
+            backgroundColor: placementColors[2]
+          },
+          {
+            type: 'bar',
+            label: 'Quartos',
+            data: fourths,
+            backgroundColor: placementColors[3]
           },
         ],
       }
@@ -912,7 +995,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       motionTypesAsJudge.filter((motionType) => motionType === uniqueMotionType).length
     );
 
-    this.charts.push(new Chart(this.motionTypesAsJudgeRef.nativeElement, {
+    this.charts.push(new Chart(this.chart10Ref.nativeElement, {
       type: 'doughnut' as ChartType,
       options: {
         plugins: {
@@ -941,7 +1024,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       motionThemesAsJudge.filter((motionTheme) => motionTheme === uniqueMotionTheme).length
     );
 
-    this.charts.push(new Chart(this.motionThemesAsJudgeRef.nativeElement, {
+    this.charts.push(new Chart(this.chart11Ref.nativeElement, {
       type: 'doughnut' as ChartType,
       options: {
         plugins: {

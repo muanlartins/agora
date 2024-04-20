@@ -1,16 +1,17 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SelectOption } from 'src/app/models/types/select-option';
 import { MemberService } from 'src/app/services/member.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Member } from 'src/app/models/types/member';
+import { getState, setState } from 'src/app/utils/state';
 
 @Component({
   selector: 'app-create-member-form',
   templateUrl: './create-member-form.component.html',
   styleUrls: ['./create-member-form.component.scss']
 })
-export class CreateMemberFormComponent implements OnInit {
+export class CreateMemberFormComponent implements OnInit, OnDestroy {
   @Input()
   public isEditing: boolean;
 
@@ -40,6 +41,42 @@ export class CreateMemberFormComponent implements OnInit {
     this.initOptions();
   }
 
+  ngOnDestroy(): void {
+    const state = getState();
+
+    const hasChanged = (property: keyof Member) =>
+      this.form.controls[property].value !== this.member[property];
+    const change = (property: keyof Member) =>
+      hasChanged(property) ?
+      this.form.controls[property].value :
+      '';
+
+    if (this.isEditing) {
+      state[this.member.id] = {
+        name: change('name'),
+        society: hasChanged('society') ?
+          this.showNewSocietyFormField() ?
+          this.form.controls['newSociety'].value :
+          this.form.controls['society'].value :
+          '',
+        isTrainee: change('isTrainee'),
+        blocked: change('blocked')
+      }
+    } else {
+      state['member'] = {
+        name: this.form.controls['name'].value,
+        society:
+          this.showNewSocietyFormField() ?
+          this.form.controls['newSociety'].value :
+          this.form.controls['society'].value,
+        isTrainee: this.form.controls['isTrainee'].value,
+        blocked: this.form.controls['blocked'].value
+      }
+    }
+
+    setState(state);
+  }
+
   public initForm() {
     this.form = this.formBuilder.group({
       name: ['', Validators.required],
@@ -49,6 +86,8 @@ export class CreateMemberFormComponent implements OnInit {
       blocked: [false]
     });
 
+    const state = getState();
+
     if (this.isEditing) {
       this.form.controls['name'].patchValue(this.member.name);
       this.form.controls['society'].patchValue(this.member.society);
@@ -56,6 +95,22 @@ export class CreateMemberFormComponent implements OnInit {
       this.form.controls['blocked'].patchValue(this.member.blocked);
 
       this.pfpUrl = this.member.hasPfp ? `/assets/pfps/${this.member.id}` : this.avatarIconUrl;
+
+      if (state[this.member.id] && state[this.member.id].name)
+        this.form.controls['name'].patchValue(state[this.member.id].name);
+      if (state[this.member.id] && state[this.member.id].society)
+        this.form.controls['society'].patchValue(state[this.member.id].society);
+      if (state[this.member.id] && state[this.member.id].isTrainee)
+        this.form.controls['isTrainee'].patchValue(state[this.member.id].isTrainee);
+      if (state[this.member.id] && state[this.member.id].blocked)
+        this.form.controls['blocked'].patchValue(state[this.member.id].blocked);
+    } else if (state['member']) {
+      const member = state['member'];
+
+      this.form.controls['name'].patchValue(member.name);
+      this.form.controls['society'].patchValue(member.society);
+      this.form.controls['isTrainee'].patchValue(member.isTrainee);
+      this.form.controls['blocked'].patchValue(member.blocked);
     }
   }
 
@@ -75,7 +130,7 @@ export class CreateMemberFormComponent implements OnInit {
   public async onSubmit() {
     const name = this.form.controls['name'].value;
     const society =
-      this.form.controls['newSociety'].value ?
+      this.showNewSocietyFormField() ?
       this.form.controls['newSociety'].value :
       this.form.controls['society'].value;
     const isTrainee = this.form.controls['isTrainee'].value;
@@ -102,6 +157,15 @@ export class CreateMemberFormComponent implements OnInit {
       await this.memberService.uploadMemberPfp(formData);
       this.loading = false;
     }
+
+    const state = getState();
+
+    if (this.isEditing)
+      delete state[this.member.id];
+    else
+      delete state['member'];
+
+    setState(state);
 
     this.dialog.closeAll();
   }

@@ -8,6 +8,7 @@ import { Article } from 'src/app/models/types/article';
 import { SelectOption } from 'src/app/models/types/select-option';
 import { ArticleService } from 'src/app/services/article.service';
 import { MemberService } from 'src/app/services/member.service';
+import { getState, setState } from 'src/app/utils/state';
 
 @Component({
   selector: 'app-create-article-form',
@@ -62,11 +63,29 @@ export class CreateArticleFormComponent implements OnInit {
       memberFilter: ['']
     });
 
+    const state = getState();
+
     if (this.isEditing) {
       this.form.controls['title'].patchValue(this.article.title);
       this.form.controls['content'].patchValue(this.article.content);
       this.form.controls['tag'].patchValue(this.article.tag);
       this.form.controls['authorId'].patchValue(this.article.authorId);
+
+      if (state[this.article.id] && state[this.article.id].title)
+        this.form.controls['title'].patchValue(state[this.article.id].title);
+      if (state[this.article.id] && state[this.article.id].content)
+        this.form.controls['content'].patchValue(state[this.article.id].content);
+      if (state[this.article.id] && state[this.article.id].tag)
+        this.form.controls['tag'].patchValue(state[this.article.id].tag);
+      if (state[this.article.id] && state[this.article.id].authorId)
+        this.form.controls['authorId'].patchValue(state[this.article.id].authorId);
+    } else if (state['article']) {
+      const article = state['article'];
+
+      this.form.controls['title'].patchValue(article.title);
+      this.form.controls['content'].patchValue(article.content);
+      this.form.controls['tag'].patchValue(article.tag);
+      this.form.controls['authorId'].patchValue(article.authorId);
     }
 
     this.form.controls['memberFilter'].valueChanges.subscribe((name: string) =>
@@ -113,12 +132,41 @@ export class CreateArticleFormComponent implements OnInit {
 
   public close() {
     this.dialog.open(ConfirmModalComponent, { data: {
-      text: `Você <b>perderá</b> qualquer mudança <b>não salva</b>! Tem certeza que quer continuar?`,
-      callback: async () => this.dialog.closeAll()
-    } });
+      text: `Você <b>poderá perder</b> qualquer mudança <b>não salva</b>! Tem certeza que quer continuar?`,
+      callback: () => {
+        const state = getState();
+
+        if (this.isEditing) {
+          state[this.article.id] = {
+            title: this.form.controls['title'].value !== this.article.title ? this.form.controls['title'].value : '',
+            content:  this.form.controls['content'].value !== this.article.content ? this.form.controls['content'].value : '',
+            tag: this.form.controls['tag'].value !== this.article.tag ?
+              this.showNewTagFormField() ?
+              this.form.controls['newTag'].value :
+              this.form.controls['tag'].value :
+              '',
+            authorId: this.form.controls['authorId'].value !== this.article.authorId ? this.form.controls['authorId'].value : '',
+          }
+        } else {
+          state['article'] = {
+            title: this.form.controls['title'].value,
+            content: this.form.controls['content'].value,
+            tag: this.showNewTagFormField() ?
+            this.form.controls['newTag'].value :
+            this.form.controls['tag'].value,
+            authorId: this.form.controls['authorId'].value,
+          }
+        }
+
+        setState(state);
+        this.dialog.closeAll();
+      }
+    }});
   }
 
   public async submit() {
+    if (!this.form.valid) return;
+
     const title = this.form.controls['title'].value;
     const content = this.form.controls['content'].value;
     const tag =
@@ -135,6 +183,15 @@ export class CreateArticleFormComponent implements OnInit {
       await this.articleService.createArticle(title, content, tag, authorId);
     }
     this.loading = false;
+
+    const state = getState();
+
+    if (this.isEditing)
+      delete state[this.article.id];
+    else
+      delete state['article'];
+
+    setState(state);
 
     this.dialog.closeAll();
   }

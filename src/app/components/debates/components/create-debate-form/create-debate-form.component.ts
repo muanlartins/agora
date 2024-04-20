@@ -1,5 +1,5 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { AfterContentChecked, Component, ElementRef, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterContentChecked, Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Subscription, firstValueFrom } from 'rxjs';
 import { DebateHouse } from 'src/app/models/enums/debate-house';
@@ -14,13 +14,14 @@ import { DebateService } from 'src/app/services/debate.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Debate } from 'src/app/models/types/debate';
 import * as removeAccents from 'remove-accents';
+import { getState, setState } from 'src/app/utils/state';
 
 @Component({
   selector: 'app-create-debate-form',
   templateUrl: './create-debate-form.component.html',
   styleUrls: ['./create-debate-form.component.scss']
 })
-export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
+export class CreateDebateFormComponent implements OnInit, AfterContentChecked, OnDestroy {
   @Input()
   public isEditing: boolean;
 
@@ -135,15 +136,82 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
     private dialog: MatDialog
   ) { }
 
-  async ngOnInit(): Promise<void> {
+  public ngOnInit(): void {
     this.initForm();
     this.initOptions();
     this.getAllMembers();
   }
 
-  ngAfterContentChecked(): void {
+  public ngAfterContentChecked(): void {
     this.checkDebatersCheckboxDisable();
     this.checkIronsCheckboxDisable();
+  }
+
+  public ngOnDestroy(): void {
+    const state = getState();
+
+    const hasChanged = (property: keyof Debate) =>
+      this.form.controls[property] && this.form.controls[property].value !== this.debate[property];
+    const change = (property: keyof Debate, change: any) =>
+      hasChanged(property) ? change : '';
+
+    if (this.isEditing) {
+      // state[this.debate.id] = {
+      //   date: change('date', new Date(this.debateFormGroup.controls['date'].value).toISOString()),
+      //   time: change('time', this.debateFormGroup.controls['time'].value),
+      //   style: change('style', this.debateFormGroup.controls['style'].value),
+      //   venue: change('venue', this.debateFormGroup.controls['venue'].value),
+      //   motionType: change(
+      //     'motionType',
+      //     this.showNewMotionTypeFormField() ?
+      //       this.debateFormGroup.controls['newMotionType'].value :
+      //       this.debateFormGroup.controls['motionType'].value
+      //   ),
+      //   motionTheme: change('motionTheme', this.debateFormGroup.controls['motionTheme'].value),
+      //   motion: change('motion', this.debateFormGroup.controls['motion'].value),
+      //   infoSlides: change('infoSlides', this.infoSlidesFormArray.controls.map((control) => control.value)),
+      //   tournament: change(
+      //     'tournament',
+      //     this.showNewTournamentFormField() ?
+      //     this.debateFormGroup.controls['newTournament'].value :
+      //     this.debateFormGroup.controls['tournament'].value
+      //   ),
+      //   debaters:
+      //     this.selectedDebaters.length === this.debate.debaters.length &&
+      //     this.selectedDebaters.map((selectedDebater: Member, index) =>
+      //       this.debate.debaters[index].id === selectedDebater.id).every((x) => x)
+      //    ? this.selectedDebaters : '',
+      //   sps: change('sps', this.spsFormArray.controls.map((control) =>
+      //     Number(control.value)
+      //   )),
+      //   chair: change('chair', this.getJudgeById(this.judgesFormGroup.controls['chair'].value)),
+      //   wings: change('wings', this.wingsFormArray.controls.map((control) => this.getJudgeById(control.value)))
+      // }
+    } else {
+      state['debate'] = {
+        date: new Date(this.debateFormGroup.controls['date'].value).toISOString(),
+        time: this.debateFormGroup.controls['time'].value,
+        style: this.debateFormGroup.controls['style'].value,
+        venue: this.debateFormGroup.controls['venue'].value,
+        motionType: this.showNewMotionTypeFormField() ?
+            this.debateFormGroup.controls['newMotionType'].value :
+            this.debateFormGroup.controls['motionType'].value,
+        motionTheme: this.debateFormGroup.controls['motionTheme'].value,
+        motion: this.debateFormGroup.controls['motion'].value,
+        infoSlides: this.infoSlidesFormArray.controls.map((control) => control.value),
+        tournament: this.showNewTournamentFormField() ?
+          this.debateFormGroup.controls['newTournament'].value :
+          this.debateFormGroup.controls['tournament'].value,
+        debaters: this.selectedDebaters,
+        sps: this.spsFormArray.controls.map((control) =>
+          Number(control.value)
+        ),
+        chair: this.getJudgeById(this.judgesFormGroup.controls['chair'].value),
+        wings: this.wingsFormArray.controls.map((control) => this.getJudgeById(control.value)),
+      }
+    }
+
+    setState(state);
   }
 
   public initForm() {
@@ -226,8 +294,6 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
         value: society,
         viewValue: society
       })).sort((a, b) => a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase()));
-
-      console.log(this.societyOptions);
     });
   }
 
@@ -252,6 +318,8 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
   }
 
   public initDebatersFormArray() {
+    this.debatersFormArray.patchValue([]);
+
     this.debaters.forEach((debater) => {
       if (this.isEditing && this.debate.debaters && this.debate.debaters.find((d) => d.id === debater.id))
         this.debatersFormArray.push(this.formBuilder.control(true));
@@ -516,16 +584,16 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
     switch (index) {
       case 0:
       case 2:
-        return 'lime';
+        return 'og';
       case 1:
       case 3:
-        return 'teal';
+        return 'oo';
       case 4:
       case 6:
-        return 'blue';
+        return 'cg';
       case 5:
       case 7:
-        return 'purple';
+        return 'co';
     }
 
     return '';
@@ -534,13 +602,13 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
   public getHouseBackgroundColor(house: DebateHouse) {
     switch(house) {
       case DebateHouse.og:
-        return 'lime';
+        return 'og';
       case DebateHouse.oo:
-        return 'teal';
+        return 'oo';
       case DebateHouse.cg:
-        return 'blue';
+        return 'cg';
       case DebateHouse.co:
-        return 'purple';
+        return 'co';
     }
   }
 
@@ -720,11 +788,25 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
     );
 
     this.loading = false;
+
+    const state = getState();
+
+    if (this.isEditing) {
+      // delete state[this.debate.id];
+    } else
+      delete state['debate'];
+
+    setState(state);
+
     this.dialog.closeAll();
   }
 
   public checkIsEditing() {
-    if (this.isEditing && !this.form.valid) {
+    const state = getState();
+
+    if (this.isEditing) {
+      const debate: Debate = state[this.debate.id];
+
       this.debateFormGroup.controls['date'].patchValue(this.debate.date);
       this.debateFormGroup.controls['time'].patchValue(this.debate.time);
       this.debateFormGroup.controls['style'].patchValue(this.debate.style);
@@ -748,6 +830,69 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked {
       this.judgesFormGroup.controls['chair'].patchValue(this.debate.chair.id);
       if (this.debate.wings) this.debate.wings.forEach((wing) => this.wingsFormArray.push(this.formBuilder.control(wing.id)));
       if (this.debate.tournament) this.debateFormGroup.controls['tournament'].patchValue(this.debate.tournament);
+
+
+      // const checkState = (property: keyof Debate) =>
+      //   debate && debate[property];
+
+      // if (checkState('date')) this.debateFormGroup.controls['date'].patchValue(debate.date);
+      // if (checkState('time')) this.debateFormGroup.controls['time'].patchValue(debate.time);
+      // if (checkState('style')) this.debateFormGroup.controls['style'].patchValue(debate.style);
+      // if (checkState('venue')) this.debateFormGroup.controls['venue'].patchValue(debate.venue);
+      // if (checkState('motionType')) this.debateFormGroup.controls['motionType'].patchValue(debate.motionType);
+      // if (checkState('motionTheme')) this.debateFormGroup.controls['motionTheme'].patchValue(debate.motionTheme);
+      // if (checkState('motion')) this.debateFormGroup.controls['motion'].patchValue(debate.motion);
+      // if (checkState('infoSlides'))
+      //   debate.infoSlides!.forEach((infoSlide: any) =>
+      //     this.infoSlidesFormArray.push(this.formBuilder.control(infoSlide))
+      //   )
+      // if (checkState('debaters')) {
+      //   this.selectedDebaters = debate.debaters;
+      //   this.uniqueSelectedDebaters = [... new Set(debate.debaters as Member[])];
+      //   this.selectedDebaters.forEach(() => this.spsFormArray.push(
+      //     this.formBuilder.control('', [Validators.min(50), Validators.max(100)])
+      //   ));
+      //   const irons = this.selectedDebaters.filter((debater, index, debaters) => debaters.indexOf(debater) !== index);
+      //   this.uniqueSelectedDebaters.forEach(() => this.ironsFormArray.push(this.formBuilder.control(false)));
+      //   irons.forEach((iron) => this.ironsFormArray.controls[this.uniqueSelectedDebaters.findIndex((debater) => iron.id === debater.id)].patchValue(true));
+      // }
+      // if (checkState('sps')) this.spsFormArray.controls.forEach((control, index) => control.patchValue(debate.sps![index]));
+      // if (checkState('chair')) this.judgesFormGroup.controls['chair'].patchValue(debate.chair.id);
+      // if (checkState('wings')) debate.wings!.forEach((wing) => this.wingsFormArray.push(this.formBuilder.control(wing.id)));
+      // if (checkState('tournament')) this.debateFormGroup.controls['tournament'].patchValue(debate.tournament);
+
+      this.setCallHouses();
+      this.subscribeToIronValueChanges();
+    } else if (state['debate']) {
+      const debate: Debate = state['debate'];
+
+      this.debateFormGroup.controls['date'].patchValue(debate.date);
+      this.debateFormGroup.controls['time'].patchValue(debate.time);
+      this.debateFormGroup.controls['style'].patchValue(debate.style);
+      this.debateFormGroup.controls['venue'].patchValue(debate.venue);
+      this.debateFormGroup.controls['motionType'].patchValue(debate.motionType);
+      this.debateFormGroup.controls['motionTheme'].patchValue(debate.motionTheme);
+      this.debateFormGroup.controls['motion'].patchValue(debate.motion);
+
+      if (debate.infoSlides) debate.infoSlides.forEach((infoSlide: any) =>
+        this.infoSlidesFormArray.push(this.formBuilder.control(infoSlide))
+      );
+
+      if (debate.debaters) {
+        this.selectedDebaters = debate.debaters;
+        this.uniqueSelectedDebaters = [... new Set(debate.debaters as Member[])];
+        this.selectedDebaters.forEach(() => this.spsFormArray.push(
+          this.formBuilder.control('', [Validators.min(50), Validators.max(100)])
+        ));
+        const irons = this.selectedDebaters.filter((debater, index, debaters) => debaters.indexOf(debater) !== index);
+        this.uniqueSelectedDebaters.forEach(() => this.ironsFormArray.push(this.formBuilder.control(false)));
+        irons.forEach((iron) => this.ironsFormArray.controls[this.uniqueSelectedDebaters.findIndex((debater) => iron.id === debater.id)].patchValue(true));
+      }
+
+      if (debate.sps) this.spsFormArray.controls.forEach((control, index) => control.patchValue(debate.sps![index]));
+      this.judgesFormGroup.controls['chair'].patchValue(debate.chair.id);
+      if (debate.wings) debate.wings.forEach((wing) => this.wingsFormArray.push(this.formBuilder.control(wing.id)));
+      if (debate.tournament) this.debateFormGroup.controls['tournament'].patchValue(debate.tournament);
 
       this.setCallHouses();
       this.subscribeToIronValueChanges();

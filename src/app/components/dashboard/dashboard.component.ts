@@ -12,7 +12,7 @@ import { Statistic } from 'src/app/models/types/statistic';
 import { ArticleService } from 'src/app/services/article.service';
 import { DebateService } from 'src/app/services/debate.service';
 import { MemberService } from 'src/app/services/member.service';
-import { MONTHS } from 'src/app/utils/constants';
+import { MONTHS, green1, green2, housesColors, placementColors, red1, red2 } from 'src/app/utils/constants';
 import { GoalService } from 'src/app/services/goals.service';
 import { Goal } from 'src/app/models/types/goal';
 
@@ -388,6 +388,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       !this.chart0Ref ||
       !this.chart1Ref ||
       !this.chart2Ref ||
+      !this.chart3Ref ||
       !this.members ||
       !this.debates ||
       !this.articles
@@ -469,21 +470,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             type: 'bar',
             label: '1G',
             data: og,
+            backgroundColor: housesColors[0]
           },
           {
             type: 'bar',
             label: '1O',
             data: oo,
+            backgroundColor: housesColors[1]
           },
           {
             type: 'bar',
             label: '2G',
             data: cg,
+            backgroundColor: housesColors[2]
           },
           {
             type: 'bar',
             label: '2O',
             data: co,
+            backgroundColor: housesColors[3]
           },
         ],
       }
@@ -537,21 +542,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
             type: 'bar',
             label: 'Primeiros',
             data: firsts,
+            backgroundColor: placementColors[0]
           },
           {
             type: 'bar',
             label: 'Segundos',
             data: seconds,
+            backgroundColor: placementColors[1]
           },
           {
             type: 'bar',
             label: 'Terceiros',
             data: thirds,
+            backgroundColor: placementColors[2]
           },
           {
             type: 'bar',
             label: 'Quartos',
             data: fourths,
+            backgroundColor: placementColors[3]
           },
         ],
       }
