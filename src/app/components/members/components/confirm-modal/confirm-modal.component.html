@@ -1,11 +1,19 @@
 <div class="content">
   <p class="content__text" [innerHTML]="text"></p>
 
-  <button
-    class="content__button"
-    mat-flat-button
-    color="primary"
-    type="submit"
-    (click)="callCallback()"
-  >Sim</button>
+  <div class="content__buttons">
+    <button
+      class="content__buttons__button"
+      mat-flat-button
+      color="primary"
+      (click)="callPositiveCallback()"
+    >Sim</button>
+    <button
+      *ngIf="negativeCallback"
+      class="content__buttons__button"
+      mat-stroked-button
+      color="primary"
+      (click)="callNegativeCallback()"
+    >Não</button>
+  </div>
 </div>

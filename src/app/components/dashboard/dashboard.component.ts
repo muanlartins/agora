@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Chart, ChartType } from 'chart.js';
 import * as moment from 'moment';
@@ -12,9 +12,10 @@ import { Statistic } from 'src/app/models/types/statistic';
 import { ArticleService } from 'src/app/services/article.service';
 import { DebateService } from 'src/app/services/debate.service';
 import { MemberService } from 'src/app/services/member.service';
-import { MONTHS, green1, green2, housesColors, placementColors, red1, red2 } from 'src/app/utils/constants';
+import { MONTHS, housesColors, placementColors } from 'src/app/utils/constants';
 import { GoalService } from 'src/app/services/goals.service';
 import { Goal } from 'src/app/models/types/goal';
+import { NzNotificationPlacement, NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-dashboard',
@@ -65,7 +66,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private debateService: DebateService,
     private articleService: ArticleService,
     private goalService: GoalService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef
   ) {
   }
 
@@ -76,6 +78,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.generateCharts();
+    this.cdr.detectChanges();
   }
 
   ngOnDestroy(): void {

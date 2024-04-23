@@ -46,8 +46,6 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
 
   public expandedElement?: Debate;
 
-  public loading: boolean = false;
-
   public label: { [column: string]: string } = {
     'Data': 'Data',
     'Moção': 'Moção',
@@ -129,12 +127,8 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
   }
 
   public getAllDebates() {
-    this.loading = true;
-
     this.debateService.getAllDebates().subscribe({
       next: (debates: Debate[]) => {
-        this.loading = false;
-
         this.debates = debates.sort((a, b) =>
           this.getDatetimeMoment(b.date, b.time).toDate().getTime() - this.getDatetimeMoment(a.date, a.time).toDate().getTime()
         );
@@ -145,7 +139,7 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
   }
 
   public openCreateDebateModal() {
-    this.dialog.open(CreateDebateModalComponent, { height : '90%' });
+    this.dialog.open(CreateDebateModalComponent, { height : '90%', disableClose: true });
   }
 
   public getDatetimeMoment(date: string, time: string) {
@@ -250,10 +244,14 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
   }
 
   public editDebate(id: string, event: any) {
-    this.dialog.open(CreateDebateModalComponent, { height: '90%', data: {
-      isEditing: true,
-      debate: this.debates.find((debate) => debate.id === id)
-    }});
+    this.dialog.open(CreateDebateModalComponent, {
+      height: '90%',
+      disableClose: true,
+      data: {
+        isEditing: true,
+        debate: this.debates.find((debate) => debate.id === id)
+      }
+    });
 
     event.stopPropagation();
   }
@@ -269,10 +267,8 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
         .format(`LLL`)}</b>, moção <b>${debate.motion}
         (${MotionTheme[debate.motionTheme]})</b>, chair <b>${debate.chair.name} (${debate.chair.society})</b> e debatedores
         <b>${debate.debaters.map((member) => `${member.name} (${member.society})`).join(', ')}</b>?`,
-      callback: async () => {
-        this.loading = true;
+      positiveCallback: async () => {
         await this.debateService.deleteDebate(id);
-        this.loading = false;
       }
     }});
 

@@ -12,7 +12,14 @@
     color: $white;
   }
 
-  &__button {
+  &__buttons {
     width: calc(100% - 64px);
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+
+    &__button {
+      width: 100%;
+    }
   }
 }

@@ -140,6 +140,38 @@ mat-stepper {
   line-height: 125%;
 }
 
+.nz-notification {
+  background: $brown;
+  color: $white;
+
+  .ant-notification-notice-message {
+    color: $white;
+    font-weight: 500;
+    font-size: 18px;
+  }
+
+  .ant-notification-notice-description {
+    color: $white;
+    font-size: 14px;
+  }
+
+  svg {
+    fill: $primary;
+  }
+
+  .ant-notification-notice-icon-success svg {
+    fill: $success;
+  }
+
+  .ant-notification-notice-icon-error svg {
+    fill: $danger;
+  }
+
+  .ant-notification-notice-close-x svg {
+    fill: $white;
+  }
+}
+
 a {
   color: inherit;
 }

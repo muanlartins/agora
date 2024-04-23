@@ -1,9 +1,8 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, combineLatest, firstValueFrom } from "rxjs";
 import { BASE_URL } from "../utils/constants";
 import { Debate } from "../models/types/debate";
-import { getToken } from "../utils/token";
 import { DebateStyle } from "../models/enums/debate-style";
 import { DebateVenue } from "../models/enums/debate-venue";
 import { MotionTheme } from "../models/enums/motion-theme";
@@ -23,24 +22,27 @@ const ENDPOINTS = {
 export class DebateService {
   public debates$: BehaviorSubject<Debate[]> = new BehaviorSubject<Debate[]>([]);
 
-  constructor(private httpClient: HttpClient, private memberService: MemberService) { }
+  constructor(
+    private httpClient: HttpClient,
+    private memberService: MemberService
+  ) { }
 
   public getAllDebates(): Observable<Debate[]> {
     if (this.debates$.value && this.debates$.value.length)
       return this.debates$.asObservable();
 
-    const token = getToken();
-
-    combineLatest([this.httpClient.get<Debate[]>(BASE_URL + ENDPOINTS.getAllDebates, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
-    }), this.memberService.getAllMembers()]).subscribe(([debates, members]) => this.debates$.next(debates
-      .map((debate) => ({
-        ...debate,
-        debaters: debate.debaters.map((debater) => members.find((member) => member.id === debater.id)!),
-        chair: members.find((member) => member.id === debate.chair.id)!,
-        wings: debate.wings?.map((wing) => members.find((member) => member.id === wing.id)!),
-      }))
-    ));
+    combineLatest([
+      this.httpClient.get<Debate[]>(BASE_URL + ENDPOINTS.getAllDebates),
+      this.memberService.getAllMembers()
+    ]).subscribe(([debates, members]) => {
+        this.debates$.next(debates
+          .map((debate) => ({
+            ...debate,
+            debaters: debate.debaters.map((debater) => members.find((member) => member.id === debater.id)!),
+            chair: members.find((member) => member.id === debate.chair.id)!,
+            wings: debate.wings?.map((wing) => members.find((member) => member.id === wing.id)!),
+          })));
+      });
 
     return this.debates$.asObservable();
   }
@@ -61,8 +63,6 @@ export class DebateService {
     wings: Member[],
     tournament?: string
   ) {
-    const token = getToken();
-
     const debate = await firstValueFrom(this.httpClient.post<Debate>(BASE_URL + ENDPOINTS.createDebate, {
       date,
       time,
@@ -78,8 +78,6 @@ export class DebateService {
       chair,
       wings,
       tournament
-    }, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
     }));
 
     this.debates$.next([...this.debates$.value, debate]);
@@ -102,8 +100,6 @@ export class DebateService {
     wings: Member[],
     tournament?: string
   ) {
-    const token = getToken();
-
     await firstValueFrom(this.httpClient.put<boolean>(BASE_URL + ENDPOINTS.updateDebate, {
       id,
       date,
@@ -120,8 +116,6 @@ export class DebateService {
       chair,
       wings,
       tournament
-    }, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
     }));
 
     const debates = [...this.debates$.value];
@@ -132,11 +126,7 @@ export class DebateService {
   }
 
   public async deleteDebate(id: string) {
-    const token = getToken();
-
-    await firstValueFrom(this.httpClient.delete<boolean>(BASE_URL + ENDPOINTS.deleteDebate(id), {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
-    }));
+    await firstValueFrom(this.httpClient.delete<boolean>(BASE_URL + ENDPOINTS.deleteDebate(id)));
 
     const debates = [...this.debates$.value];
     debates.splice(debates.findIndex((debate) => debate.id === id), 1);

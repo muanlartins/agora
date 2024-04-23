@@ -1,7 +1,7 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { AfterContentChecked, Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
-import { Subscription, firstValueFrom } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { DebateHouse } from 'src/app/models/enums/debate-house';
 import { DebatePosition } from 'src/app/models/enums/debate-position';
 import { DebateStyle } from 'src/app/models/enums/debate-style';
@@ -11,17 +11,19 @@ import { SelectOption } from 'src/app/models/types/select-option';
 import { Member } from 'src/app/models/types/member';
 import { MemberService } from 'src/app/services/member.service';
 import { DebateService } from 'src/app/services/debate.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Debate } from 'src/app/models/types/debate';
 import * as removeAccents from 'remove-accents';
 import { getState, setState } from 'src/app/utils/state';
+import { ConfirmModalComponent } from 'src/app/components/members/components/confirm-modal/confirm-modal.component';
+import { CreateDebateModalComponent } from '../create-debate-modal/create-debate-modal.component';
 
 @Component({
   selector: 'app-create-debate-form',
   templateUrl: './create-debate-form.component.html',
   styleUrls: ['./create-debate-form.component.scss']
 })
-export class CreateDebateFormComponent implements OnInit, AfterContentChecked, OnDestroy {
+export class CreateDebateFormComponent implements OnInit, AfterViewInit {
   @Input()
   public isEditing: boolean;
 
@@ -42,6 +44,8 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
 
   public debaters: Member[] = [];
 
+  public members: Member[] = [];
+
   public filteredDebaters: Member[] = [];
 
   public selectedDebaters: Member[] = [];
@@ -59,8 +63,6 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
   public debateHouses: [key: string, value: DebateHouse][] = Object.entries(DebateHouse);
 
   public callHouses: [key: string, value: DebateHouse][] = [];
-
-  public loading: boolean = false;
 
   @ViewChildren('debatersLegendHouse')
   public debatersLegendHousesRefs: QueryList<ElementRef<HTMLDivElement>>;
@@ -133,7 +135,9 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
     private formBuilder: FormBuilder,
     private memberService: MemberService,
     private debateService: DebateService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dialogRef: MatDialogRef<CreateDebateModalComponent>,
+    private cdr: ChangeDetectorRef
   ) { }
 
   public ngOnInit(): void {
@@ -142,76 +146,11 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
     this.getAllMembers();
   }
 
-  public ngAfterContentChecked(): void {
+  public ngAfterViewInit(): void {
+    this.checkIsEditing();
     this.checkDebatersCheckboxDisable();
     this.checkIronsCheckboxDisable();
-  }
-
-  public ngOnDestroy(): void {
-    const state = getState();
-
-    const hasChanged = (property: keyof Debate) =>
-      this.form.controls[property] && this.form.controls[property].value !== this.debate[property];
-    const change = (property: keyof Debate, change: any) =>
-      hasChanged(property) ? change : '';
-
-    if (this.isEditing) {
-      // state[this.debate.id] = {
-      //   date: change('date', new Date(this.debateFormGroup.controls['date'].value).toISOString()),
-      //   time: change('time', this.debateFormGroup.controls['time'].value),
-      //   style: change('style', this.debateFormGroup.controls['style'].value),
-      //   venue: change('venue', this.debateFormGroup.controls['venue'].value),
-      //   motionType: change(
-      //     'motionType',
-      //     this.showNewMotionTypeFormField() ?
-      //       this.debateFormGroup.controls['newMotionType'].value :
-      //       this.debateFormGroup.controls['motionType'].value
-      //   ),
-      //   motionTheme: change('motionTheme', this.debateFormGroup.controls['motionTheme'].value),
-      //   motion: change('motion', this.debateFormGroup.controls['motion'].value),
-      //   infoSlides: change('infoSlides', this.infoSlidesFormArray.controls.map((control) => control.value)),
-      //   tournament: change(
-      //     'tournament',
-      //     this.showNewTournamentFormField() ?
-      //     this.debateFormGroup.controls['newTournament'].value :
-      //     this.debateFormGroup.controls['tournament'].value
-      //   ),
-      //   debaters:
-      //     this.selectedDebaters.length === this.debate.debaters.length &&
-      //     this.selectedDebaters.map((selectedDebater: Member, index) =>
-      //       this.debate.debaters[index].id === selectedDebater.id).every((x) => x)
-      //    ? this.selectedDebaters : '',
-      //   sps: change('sps', this.spsFormArray.controls.map((control) =>
-      //     Number(control.value)
-      //   )),
-      //   chair: change('chair', this.getJudgeById(this.judgesFormGroup.controls['chair'].value)),
-      //   wings: change('wings', this.wingsFormArray.controls.map((control) => this.getJudgeById(control.value)))
-      // }
-    } else {
-      state['debate'] = {
-        date: new Date(this.debateFormGroup.controls['date'].value).toISOString(),
-        time: this.debateFormGroup.controls['time'].value,
-        style: this.debateFormGroup.controls['style'].value,
-        venue: this.debateFormGroup.controls['venue'].value,
-        motionType: this.showNewMotionTypeFormField() ?
-            this.debateFormGroup.controls['newMotionType'].value :
-            this.debateFormGroup.controls['motionType'].value,
-        motionTheme: this.debateFormGroup.controls['motionTheme'].value,
-        motion: this.debateFormGroup.controls['motion'].value,
-        infoSlides: this.infoSlidesFormArray.controls.map((control) => control.value),
-        tournament: this.showNewTournamentFormField() ?
-          this.debateFormGroup.controls['newTournament'].value :
-          this.debateFormGroup.controls['tournament'].value,
-        debaters: this.selectedDebaters,
-        sps: this.spsFormArray.controls.map((control) =>
-          Number(control.value)
-        ),
-        chair: this.getJudgeById(this.judgesFormGroup.controls['chair'].value),
-        wings: this.wingsFormArray.controls.map((control) => this.getJudgeById(control.value)),
-      }
-    }
-
-    setState(state);
+    this.cdr.detectChanges();
   }
 
   public initForm() {
@@ -256,11 +195,7 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
       )
     }
 
-    this.loading = true;
-
     this.debateService.getAllDebates().subscribe((debates: Debate[]) => {
-      this.loading = false;
-
       this.tournamentOptions = [...new Set(['Interno', ...debates.map((debate) => debate.tournament)]), 'Nova Ocasião']
       .filter((tournament): tournament is string => tournament !== null)
       .map((tournament) => ({
@@ -284,30 +219,17 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
         return a.value.toLowerCase().localeCompare(b.value.toLowerCase())
       });
     });
-
-    this.loading = true;
-
-    this.memberService.getAllMembers().subscribe((members: Member[]) => {
-      this.loading = false;
-
-      this.societyOptions = [...new Set(members.map((member) => member.society))].map((society: string) => ({
-        value: society,
-        viewValue: society
-      })).sort((a, b) => a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase()));
-    });
   }
 
   public getAllMembers() {
-    this.loading = true;
     this.memberService.getAllMembers().subscribe((members) => {
-      this.loading = false;
       this.debaters = members.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+      this.members = members.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
       this.judges = members.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
       this.initDebaters();
       this.initJudgeOptions();
       this.subscribeToValueChanges();
-      this.checkIsEditing();
     });
   }
 
@@ -320,8 +242,23 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
   public initDebatersFormArray() {
     this.debatersFormArray.patchValue([]);
 
+    const state = getState();
+
     this.debaters.forEach((debater) => {
-      if (this.isEditing && this.debate.debaters && this.debate.debaters.find((d) => d.id === debater.id))
+      if (
+        (
+          this.isEditing &&
+          this.debate.debaters &&
+          this.debate.debaters.find((d) => d.id === debater.id)
+        )
+        ||
+        (
+          !this.isEditing &&
+          state['debate'] &&
+          state['debate'].debaters &&
+          state['debate'].debaters.find((d: any) => d.id === debater.id)
+        )
+      )
         this.debatersFormArray.push(this.formBuilder.control(true));
       else this.debatersFormArray.push(this.formBuilder.control(false));
     });
@@ -335,6 +272,13 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
     }));
 
     this.filteredJudgeOptions = this.judgeOptions;
+  }
+
+  public initSocietyOptions() {
+    this.societyOptions = [...new Set(this.members.map((member) => member.society))].map((society: string) => ({
+      value: society,
+      viewValue: society
+    })).sort((a, b) => a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase()));
   }
 
   public filterJudgeOptions(filter?: string) {
@@ -752,8 +696,6 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
     const chair: Member = this.getJudgeById(this.judgesFormGroup.controls['chair'].value);
     const wings: Member[] = this.wingsFormArray.controls.map((control) => this.getJudgeById(control.value));
 
-    this.loading = true;
-
     if (this.isEditing) await this.debateService.updateDebate(
       this.debate.id,
       date,
@@ -787,14 +729,11 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
       wings
     );
 
-    this.loading = false;
-
     const state = getState();
 
-    if (this.isEditing) {
-      // delete state[this.debate.id];
-    } else
+    if (!this.isEditing) {
       delete state['debate'];
+    }
 
     setState(state);
 
@@ -805,8 +744,6 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
     const state = getState();
 
     if (this.isEditing) {
-      const debate: Debate = state[this.debate.id];
-
       this.debateFormGroup.controls['date'].patchValue(this.debate.date);
       this.debateFormGroup.controls['time'].patchValue(this.debate.time);
       this.debateFormGroup.controls['style'].patchValue(this.debate.style);
@@ -831,36 +768,7 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
       if (this.debate.wings) this.debate.wings.forEach((wing) => this.wingsFormArray.push(this.formBuilder.control(wing.id)));
       if (this.debate.tournament) this.debateFormGroup.controls['tournament'].patchValue(this.debate.tournament);
 
-
-      // const checkState = (property: keyof Debate) =>
-      //   debate && debate[property];
-
-      // if (checkState('date')) this.debateFormGroup.controls['date'].patchValue(debate.date);
-      // if (checkState('time')) this.debateFormGroup.controls['time'].patchValue(debate.time);
-      // if (checkState('style')) this.debateFormGroup.controls['style'].patchValue(debate.style);
-      // if (checkState('venue')) this.debateFormGroup.controls['venue'].patchValue(debate.venue);
-      // if (checkState('motionType')) this.debateFormGroup.controls['motionType'].patchValue(debate.motionType);
-      // if (checkState('motionTheme')) this.debateFormGroup.controls['motionTheme'].patchValue(debate.motionTheme);
-      // if (checkState('motion')) this.debateFormGroup.controls['motion'].patchValue(debate.motion);
-      // if (checkState('infoSlides'))
-      //   debate.infoSlides!.forEach((infoSlide: any) =>
-      //     this.infoSlidesFormArray.push(this.formBuilder.control(infoSlide))
-      //   )
-      // if (checkState('debaters')) {
-      //   this.selectedDebaters = debate.debaters;
-      //   this.uniqueSelectedDebaters = [... new Set(debate.debaters as Member[])];
-      //   this.selectedDebaters.forEach(() => this.spsFormArray.push(
-      //     this.formBuilder.control('', [Validators.min(50), Validators.max(100)])
-      //   ));
-      //   const irons = this.selectedDebaters.filter((debater, index, debaters) => debaters.indexOf(debater) !== index);
-      //   this.uniqueSelectedDebaters.forEach(() => this.ironsFormArray.push(this.formBuilder.control(false)));
-      //   irons.forEach((iron) => this.ironsFormArray.controls[this.uniqueSelectedDebaters.findIndex((debater) => iron.id === debater.id)].patchValue(true));
-      // }
-      // if (checkState('sps')) this.spsFormArray.controls.forEach((control, index) => control.patchValue(debate.sps![index]));
-      // if (checkState('chair')) this.judgesFormGroup.controls['chair'].patchValue(debate.chair.id);
-      // if (checkState('wings')) debate.wings!.forEach((wing) => this.wingsFormArray.push(this.formBuilder.control(wing.id)));
-      // if (checkState('tournament')) this.debateFormGroup.controls['tournament'].patchValue(debate.tournament);
-
+      this.applyFilters();
       this.setCallHouses();
       this.subscribeToIronValueChanges();
     } else if (state['debate']) {
@@ -890,10 +798,11 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
       }
 
       if (debate.sps) this.spsFormArray.controls.forEach((control, index) => control.patchValue(debate.sps![index]));
-      this.judgesFormGroup.controls['chair'].patchValue(debate.chair.id);
+      if (debate.chair) this.judgesFormGroup.controls['chair'].patchValue(debate.chair.id);
       if (debate.wings) debate.wings.forEach((wing) => this.wingsFormArray.push(this.formBuilder.control(wing.id)));
       if (debate.tournament) this.debateFormGroup.controls['tournament'].patchValue(debate.tournament);
 
+      this.applyFilters();
       this.setCallHouses();
       this.subscribeToIronValueChanges();
     }
@@ -911,5 +820,44 @@ export class CreateDebateFormComponent implements OnInit, AfterContentChecked, O
 
   public showNewMotionTypeFormField() {
     return this.debateFormGroup.controls['motionType'].value === 'Novo Tipo';
+  }
+
+  public close() {
+    this.dialog.open(ConfirmModalComponent, {
+      data: {
+        text: `Você <b>poderá perder</b> qualquer mudança <b>não salva</b>! Tem certeza que quer continuar?`,
+        positiveCallback: () => {
+          const state = getState();
+
+          if (!this.isEditing) {
+            state['debate'] = {
+              date: new Date(this.debateFormGroup.controls['date'].value).toISOString(),
+              time: this.debateFormGroup.controls['time'].value,
+              style: this.debateFormGroup.controls['style'].value,
+              venue: this.debateFormGroup.controls['venue'].value,
+              motionType: this.showNewMotionTypeFormField() ?
+                  this.debateFormGroup.controls['newMotionType'].value :
+                  this.debateFormGroup.controls['motionType'].value,
+              motionTheme: this.debateFormGroup.controls['motionTheme'].value,
+              motion: this.debateFormGroup.controls['motion'].value,
+              infoSlides: this.infoSlidesFormArray.controls.map((control) => control.value),
+              tournament: this.showNewTournamentFormField() ?
+                this.debateFormGroup.controls['newTournament'].value :
+                this.debateFormGroup.controls['tournament'].value,
+              debaters: this.selectedDebaters,
+              sps: this.spsFormArray.controls.map((control) =>
+                Number(control.value)
+              ),
+              chair: this.getJudgeById(this.judgesFormGroup.controls['chair'].value),
+              wings: this.wingsFormArray.controls.map((control) => this.getJudgeById(control.value)),
+            }
+          }
+
+          setState(state);
+
+          this.dialogRef.close();
+        }
+      }
+    });
   }
 }

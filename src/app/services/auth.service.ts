@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Token } from 'src/app/models/types/token';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { BASE_URL } from '../utils/constants';
+import { Router } from '@angular/router';
 
 const ENDPOINTS = {
   login: '/auth/login',
-  refresh: '/auth/refresh',
 }
 
 @Injectable({
@@ -14,18 +14,15 @@ const ENDPOINTS = {
 })
 export class AuthService {
 
-  constructor(private httpClient: HttpClient) { }
+  constructor(
+    private httpClient: HttpClient,
+    private router: Router
+  ) { }
 
   public login(login: string, password: string): Observable<Token> {
     return this.httpClient.post<string>(BASE_URL + ENDPOINTS.login, {
       login,
       password
-    });
-  }
-
-  public refresh(token: string) {
-    return this.httpClient.get<Token>(BASE_URL + ENDPOINTS.refresh, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
     });
   }
 }

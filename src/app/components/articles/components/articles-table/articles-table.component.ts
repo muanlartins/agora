@@ -177,7 +177,7 @@ export class ArticlesTableComponent implements OnInit, AfterViewInit {
 
     this.dialog.open(ConfirmModalComponent, { data: {
       text: `Você tem certeza que quer deletar o artigo <b>${article.title}</b>?`,
-      callback: async () => {
+      positiveCallback: async () => {
         this.loading = true;
         await this.articleService.deleteArticle(id);
         this.loading = false;

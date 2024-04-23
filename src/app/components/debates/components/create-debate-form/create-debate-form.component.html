@@ -1,3 +1,4 @@
+<button class="cancel" mat-flat-button color="primary" (click)="close()">Cancelar</button>
 <form class="form" [formGroup]="form" mat-dialog-content>
   <mat-stepper class="form__stepper" [linear]="false" orientation="vertical">
     <mat-step class="form__stepper__step" [stepControl]="debateFormGroup">
@@ -302,4 +303,4 @@
     </mat-step>
   </mat-stepper>
 </form>
-<app-spinner [loading]="loading" [fullscreen]="true"></app-spinner>
+<button class="cancel" mat-flat-button color="primary" (click)="close()">Cancelar</button>

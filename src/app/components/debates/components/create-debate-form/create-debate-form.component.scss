@@ -4,6 +4,11 @@
   --mat-form-field-width: calc(calc(100% - 2rem) / 2);
 }
 
+.cancel {
+  width: calc(100% - 64px);
+  margin: 32px 0 32px 32px;
+}
+
 .form {
   display: flex;
   flex-direction: column;

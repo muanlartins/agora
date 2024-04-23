@@ -30,8 +30,6 @@ export class CreateArticleFormComponent implements OnInit {
 
   public filteredAuthorOptions: SelectOption[] = [];
 
-  public loading: boolean = false;
-
   public get title() {
     return this.form ? this.form.controls['title'].value : '';
   }
@@ -45,7 +43,6 @@ export class CreateArticleFormComponent implements OnInit {
     private articleService: ArticleService,
     private memberService: MemberService,
     private dialog: MatDialog,
-    private elementRef: ElementRef
   ) {}
 
   public async ngOnInit(): Promise<void> {
@@ -133,7 +130,7 @@ export class CreateArticleFormComponent implements OnInit {
   public close() {
     this.dialog.open(ConfirmModalComponent, { data: {
       text: `Você <b>poderá perder</b> qualquer mudança <b>não salva</b>! Tem certeza que quer continuar?`,
-      callback: () => {
+      positiveCallback: () => {
         const state = getState();
 
         if (this.isEditing) {
@@ -160,7 +157,7 @@ export class CreateArticleFormComponent implements OnInit {
 
         setState(state);
         this.dialog.closeAll();
-      }
+      },
     }});
   }
 
@@ -175,14 +172,10 @@ export class CreateArticleFormComponent implements OnInit {
       this.form.controls['tag'].value;
     const authorId = this.form.controls['authorId'].value;
 
-
-    this.loading = true;
     if (this.isEditing)
       await this.articleService.updateArticle(this.article.id, title, content, tag, authorId);
-    else {
+    else
       await this.articleService.createArticle(title, content, tag, authorId);
-    }
-    this.loading = false;
 
     const state = getState();
 

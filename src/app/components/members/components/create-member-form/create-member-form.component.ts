@@ -1,17 +1,19 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SelectOption } from 'src/app/models/types/select-option';
 import { MemberService } from 'src/app/services/member.service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Member } from 'src/app/models/types/member';
 import { getState, setState } from 'src/app/utils/state';
+import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component';
+import { CreateMemberModalComponent } from '../create-member-modal/create-member-modal.component';
 
 @Component({
   selector: 'app-create-member-form',
   templateUrl: './create-member-form.component.html',
   styleUrls: ['./create-member-form.component.scss']
 })
-export class CreateMemberFormComponent implements OnInit, OnDestroy {
+export class CreateMemberFormComponent implements OnInit {
   @Input()
   public isEditing: boolean;
 
@@ -33,48 +35,13 @@ export class CreateMemberFormComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private memberService: MemberService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private dialogRef: MatDialogRef<CreateMemberModalComponent>
   ) {}
 
   ngOnInit(): void {
     this.initForm();
     this.initOptions();
-  }
-
-  ngOnDestroy(): void {
-    const state = getState();
-
-    const hasChanged = (property: keyof Member) =>
-      this.form.controls[property].value !== this.member[property];
-    const change = (property: keyof Member) =>
-      hasChanged(property) ?
-      this.form.controls[property].value :
-      '';
-
-    if (this.isEditing) {
-      state[this.member.id] = {
-        name: change('name'),
-        society: hasChanged('society') ?
-          this.showNewSocietyFormField() ?
-          this.form.controls['newSociety'].value :
-          this.form.controls['society'].value :
-          '',
-        isTrainee: change('isTrainee'),
-        blocked: change('blocked')
-      }
-    } else {
-      state['member'] = {
-        name: this.form.controls['name'].value,
-        society:
-          this.showNewSocietyFormField() ?
-          this.form.controls['newSociety'].value :
-          this.form.controls['society'].value,
-        isTrainee: this.form.controls['isTrainee'].value,
-        blocked: this.form.controls['blocked'].value
-      }
-    }
-
-    setState(state);
   }
 
   public initForm() {
@@ -199,5 +166,50 @@ export class CreateMemberFormComponent implements OnInit, OnDestroy {
 
   public showNewSocietyFormField() {
     return this.form.controls['society'].value === 'Nova Sociedade';
+  }
+
+  public close() {
+    this.dialog.open(ConfirmModalComponent, {
+      data: {
+        text: `Você <b>poderá perder</b> qualquer mudança <b>não salva</b>! Tem certeza que quer continuar?`,
+        positiveCallback: () => {
+          const state = getState();
+
+          const hasChanged = (property: keyof Member) =>
+            this.form.controls[property].value !== this.member[property];
+          const change = (property: keyof Member) =>
+            hasChanged(property) ?
+            this.form.controls[property].value :
+            '';
+
+          if (this.isEditing) {
+            state[this.member.id] = {
+              name: change('name'),
+              society: hasChanged('society') ?
+                this.showNewSocietyFormField() ?
+                this.form.controls['newSociety'].value :
+                this.form.controls['society'].value :
+                '',
+              isTrainee: change('isTrainee'),
+              blocked: change('blocked')
+            }
+          } else {
+            state['member'] = {
+              name: this.form.controls['name'].value,
+              society:
+                this.showNewSocietyFormField() ?
+                this.form.controls['newSociety'].value :
+                this.form.controls['society'].value,
+              isTrainee: this.form.controls['isTrainee'].value,
+              blocked: this.form.controls['blocked'].value
+            }
+          }
+
+          setState(state);
+
+          this.dialogRef.close();
+        }
+      },
+    });
   }
 }

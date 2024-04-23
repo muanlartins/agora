@@ -57,8 +57,6 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
 
   public debatesParticipations: { [id: string]: number } = {};
 
-  public loading: boolean = false;
-
   public constructor(
     private formBuilder: FormBuilder,
     private memberService: MemberService,
@@ -133,14 +131,11 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   }
 
   public getData() {
-    this.loading = true;
-
     combineLatest([
       this.debateService.getAllDebates(),
       this.memberService.getAllMembers()
     ]).subscribe(([debates, members]) => {
       if (debates && debates.length && members && members.length) {
-        this.loading = false;
         this.debates = debates;
         this.members = members;
         this.members.forEach((member) => {
@@ -160,7 +155,7 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   }
 
   public openCreateMemberModal() {
-    this.dialog.open(CreateMemberModalComponent, { width: '80vw' });
+    this.dialog.open(CreateMemberModalComponent, { width: '80vw', disableClose: true  });
   }
 
   public getColumnData(element: Member, column: string) {
@@ -177,7 +172,7 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
     this.dialog.open(CreateMemberModalComponent, { width: '80vw', data: {
       isEditing: true,
       member: this.members.find((member) => member.id === id)
-    }});
+    }, disableClose: true });
   }
 
   public deleteMember(id: string, event: Event) {
@@ -187,11 +182,10 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
 
     this.dialog.open(ConfirmModalComponent, { data: {
       text: `Você tem certeza que quer deletar o membro <b>${member.name} (${member.society})</b>?`,
-      callback: async () => {
-        this.loading = true;
+      positiveCallback: async () => {
         await this.memberService.deleteMember(id);
-        this.loading = false;
-      }
+      },
+      disableClose: true
     } })
   }
 

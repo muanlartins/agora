@@ -1,9 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import * as moment from 'moment';
-import { firstValueFrom } from 'rxjs';
 import { Article } from 'src/app/models/types/article';
 import { Member } from 'src/app/models/types/member';
-import { MemberService } from 'src/app/services/member.service';
 
 @Component({
   selector: 'app-article',

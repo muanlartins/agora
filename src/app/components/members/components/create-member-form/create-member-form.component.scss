@@ -4,6 +4,11 @@
   --button-height: 3.2rem;
 }
 
+.cancel {
+  width: calc(100% - 64px);
+  margin: 16px 0 32px 32px;
+}
+
 .form {
   display: flex;
   justify-content: flex-start;

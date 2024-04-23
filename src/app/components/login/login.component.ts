@@ -6,7 +6,7 @@ import { sha256 } from 'js-sha256';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Token } from 'src/app/models/types/token';
 import { AuthService } from 'src/app/services/auth.service';
-import { getToken } from 'src/app/utils/token';
+import { getToken, setToken } from 'src/app/utils/token';
 
 @Component({
   selector: 'app-login',
@@ -15,8 +15,6 @@ import { getToken } from 'src/app/utils/token';
 })
 export class LoginComponent implements OnInit {
   public form: FormGroup;
-
-  public loading: boolean = false;
 
   public wrongLogin: boolean = false;
 
@@ -47,16 +45,11 @@ export class LoginComponent implements OnInit {
   }
 
   public login(login: string, password: string) {
-    this.loading = true;
     this.authService.login(login, password).subscribe({
       next: (token: Token) => {
-        localStorage.setItem("token", token);
+        setToken(token);
         this.checkLogin();
-      },
-      error: () => {
-        this.loading = false;
-        this.wrongLogin = true;
-      },
+      }
     });
   }
 

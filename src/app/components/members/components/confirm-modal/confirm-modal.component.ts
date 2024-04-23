@@ -1,5 +1,5 @@
-import { Component, Inject, Input } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-confirm-modal',
@@ -9,20 +9,32 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 export class ConfirmModalComponent {
   public text: string;
 
-  public callback: () => {};
+  public positiveCallback: () => {};
+
+  public negativeCallback: () => {};
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) data: { text: string, callback: () => {} },
-    private dialog: MatDialog,
+    @Inject(MAT_DIALOG_DATA) data: {
+      text: string,
+      positiveCallback: () => {},
+      negativeCallback: () => {}
+    },
     private dialogRef: MatDialogRef<ConfirmModalComponent>
   ) {
     this.text = data.text;
 
-    this.callback = data.callback;
+    this.positiveCallback = data.positiveCallback;
+    this.negativeCallback = data.negativeCallback;
   }
 
-  public async callCallback() {
-    await this.callback();
+  public async callPositiveCallback() {
+    await this.positiveCallback();
+
+    this.dialogRef.close();
+  }
+
+  public async callNegativeCallback() {
+    await this.negativeCallback();
 
     this.dialogRef.close();
   }

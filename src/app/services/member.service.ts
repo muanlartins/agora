@@ -2,7 +2,6 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, firstValueFrom } from "rxjs";
 import { BASE_URL } from "../utils/constants";
-import { getToken } from "../utils/token";
 import { Member } from "../models/types/member";
 
 const ENDPOINTS = {
@@ -25,17 +24,16 @@ export class MemberService {
     if (this.members$.value && this.members$.value.length)
       return this.members$.asObservable();
 
-    const token = getToken();
-
-    this.httpClient.get<Member[]>(BASE_URL + ENDPOINTS.getAllMembers, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
-    }).subscribe((members) => this.members$.next(members));
+    this.httpClient.get<Member[]>(BASE_URL + ENDPOINTS.getAllMembers)
+      .subscribe((members) => {
+        this.members$.next(members);
+      }
+    );
 
     return this.members$.asObservable();
   }
 
   public async createMember(name: string, society: string, isTrainee: boolean, hasPfp: boolean, blocked: boolean) {
-    const token = getToken();
 
     const member = await firstValueFrom(this.httpClient.post<Member>(BASE_URL + ENDPOINTS.createMember, {
       name,
@@ -43,8 +41,6 @@ export class MemberService {
       isTrainee,
       hasPfp,
       blocked
-    }, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
     }));
 
     this.members$.next([...this.members$.value, member]);
@@ -53,7 +49,6 @@ export class MemberService {
   }
 
   public async updateMember(id: string, name: string, society: string, isTrainee: boolean, hasPfp: boolean, blocked: boolean) {
-    const token = getToken();
 
     await firstValueFrom(this.httpClient.put<boolean>(BASE_URL + ENDPOINTS.editMember, {
       id,
@@ -62,8 +57,6 @@ export class MemberService {
       isTrainee,
       hasPfp,
       blocked
-    }, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
     }));
 
     const members = [...this.members$.value];
@@ -74,11 +67,7 @@ export class MemberService {
   }
 
   public async uploadMemberPfp(formData: FormData) {
-    const token = getToken();
-
-    await firstValueFrom(this.httpClient.post<boolean>(BASE_URL + ENDPOINTS.updatePfp, formData, {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`)
-    }));
+    await firstValueFrom(this.httpClient.post<boolean>(BASE_URL + ENDPOINTS.updatePfp, formData));
   }
 
   public getMemberPfpUrl(id: string) {
@@ -86,11 +75,7 @@ export class MemberService {
   }
 
   public async deleteMember(id: string) {
-    const token = getToken();
-
-    await firstValueFrom(this.httpClient.delete<boolean>(BASE_URL + ENDPOINTS.deleteMember(id), {
-      headers: new HttpHeaders().set('Authorization', `Bearer ${token}`),
-    }));
+    await firstValueFrom(this.httpClient.delete<boolean>(BASE_URL + ENDPOINTS.deleteMember(id)));
 
     const members = [...this.members$.value];
     members.splice(members.findIndex((member) => member.id === id), 1);

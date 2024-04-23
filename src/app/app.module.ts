@@ -1,12 +1,12 @@
 import { registerLocaleData } from '@angular/common';
 import pt from '@angular/common/locales/pt';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule, SecurityContext } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, ErrorHandler, NgModule, SecurityContext, mergeApplicationConfig } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { NgxSpinnerModule } from "ngx-spinner";
@@ -56,6 +56,10 @@ import { ArticleComponent } from './components/articles/components/article/artic
 import { ArticleModalComponent } from './components/articles/components/article-modal/article-modal.component';
 import { ReportComponent } from './components/report/report.component';
 import { AdminGuard } from './guards/admin.guard';
+import { CustomErrorHandler } from './handlers/error-handler';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { LoadingInterceptor } from './interceptors/loading.interceptor';
+import { Router } from '@angular/router';
 
 registerLocaleData(pt);
 
@@ -128,7 +132,10 @@ registerLocaleData(pt);
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {
       appearance: 'outline',
       subscriptSizing: 'dynamic'
-    }}
+    }},
+    { provide: ErrorHandler, useClass: CustomErrorHandler },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true }
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
