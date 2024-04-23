@@ -109,8 +109,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.filteredDebates = [...this.debates];
 
-    if (!!month || month === 0) this.filteredDebates = this.filteredDebates.filter((debate: Debate) =>
-      moment(debate.date).month() - 1 === month
+    if (!!month || month === 0) this.filteredDebates = this.filteredDebates.filter(
+      (debate: Debate) => moment(debate.date).month() === month
     );
 
     if (!!tournament) this.filteredDebates = this.filteredDebates.filter((debate: Debate) =>
@@ -129,7 +129,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public initOptions() {
     this.monthOptions = MONTHS.map((viewValue, value) => ({ value, viewValue })).filter((option) => option.value <= moment(Date.now()).month());
 
-    this.tournamentOptions = [...new Set(this.debates.filter((debate: Debate) => debate.tournament).map((debate: Debate) => debate.tournament!))]
+    this.tournamentOptions = [...new Set(this.filteredDebates.filter((debate: Debate) => debate.tournament).map((debate: Debate) => debate.tournament!))]
       .map((tournament) =>({
         value: tournament,
         viewValue: tournament
@@ -153,6 +153,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.articles = articles;
         this.initOptions();
 
+        this.filterDebates();
         this.generateRanks();
         this.generateStatistics();
         this.generateCharts();
@@ -162,7 +163,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public generateRanks() {
     if (
-      !this.debates.length ||
+      !this.filteredDebates.length ||
       !this.members.length ||
       !this.articles.length
     ) return;
@@ -325,7 +326,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public generateStatistics() {
     if (
-      !this.debates.length ||
+      !this.filteredDebates.length ||
       !this.members.length ||
       !this.articles.length
     ) return;
@@ -377,12 +378,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Partner Society
 
-    this.statistics.push({
+    const partnerSocieties = uniqueSocieties.filter((society: string) => society !== 'sdufrj').map((uniqueSociety: string) => ({
+      society: uniqueSociety,
+      amount: uniqueActiveMembers.filter((member: Member) => member.society === uniqueSociety).length
+    })).sort((a, b) => b.amount - a.amount);
+
+    if (partnerSocieties.length) this.statistics.push({
       title: 'Sociedade <b>Parceira</b>',
-      value: uniqueSocieties.filter((society: string) => society !== 'sdufrj').map((uniqueSociety: string) => ({
-        society: uniqueSociety,
-        amount: uniqueActiveMembers.filter((member: Member) => member.society === uniqueSociety).length
-      })).sort((a, b) => b.amount - a.amount)[0].society
+      value: partnerSocieties[0].society
     })
   }
 
@@ -393,7 +396,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       !this.chart2Ref ||
       !this.chart3Ref ||
       !this.members ||
-      !this.debates ||
+      !this.filteredDebates ||
       !this.articles
     )
       return;
