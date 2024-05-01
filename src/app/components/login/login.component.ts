@@ -2,8 +2,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { sha256 } from 'js-sha256';
-import { NgxSpinnerService } from 'ngx-spinner';
 import { Token } from 'src/app/models/types/token';
 import { AuthService } from 'src/app/services/auth.service';
 import { getToken, setToken } from 'src/app/utils/token';
@@ -39,9 +37,9 @@ export class LoginComponent implements OnInit {
     if (!this.form.valid) return;
 
     const login = this.form.controls['login'].value;
-    const encryptedPassword = sha256(this.form.controls['password'].value);
+    const password = this.form.controls['password'].value;
 
-    this.login(login, encryptedPassword);
+    this.login(login, password);
   }
 
   public login(login: string, password: string) {
