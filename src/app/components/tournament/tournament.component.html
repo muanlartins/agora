@@ -55,56 +55,5 @@
         <div class="page__content__participants__participant__society">{{ participant.society }}</div>
         <div class="page__content__participants__participant__date">{{ getDate(participant.subscribedAt) }}</div>
       </div>
-      <div class="page__content__participants__participant" *ngFor="let participant of participants">
-        <div class="page__content__participants__participant__pfp" *ngIf="isAdmin()">
-          <label
-            class="page__content__participants__participant__pfp__label"
-            [for]="'pfp-upload-' + participant.id"
-          >
-            <input type='file' hidden [id]="'pfp-upload-' + participant.id" (change)="onPfpFileSelected($event, participant)" />
-            <nz-avatar [nzSize]="128" [nzSrc]="getSrc(participant)"></nz-avatar>
-          </label>
-        </div>
-        <div class="page__content__participants__participant__pfp" *ngIf="!isAdmin()">
-          <nz-avatar [nzSize]="128" [nzSrc]="getSrc(participant)"></nz-avatar>
-        </div>
-        <div class="page__content__participants__participant__name">{{ participant.name }}</div>
-        <div class="page__content__participants__participant__society">{{ participant.society }}</div>
-        <div class="page__content__participants__participant__date">{{ getDate(participant.subscribedAt) }}</div>
-      </div>
-      <div class="page__content__participants__participant" *ngFor="let participant of participants">
-        <div class="page__content__participants__participant__pfp" *ngIf="isAdmin()">
-          <label
-            class="page__content__participants__participant__pfp__label"
-            [for]="'pfp-upload-' + participant.id"
-          >
-            <input type='file' hidden [id]="'pfp-upload-' + participant.id" (change)="onPfpFileSelected($event, participant)" />
-            <nz-avatar [nzSize]="128" [nzSrc]="getSrc(participant)"></nz-avatar>
-          </label>
-        </div>
-        <div class="page__content__participants__participant__pfp" *ngIf="!isAdmin()">
-          <nz-avatar [nzSize]="128" [nzSrc]="getSrc(participant)"></nz-avatar>
-        </div>
-        <div class="page__content__participants__participant__name">{{ participant.name }}</div>
-        <div class="page__content__participants__participant__society">{{ participant.society }}</div>
-        <div class="page__content__participants__participant__date">{{ getDate(participant.subscribedAt) }}</div>
-      </div>
-      <div class="page__content__participants__participant" *ngFor="let participant of participants">
-        <div class="page__content__participants__participant__pfp" *ngIf="isAdmin()">
-          <label
-            class="page__content__participants__participant__pfp__label"
-            [for]="'pfp-upload-' + participant.id"
-          >
-            <input type='file' hidden [id]="'pfp-upload-' + participant.id" (change)="onPfpFileSelected($event, participant)" />
-            <nz-avatar [nzSize]="128" [nzSrc]="getSrc(participant)"></nz-avatar>
-          </label>
-        </div>
-        <div class="page__content__participants__participant__pfp" *ngIf="!isAdmin()">
-          <nz-avatar [nzSize]="128" [nzSrc]="getSrc(participant)"></nz-avatar>
-        </div>
-        <div class="page__content__participants__participant__name">{{ participant.name }}</div>
-        <div class="page__content__participants__participant__society">{{ participant.society }}</div>
-        <div class="page__content__participants__participant__date">{{ getDate(participant.subscribedAt) }}</div>
-      </div>
   </div>
 </div>
