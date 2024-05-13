@@ -70,10 +70,6 @@ export class MemberService {
     await firstValueFrom(this.httpClient.post<boolean>(BASE_URL + ENDPOINTS.updatePfp, formData));
   }
 
-  public getMemberPfpUrl(id: string) {
-    return `/assets/pfps/${id}`;
-  }
-
   public async deleteMember(id: string) {
     await firstValueFrom(this.httpClient.delete<boolean>(BASE_URL + ENDPOINTS.deleteMember(id)));
 

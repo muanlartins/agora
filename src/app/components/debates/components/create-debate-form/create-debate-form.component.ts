@@ -204,6 +204,7 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
       })).sort((a, b) => {
         if (a.value === 'Interno') return -1;
         if (b.value === 'Nova Ocasião') return 1;
+        if (!a.value || !b.value) return 0;
 
         return a.value.toLowerCase().localeCompare(b.value.toLowerCase())
       });

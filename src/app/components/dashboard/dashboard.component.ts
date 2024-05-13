@@ -117,10 +117,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       debate.tournament === tournament
     );
 
-    if (trainee) this.filteredDebates = this.filteredDebates.filter((debate: Debate) =>
-      debate.debaters.some((debater: Member) => debater.isTrainee)
-    );
-
     this.generateRanks();
     this.generateStatistics();
     this.generateCharts();

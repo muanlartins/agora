@@ -10,9 +10,11 @@ import { GoalsComponent } from './components/goals/goals.component';
 import { ArticlesComponent } from './components/articles/articles.component';
 import { AdminGuard } from './guards/admin.guard';
 import { ReportComponent } from './components/report/report.component';
+import { MetadebateComponent } from './components/metadebate/metadebate/metadebate.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: "full" },
+  { path: 'metadebate', component: MetadebateComponent },
   { path: 'login', component: LoginComponent, data: {} },
   { path: 'dashboard', component: DashboardComponent, canActivate: [LoginGuard] },
   { path: 'debates', component: DebatesComponent, canActivate: [LoginGuard] },

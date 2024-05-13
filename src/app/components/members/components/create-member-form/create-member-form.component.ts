@@ -103,7 +103,6 @@ export class CreateMemberFormComponent implements OnInit {
     const isTrainee = this.form.controls['isTrainee'].value;
     const blocked = this.form.controls['blocked'].value;
 
-    this.loading = true;
     let id: string;
     if (this.isEditing) {
       const hasPfp = this.member.hasPfp;
@@ -114,15 +113,12 @@ export class CreateMemberFormComponent implements OnInit {
       const member: Member = await this.memberService.createMember(name, society, isTrainee, hasPfp, blocked);
       id = member.id;
     }
-    this.loading = false;
 
     if (this.avatarFile) {
       const formData: FormData = new FormData();
       formData.append('file', this.avatarFile, id);
 
-      this.loading = true;
       await this.memberService.uploadMemberPfp(formData);
-      this.loading = false;
     }
 
     const state = getState();

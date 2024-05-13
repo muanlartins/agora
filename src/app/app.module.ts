@@ -60,6 +60,7 @@ import { CustomErrorHandler } from './handlers/error-handler';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { Router } from '@angular/router';
+import { MetadebateComponent } from './components/metadebate/metadebate/metadebate.component';
 
 registerLocaleData(pt);
 
@@ -90,6 +91,7 @@ registerLocaleData(pt);
     ArticleComponent,
     ArticleModalComponent,
     ReportComponent,
+    MetadebateComponent,
   ],
   imports: [
     BrowserModule,

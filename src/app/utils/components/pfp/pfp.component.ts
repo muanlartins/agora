@@ -19,7 +19,10 @@ export class PfpComponent {
   @Input()
   public shape: NzShapeSCType = 'circle';
 
+  @Input()
+  public path: string = 'pfps';
+
   public getSrc() {
-    return 'https://www.agoradebates.com/assets/' + (this.hasPfp ? 'pfps/' + this.id : 'user.png');
+    return 'https://www.agoradebates.com/assets/' + (this.hasPfp ? this.path + '/' + this.id : 'user.png');
   }
 }
