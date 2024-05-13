@@ -5,11 +5,11 @@ import { ParticipantService } from 'src/app/services/participant.service';
 import { isAdmin } from 'src/app/utils/auth';
 
 @Component({
-  selector: 'app-metadebate',
-  templateUrl: './metadebate.component.html',
-  styleUrls: ['./metadebate.component.scss']
+  selector: 'app-tournament',
+  templateUrl: './tournament.component.html',
+  styleUrls: ['./tournament.component.scss']
 })
-export class MetadebateComponent implements OnInit {
+export class TournamentComponent implements OnInit {
   public participants: Participant[] = [];
 
   public participantsFile: File;
@@ -31,7 +31,7 @@ export class MetadebateComponent implements OnInit {
 
   public uploadParticipants() {
     const formData: FormData = new FormData();
-    formData.append('file', this.participantsFile, 'metadebate.csv');
+    formData.append('file', this.participantsFile, 'tournament.csv');
 
     this.participantService.uploadParticipants(formData, 'metadebate').subscribe((participants) => {
       this.participants = participants;

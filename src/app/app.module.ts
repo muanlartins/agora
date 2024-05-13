@@ -60,7 +60,7 @@ import { CustomErrorHandler } from './handlers/error-handler';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { Router } from '@angular/router';
-import { MetadebateComponent } from './components/metadebate/metadebate/metadebate.component';
+import { TournamentComponent } from './components/tournament/tournament.component';
 
 registerLocaleData(pt);
 
@@ -91,7 +91,7 @@ registerLocaleData(pt);
     ArticleComponent,
     ArticleModalComponent,
     ReportComponent,
-    MetadebateComponent,
+    TournamentComponent,
   ],
   imports: [
     BrowserModule,
