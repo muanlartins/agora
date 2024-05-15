@@ -1,0 +1,48 @@
+@import './src/variables.scss';
+
+:host {
+  --button-height: 3.2rem;
+}
+
+.cancel {
+  width: calc(100% - 64px);
+  margin: 16px 0 32px 32px;
+}
+
+.form {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 32px;
+  padding: 32px;
+
+  &__field {
+    position: relative;
+  }
+
+  &__button {
+    height: var(--button-height);
+  }
+
+  &__avatar {
+    position: relative;
+    transition: $transition;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &:hover::after {
+      content: '';
+      background: black;
+      opacity: 0.3;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      border-radius: 50%;
+      top: 0;
+      left: 0;
+    }
+  }
+}

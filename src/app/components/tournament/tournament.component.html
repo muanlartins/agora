@@ -37,8 +37,30 @@
   </div>
   <div class="page__content">
     <div class="page__content__title">Inscritos no Campeonato de Metadebate</div>
+    <form class="page__content__filters" [formGroup]="form">
+      <mat-form-field class="page__content__filters__filter">
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+      <mat-form-field class="page__content__filters__filter">
+        <mat-label>Sociedade</mat-label>
+        <mat-select>
+          <mat-option>Nenhuma</mat-option>
+          <mat-option *ngFor="let option of societyOptions" [value]="option.value">
+            {{ option.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button
+        *ngIf="isAdmin()"
+        class="page__content__filters__button"
+        mat-flat-button
+        color="primary"
+        (click)="openCreateParticipantModal()"
+      >Criar Participante</button>
+    </form>
     <div class="page__content__participants">
-      <div class="page__content__participants__participant" *ngFor="let participant of participants">
+      <div class="page__content__participants__participant" *ngFor="let participant of filteredParticipants">
         <div class="page__content__participants__participant__pfp" *ngIf="isAdmin()">
           <label
             class="page__content__participants__participant__pfp__label"
@@ -54,6 +76,10 @@
         <div class="page__content__participants__participant__name">{{ participant.name }}</div>
         <div class="page__content__participants__participant__society">{{ participant.society }}</div>
         <div class="page__content__participants__participant__date">{{ getDate(participant.subscribedAt) }}</div>
+        <div class="page__content__participants__participant__admin" *ngIf="isAdmin()">
+          <img (click)="editParticipant(participant.id)" src="assets/edit-text.png" class="page__content__participants__participant__admin__icon" />
+          <img (click)="deleteParticipant(participant.id)" src="assets/delete.png" class="page__content__participants__participant__admin__icon" />
+        </div>
       </div>
   </div>
 </div>

@@ -61,6 +61,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { Router } from '@angular/router';
 import { TournamentComponent } from './components/tournament/tournament.component';
+import { CreateParticipantModalComponent } from './components/tournament/components/create-participant-modal/create-participant-modal.component';
+import { CreateParticipantFormComponent } from './components/tournament/components/create-participant-form/create-participant-form.component';
 
 registerLocaleData(pt);
 
@@ -92,6 +94,8 @@ registerLocaleData(pt);
     ArticleModalComponent,
     ReportComponent,
     TournamentComponent,
+    CreateParticipantModalComponent,
+    CreateParticipantFormComponent,
   ],
   imports: [
     BrowserModule,

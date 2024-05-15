@@ -1,0 +1,38 @@
+<form class="form" [formGroup]="form" (submit)="onSubmit()">
+  <mat-form-field class="form__field">
+    <mat-label>Nome</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
+  <mat-form-field class="form__field form__field--select">
+    <mat-label>Sociedade</mat-label>
+    <mat-select formControlName="society">
+      <mat-option value="Nova Sociedade">
+        Nova Sociedade
+      </mat-option>
+      <mat-option *ngFor="let society of societyOptions" [value]="society.value">
+        {{ society.viewValue }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field
+    *ngIf="showNewSocietyFormField()"
+    class="form__field"
+  >
+    <mat-label>Nova Sociedade</mat-label>
+    <textarea
+      matInput
+      cdkTextareaAutosize
+      #autosize="cdkTextareaAutosize"
+      cdkAutosizeMinRows="1"
+      formControlName="newSociety"
+    ></textarea>
+  </mat-form-field>
+  <button
+    class="form__button"
+    mat-flat-button
+    color="primary"
+    [disabled]="!form.valid"
+    type="submit"
+  >{{ getButtonText() }}</button>
+</form>
+<button class="cancel" mat-flat-button color="primary" (click)="close()">Cancelar</button>
