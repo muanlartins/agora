@@ -51,16 +51,26 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
-      <button
-        *ngIf="isAdmin()"
-        class="page__content__filters__button"
-        mat-flat-button
-        color="primary"
-        (click)="openCreateParticipantModal()"
-      >Criar Participante</button>
+      <div class="page__content__filters__buttons">
+        <button
+          *ngIf="isAdmin()"
+          class="page__content__filters__buttons__button"
+          mat-flat-button
+          color="primary"
+          (click)="openCreateParticipantModal()"
+        >Criar Participante</button>
+        <button
+          *ngIf="isAdmin()"
+          class="page__content__filters__buttons__button"
+          mat-flat-button
+          color="primary"
+          (click)="openDuoRegistrationModal()"
+        >Registrar Duplas</button>
+      </div>
     </form>
     <div class="page__content__participants">
       <div class="page__content__participants__participant" *ngFor="let participant of filteredParticipants">
+        <div *ngIf="participant.mvp" class="page__content__participants__participant__mvp">⭐</div>
         <div class="page__content__participants__participant__pfp" *ngIf="isAdmin()">
           <label
             class="page__content__participants__participant__pfp__label"
@@ -75,7 +85,21 @@
         </div>
         <div class="page__content__participants__participant__name">{{ participant.name }}</div>
         <div class="page__content__participants__participant__society">{{ participant.society }}</div>
-        <div class="page__content__participants__participant__date">{{ getDate(participant.subscribedAt) }}</div>
+        <div *ngIf="participant.category" class="page__content__participants__participant__category">
+          {{ getParticipantCategoryViewValue(participant.category) }}
+          <span *ngIf="participant.category === ParticipantCategory.dino">🦕</span>
+        </div>
+        <div *ngIf="participant.roles" class="page__content__participants__participant__roles">
+          <div *ngFor="let role of participant.roles" class="page__content__participants__participant__roles__role">
+            {{ getTournamentRoleViewValue(role) }}
+          </div>
+        </div>
+        <div *ngIf="participant.duoId" class="page__content__participants__participant__duo">
+          <span>Dupla:</span> {{ getParticipantDuo(participant) }}
+        </div>
+        <div class="page__content__participants__participant__date">
+          <span>Inscrito em:</span> {{ getDate(participant.subscribedAt) }}
+        </div>
         <div class="page__content__participants__participant__admin" *ngIf="isAdmin()">
           <img (click)="editParticipant(participant.id)" src="assets/edit-text.png" class="page__content__participants__participant__admin__icon" />
           <img (click)="deleteParticipant(participant.id)" src="assets/delete.png" class="page__content__participants__participant__admin__icon" />

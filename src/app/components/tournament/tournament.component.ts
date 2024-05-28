@@ -9,6 +9,9 @@ import { isAdmin } from 'src/app/utils/auth';
 import { CreateParticipantModalComponent } from './components/create-participant-modal/create-participant-modal.component';
 import { ConfirmModalComponent } from '../members/components/confirm-modal/confirm-modal.component';
 import * as removeAccents from 'remove-accents';
+import { RegisterDuoModalComponent } from './components/register-duo-modal/register-duo-modal.component';
+import { getTournamentRoleViewValue } from 'src/app/models/enums/tournament-role';
+import { ParticipantCategory, getParticipantCategoryViewValue } from 'src/app/models/enums/participant-category';
 
 @Component({
   selector: 'app-tournament',
@@ -31,6 +34,18 @@ export class TournamentComponent implements OnInit {
   public form: FormGroup;
 
   public societyOptions: SelectOption[];
+
+  public get getTournamentRoleViewValue() {
+    return getTournamentRoleViewValue;
+  }
+
+  public get getParticipantCategoryViewValue() {
+    return getParticipantCategoryViewValue;
+  }
+
+  public get ParticipantCategory() {
+    return ParticipantCategory;
+  }
 
   @ViewChild('participantsUpload')
   public participantsUploadInputRef: ElementRef<HTMLInputElement>;
@@ -90,6 +105,13 @@ export class TournamentComponent implements OnInit {
     });
   }
 
+  public openDuoRegistrationModal() {
+    this.dialog.open(RegisterDuoModalComponent, {
+      autoFocus: false,
+      disableClose: true
+    });
+  }
+
   public editParticipant(id: string) {
     this.dialog.open(CreateParticipantModalComponent, { data: {
       isEditing: true,
@@ -122,7 +144,11 @@ export class TournamentComponent implements OnInit {
     this.participantService.getAllParticipants().subscribe((participants) => {
       this.participants = participants.sort((a, b) =>
         moment(b.subscribedAt, "DD/MM/YYYY HH:mm").toDate().getTime() - moment(a.subscribedAt, "DD/MM/YYYY HH:mm").toDate().getTime()
-      );
+      ).sort((a, b) => {
+        if (a.mvp) return -1;
+        if (b.mvp) return 1;
+        return 0;
+      });
 
       this.filteredParticipants = [...this.participants];
 
@@ -168,5 +194,9 @@ export class TournamentComponent implements OnInit {
 
   public participantsFileUpload() {
     this.participantsUploadInputRef.nativeElement.click();
+  }
+
+  public getParticipantDuo(participant: Participant) {
+    return this.participants.find((duoParticipant: Participant) => duoParticipant.id === participant.duoId)!.name;
   }
 }

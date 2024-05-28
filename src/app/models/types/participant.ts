@@ -1,3 +1,6 @@
+import { ParticipantCategory } from "../enums/participant-category";
+import { TournamentRole } from "../enums/tournament-role";
+
 export type Participant = {
   id: string;
   tournament: string;
@@ -5,4 +8,8 @@ export type Participant = {
   society: string;
   subscribedAt: string;
   hasPfp: boolean;
+  duoId?: string;
+  category?: ParticipantCategory;
+  roles?: TournamentRole[];
+  mvp?: boolean;
 }

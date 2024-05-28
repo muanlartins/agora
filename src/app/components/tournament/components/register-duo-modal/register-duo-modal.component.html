@@ -1,0 +1,58 @@
+<div class="lists">
+  <div class="lists__list">
+    <div class="lists__list__title">Inscritos</div>
+    <div
+      cdkDropList
+      #participantList="cdkDropList"
+      [cdkDropListData]="participants"
+      [cdkDropListConnectedTo]="[participantOneList, participantTwoList]"
+      class="lists__list__participants"
+      (cdkDropListDropped)="drop($event)"
+    >
+      <div class="lists__list__participants__participant" *ngFor="let participant of participants" cdkDrag>
+        <div class="lists__list__participants__participant__placeholder" *cdkDragPlaceholder></div>
+        <div class="lists__list__participants__participant__name">{{ participant.name }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="lists__list">
+    <div class="lists__list__title">Primeiro da Dupla</div>
+    <div
+      cdkDropList
+      #participantOneList="cdkDropList"
+      [cdkDropListData]="participantsOne"
+      [cdkDropListConnectedTo]="[participantList, participantTwoList]"
+      class="lists__list__participants"
+      (cdkDropListDropped)="drop($event)"
+    >
+      <div class="lists__list__participants__participant" *ngFor="let participant of participantsOne" cdkDrag>
+        <div class="lists__list__participants__participant__placeholder" *cdkDragPlaceholder></div>
+        <div class="lists__list__participants__participant__name">{{ participant.name }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="lists__list">
+    <div class="lists__list__title">Segundo da Dupla</div>
+    <div
+      cdkDropList
+      #participantTwoList="cdkDropList"
+      [cdkDropListData]="participantsTwo"
+      [cdkDropListConnectedTo]="[participantList, participantOneList]"
+      class="lists__list__participants"
+      (cdkDropListDropped)="drop($event)"
+    >
+      <div class="lists__list__participants__participant" *ngFor="let participant of participantsTwo" cdkDrag>
+        <div class="lists__list__participants__participant__placeholder" *cdkDragPlaceholder></div>
+        <div class="lists__list__participants__participant__name">{{ participant.name }}</div>
+      </div>
+    </div>
+  </div>
+  <button
+    [disabled]="participantsOne.length !== participantsTwo.length"
+    class="lists__button"
+    mat-flat-button
+    color="primary"
+    (click)="registerDuos()"
+  >Registrar</button>
+</div>
+<button class="cancel" mat-flat-button color="primary" (click)="close()">Cancelar</button>

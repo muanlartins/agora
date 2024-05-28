@@ -10,7 +10,8 @@ const ENDPOINTS = {
   uploadParticipantPfp: (tournament: string) => `/participant/${tournament}/pfp`,
   createParticipant: '/participant',
   updateParticipant: '/participant',
-  deleteParticipant: (id: string) => `/participant/${id}`
+  deleteParticipant: (id: string) => `/participant/${id}`,
+  registerDuos: '/participants/duos'
 }
 
 @Injectable({
@@ -33,6 +34,17 @@ export class ParticipantService {
 
     return this.participants$.asObservable();
   }
+
+  public refreshAllParticipants() {
+    this.httpClient.get<Participant[]>(BASE_URL + ENDPOINTS.getAllParticipants)
+      .subscribe((participants) => {
+        this.participants$.next(participants);
+      }
+    );
+
+    return this.participants$.asObservable();
+  }
+
 
   public uploadParticipants(formData: FormData, tournament: string) {
     this.httpClient.post<Participant[]>(BASE_URL + ENDPOINTS.uploadParticipants(tournament), formData)
@@ -59,11 +71,19 @@ export class ParticipantService {
   public async updateParticipant(updatedParticipant: Participant) {
     await firstValueFrom(this.httpClient.put(BASE_URL + ENDPOINTS.updateParticipant, updatedParticipant));
 
-    const participants = [...this.participants$.value];
-    participants.splice(participants.findIndex((participant) => participant.id === updatedParticipant.id), 1);
-    participants.push(updatedParticipant);
+    this.refreshAllParticipants();
+  }
 
-    this.participants$.next(participants);
+  public async registerDuos(participantsOne: Participant[], participantsTwo: Participant[]) {
+    const duos = [];
+
+    for (let i=0;i<participantsOne.length;i++) {
+      duos.push([participantsOne[i].id, participantsTwo[i].id]);
+    }
+
+    await firstValueFrom(this.httpClient.post(BASE_URL + ENDPOINTS.registerDuos, duos));
+
+    this.refreshAllParticipants();
   }
 
   public async deleteParticipant(id: string) {

@@ -8,10 +8,8 @@ import { Participant } from 'src/app/models/types/participant';
   styleUrls: ['./create-participant-modal.component.scss']
 })
 export class CreateParticipantModalComponent {
-  @Input()
   public participant: Participant;
 
-  @Input()
   public isEditing: boolean = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: { isEditing: boolean, participant: Participant }) {

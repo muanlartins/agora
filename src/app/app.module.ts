@@ -63,6 +63,7 @@ import { Router } from '@angular/router';
 import { TournamentComponent } from './components/tournament/tournament.component';
 import { CreateParticipantModalComponent } from './components/tournament/components/create-participant-modal/create-participant-modal.component';
 import { CreateParticipantFormComponent } from './components/tournament/components/create-participant-form/create-participant-form.component';
+import { RegisterDuoModalComponent } from './components/tournament/components/register-duo-modal/register-duo-modal.component';
 
 registerLocaleData(pt);
 
@@ -96,6 +97,7 @@ registerLocaleData(pt);
     TournamentComponent,
     CreateParticipantModalComponent,
     CreateParticipantFormComponent,
+    RegisterDuoModalComponent,
   ],
   imports: [
     BrowserModule,

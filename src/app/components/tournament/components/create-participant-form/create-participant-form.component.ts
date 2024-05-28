@@ -8,6 +8,8 @@ import { ParticipantService } from 'src/app/services/participant.service';
 import { getState, setState } from 'src/app/utils/state';
 import { CreateParticipantModalComponent } from '../create-participant-modal/create-participant-modal.component';
 import * as moment from 'moment';
+import { ParticipantCategory, getParticipantCategoryViewValue } from 'src/app/models/enums/participant-category';
+import { TournamentRole, getTournamentRoleViewValue } from 'src/app/models/enums/tournament-role';
 
 @Component({
   selector: 'app-create-participant-form',
@@ -23,7 +25,21 @@ export class CreateParticipantFormComponent implements OnInit {
 
   public societyOptions: SelectOption[] = [];
 
+  public categoryOptions: SelectOption[] = [];
+
+  public roleOptions: SelectOption[] = [];
+
+  public duoOptions: SelectOption[] = [];
+
   public form: FormGroup;
+
+  public get ParticipantCategory() {
+    return ParticipantCategory;
+  }
+
+  public get TournamentRole() {
+    return TournamentRole;
+  }
 
   public constructor(
     private formBuilder: FormBuilder,
@@ -40,7 +56,11 @@ export class CreateParticipantFormComponent implements OnInit {
     this.form = this.formBuilder.group({
       name: [''],
       society: [''],
-      newSociety: ['']
+      newSociety: [''],
+      category: [''],
+      roles: [[]],
+      mvp: [false],
+      duoId: [''],
     });
 
     this.initOptions();
@@ -50,16 +70,32 @@ export class CreateParticipantFormComponent implements OnInit {
     if (this.isEditing) {
       this.form.controls['name'].patchValue(this.participant.name);
       this.form.controls['society'].patchValue(this.participant.society);
+      this.form.controls['category'].patchValue(this.participant.category);
+      this.form.controls['roles'].patchValue(this.participant.roles);
+      this.form.controls['mvp'].patchValue(this.participant.mvp);
+      this.form.controls['duoId'].patchValue(this.participant.duoId);
 
       if (state[this.participant.id] && state[this.participant.id].name)
         this.form.controls['name'].patchValue(state[this.participant.id].name);
       if (state[this.participant.id] && state[this.participant.id].society)
         this.form.controls['society'].patchValue(state[this.participant.id].society);
+      if (state[this.participant.id] && state[this.participant.id].category)
+        this.form.controls['category'].patchValue(state[this.participant.id].category);
+      if (state[this.participant.id] && state[this.participant.id].roles)
+        this.form.controls['roles'].patchValue(state[this.participant.id].roles);
+      if (state[this.participant.id] && state[this.participant.id].mvp)
+        this.form.controls['mvp'].patchValue(state[this.participant.id].mvp);
+      if (state[this.participant.id] && state[this.participant.id].duoId)
+        this.form.controls['duoId'].patchValue(state[this.participant.id].duoId);
     } else if (state['participant']) {
       const participant = state['participant'];
 
       this.form.controls['name'].patchValue(participant.name);
       this.form.controls['society'].patchValue(participant.society);
+      this.form.controls['category'].patchValue(participant.category);
+      this.form.controls['roles'].patchValue(participant.roles);
+      this.form.controls['mvp'].patchValue(participant.mvp);
+      this.form.controls['duoId'].patchValue(participant.duoId);
     }
   }
 
@@ -69,6 +105,21 @@ export class CreateParticipantFormComponent implements OnInit {
         value: society,
         viewValue: society
       })).sort((a, b) => a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase()));
+
+      this.categoryOptions = Object.values(ParticipantCategory).map((category) => ({
+        value: category,
+        viewValue: getParticipantCategoryViewValue(category)
+      }));
+
+      this.roleOptions = Object.values(TournamentRole).map((role) => ({
+        value: role,
+        viewValue: getTournamentRoleViewValue(role)
+      }));
+
+      this.duoOptions = participants.map((participant) => ({
+        value: participant.id,
+        viewValue: participant.name
+      }));
     });
   }
 
@@ -78,6 +129,10 @@ export class CreateParticipantFormComponent implements OnInit {
       this.showNewSocietyFormField() ?
       this.form.controls['newSociety'].value :
       this.form.controls['society'].value;
+    const category = this.form.controls['category'].value;
+    const roles = this.form.controls['roles'].value;
+    const mvp = this.form.controls['mvp'].value;
+    const duoId = this.form.controls['duoId'].value;
 
     let id: string;
     if (this.isEditing) {
@@ -91,6 +146,10 @@ export class CreateParticipantFormComponent implements OnInit {
         society: society,
         subscribedAt: this.participant.subscribedAt,
         hasPfp: hasPfp,
+        category: category,
+        roles: roles,
+        mvp: mvp,
+        duoId: duoId
       };
 
       await this.participantService.updateParticipant(participant);
@@ -103,6 +162,10 @@ export class CreateParticipantFormComponent implements OnInit {
         society: society,
         subscribedAt: moment().locale('pt-br').format("DD/MM/YYYY HH:mm"),
         hasPfp: false,
+        category: category,
+        roles: roles,
+        mvp: mvp,
+        duoId: duoId
       };
 
       const createdParticipant: Participant = await this.participantService.createParticipant(participant);
@@ -130,6 +193,12 @@ export class CreateParticipantFormComponent implements OnInit {
 
   public showNewSocietyFormField() {
     return this.form.controls['society'].value === 'Nova Sociedade';
+  }
+
+  public isParticipantDebater() {
+    if (this.participant && this.participant.roles) this.participant.roles.includes(TournamentRole.debater);
+
+    return this.form.controls['roles'].value.includes(TournamentRole.debater);
   }
 
   public close() {

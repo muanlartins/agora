@@ -27,6 +27,38 @@
       formControlName="newSociety"
     ></textarea>
   </mat-form-field>
+  <mat-form-field class="form__field form__field--select">
+    <mat-label>Categoria</mat-label>
+    <mat-select formControlName="category">
+      <mat-option *ngFor="let option of categoryOptions" [value]="option.value">
+        {{ option.viewValue }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field class="form__field form__field--select">
+    <mat-label>Funções</mat-label>
+    <mat-select formControlName="roles" multiple>
+      <mat-option *ngFor="let option of roleOptions" [value]="option.value">
+        {{ option.viewValue }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-checkbox
+    class="form__field"
+    color="primary"
+    formControlName="mvp"
+  >MVP (destaque)</mat-checkbox>
+  <mat-form-field  class="form__field form__field--select">
+    <mat-label>Dupla</mat-label>
+    <mat-select formControlName="duoId">
+      <mat-option value="">
+        Nenhuma
+      </mat-option>
+      <mat-option *ngFor="let option of duoOptions" [value]="option.value">
+        {{ option.viewValue }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <button
     class="form__button"
     mat-flat-button
