@@ -38,6 +38,7 @@
       &__agora {
         padding-bottom: 16px;
         height: 60px;
+        cursor: pointer;
       }
 
       &__sd {
@@ -67,6 +68,14 @@
 
         &:hover {
           text-shadow: 0 0 12px $primary, 0 0 24px $primary;
+        }
+
+        &--condeb {
+          color: $condebsecondary;
+
+          &:hover {
+            text-shadow: 0 0 12px $condebsecondary, 0 0 24px $condebsecondary;
+          }
         }
 
         &:last-child {

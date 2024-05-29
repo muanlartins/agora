@@ -64,6 +64,7 @@ import { TournamentComponent } from './components/tournament/tournament.componen
 import { CreateParticipantModalComponent } from './components/tournament/components/create-participant-modal/create-participant-modal.component';
 import { CreateParticipantFormComponent } from './components/tournament/components/create-participant-form/create-participant-form.component';
 import { RegisterDuoModalComponent } from './components/tournament/components/register-duo-modal/register-duo-modal.component';
+import { TabbyArchiveComponent } from './components/tabby-archive/tabby-archive.component';
 
 registerLocaleData(pt);
 
@@ -98,6 +99,7 @@ registerLocaleData(pt);
     CreateParticipantModalComponent,
     CreateParticipantFormComponent,
     RegisterDuoModalComponent,
+    TabbyArchiveComponent,
   ],
   imports: [
     BrowserModule,

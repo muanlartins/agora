@@ -1,0 +1,95 @@
+<div class="page">
+  <div class="page__navbar">
+    <div class="page__navbar__logo">
+      <img src="assets/agora-logo-white.png" class="page__navbar__logo__agora" (click)="goToLandingPage()" />
+      <!-- <img src="assets/sd-logo-white.png" class="page__navbar__logo__sd" /> -->
+      <img src="assets/condeb-logo.png" class="page__navbar__logo__condeb" />
+    </div>
+    <ul class="page__navbar__menu">
+      <li class="page__navbar__menu__option" routerLink="/login">Login</li>
+      <li class="page__navbar__menu__option" routerLink="/tabby-archive" routerLinkActive="page__navbar__menu__option--active">Tabby Archive</li>
+      <!-- <li class="page__navbar__menu__option">Cadastre-se</li> -->
+    </ul>
+  </div>
+  <div class="page__content">
+    <div class="page__content__introduction">
+      <div class="page__content__introduction__title">Tabby Archive</div>
+      <div class="page__content__introduction__description">
+        O Tabby Archive, ou Arquivo Tabby, é um projeto da CONDEB de disponibilizar publicamente
+        registros dos tabbies dos campeonatos de debates.
+      </div>
+      <div class="page__content__introduction__description">Selecione um torneio abaixo para poder ver os seus dados.</div>
+    </div>
+    <form class="page__content__form" [formGroup]="form">
+      <mat-form-field>
+        <mat-label>Torneio</mat-label>
+        <mat-select formControlName="tournament">
+          <mat-option>Nenhum</mat-option>
+          <mat-option value="icariocao">I Cariocao</mat-option>
+          <mat-option value="icuradoria">I Curadoria Lusófona</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+    <div class="page__content__tournament" *ngIf="data">
+      <div class="page__content__tournament__title">
+        {{ data.tournamentName }}
+      </div>
+      <div class="page__content__tournament__rounds">
+        <div class="page__content__tournament__rounds__round" *ngFor="let round of data.rounds">
+          <div class="page__content__tournament__rounds__round__name">
+            {{ round.roundName }} ({{round.roundAbbreviation}})
+            ({{ round.isEliminationRound ? 'Fechada' : 'Aberta'}})
+          </div>
+          <div class="page__content__tournament__rounds__round__debates">
+            <div class="page__content__tournament__rounds__round__debates__debate" *ngFor="let debate of round.debates">
+              <div class="page__content__tournament__rounds__round__debates__debate__venue">
+                {{ debate.debateVenue }}
+              </div>
+              <div class="page__content__tournament__rounds__round__debates__debate__motion"
+                [innerHTML]="debate.debateMotion"
+              ></div>
+              <div class="page__content__tournament__rounds__round__debates__debate__side" *ngFor="let i of [0,1,2,3]">
+                <div class="page__content__tournament__rounds__round__debates__debate__side__title">
+                  {{ getSideTitle(i) }} <span class="condebsecondary">({{ debate.debateSides[i].sideTeam.name }})</span>
+                  <span class="primary">
+                    ({{ getSideRank(debate.debateSides[i].sideRank) }})
+                  </span>
+                </div>
+                <div class="page__content__tournament__rounds__round__debates__debate__side__team">
+
+                </div>
+                <div class="page__content__tournament__rounds__round__debates__debate__side__speakers">
+                  <div
+                  class="page__content__tournament__rounds__round__debates__debate__side__speakers__speaker"
+                    *ngFor="let speaker of debate.debateSides[i].sideTeam.speakers; index as speakerIndex"
+                  >
+                    {{ speaker.name }} <span class="condebsecondary">({{ speaker.society }})</span>
+                    <span *ngIf="debate.debateSides[i].sideSpeakers.length > 0" class="primary"> ({{
+                      debate.debateSides[i].sideSpeakers[speakerIndex].speechSps
+                    }})</span>
+                  </div>
+                </div>
+              </div>
+              <div class="page__content__tournament__rounds__round__debates__debate__adjudicators">
+                <div class="page__content__tournament__rounds__round__debates__debate__adjudicators__title">
+                  Mesa Adjudicadora
+                </div>
+                <div class="page__content__tournament__rounds__round__debates__debate__adjudicators__chair">
+                  <span class="primary">©</span> {{ debate.debateChair.name }} <span class="condebsecondary">({{ debate.debateChair.society }})</span>
+                </div>
+                <div class="page__content__tournament__rounds__round__debates__debate__adjudicators__wings">
+                  <div
+                    *ngFor="let wing of debate.debateWings"
+                    class="page__content__tournament__rounds__round__debates__debate__adjudicators__wings__wing"
+                  >
+                    {{ wing.name }} <span class="condebsecondary">({{ wing.society }})</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

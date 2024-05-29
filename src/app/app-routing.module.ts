@@ -11,11 +11,13 @@ import { ArticlesComponent } from './components/articles/articles.component';
 import { AdminGuard } from './guards/admin.guard';
 import { ReportComponent } from './components/report/report.component';
 import { TournamentComponent } from './components/tournament/tournament.component';
+import { TabbyArchiveComponent } from './components/tabby-archive/tabby-archive.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: "full" },
   { path: 'metadebate', component: TournamentComponent },
   { path: 'login', component: LoginComponent, data: {} },
+  { path: 'tabby-archive', component: TabbyArchiveComponent, data: {} },
   { path: 'dashboard', component: DashboardComponent, canActivate: [LoginGuard] },
   { path: 'debates', component: DebatesComponent, canActivate: [LoginGuard] },
   { path: 'members', component: MembersComponent, canActivate: [LoginGuard] },
