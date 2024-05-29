@@ -25,10 +25,8 @@ export class TabbyArchiveComponent implements OnInit {
 
   public initForm() {
     this.form = this.formBuilder.group({
-      tournament: ['icariocao']
+      tournament: ['']
     });
-
-    this.getTournamentTabbyData('icariocao');
 
     this.form.controls['tournament'].valueChanges.subscribe((tournament) => {
       if (tournament) this.getTournamentTabbyData(tournament);

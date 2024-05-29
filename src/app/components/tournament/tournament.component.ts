@@ -12,6 +12,7 @@ import * as removeAccents from 'remove-accents';
 import { RegisterDuoModalComponent } from './components/register-duo-modal/register-duo-modal.component';
 import { getTournamentRoleViewValue } from 'src/app/models/enums/tournament-role';
 import { ParticipantCategory, getParticipantCategoryViewValue } from 'src/app/models/enums/participant-category';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tournament',
@@ -53,7 +54,8 @@ export class TournamentComponent implements OnInit {
   constructor (
     private participantService: ParticipantService,
     private formBuilder: FormBuilder,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router,
   ) {}
 
   public ngOnInit(): void {
@@ -198,5 +200,9 @@ export class TournamentComponent implements OnInit {
 
   public getParticipantDuo(participant: Participant) {
     return this.participants.find((duoParticipant: Participant) => duoParticipant.id === participant.duoId)!.name;
+  }
+
+  public goToLandingPage() {
+    this.router.navigate([""]);
   }
 }
