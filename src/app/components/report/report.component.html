@@ -40,6 +40,11 @@
           </div>
         </div>
       </div>
+      <div class="page__content__body__middle" *ngIf="member">
+        <app-markdown
+          [data]="member.description"
+        ></app-markdown>
+      </div>
       <div class="page__content__body__lower" [style.opacity]="member ? 1 : 0">
         <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__section">
           Como debatedor(a)

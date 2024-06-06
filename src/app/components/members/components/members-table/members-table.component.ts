@@ -155,7 +155,7 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   }
 
   public openCreateMemberModal() {
-    this.dialog.open(CreateMemberModalComponent, { width: '80vw', disableClose: true  });
+    this.dialog.open(CreateMemberModalComponent, { width: '80vw', maxHeight: '80vh', disableClose: true  });
   }
 
   public getColumnData(element: Member, column: string) {
@@ -169,7 +169,7 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
   public editMember(id: string, event: Event) {
     event.stopPropagation();
 
-    this.dialog.open(CreateMemberModalComponent, { width: '80vw', data: {
+    this.dialog.open(CreateMemberModalComponent, { width: '80vw', maxHeight: '80vh', data: {
       isEditing: true,
       member: this.members.find((member) => member.id === id)
     }, disableClose: true });
