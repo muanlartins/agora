@@ -7,7 +7,7 @@
     </div>
     <ul class="page__navbar__menu">
       <li class="page__navbar__menu__option" routerLink="/login">Login</li>
-      <li class="page__navbar__menu__option" routerLink="/tabby-archive" routerLinkActive="page__navbar__menu__option--active">Tabby Archive</li>
+      <!-- <li class="page__navbar__menu__option" routerLink="/tabby-archive" routerLinkActive="page__navbar__menu__option--active">Tabby Archive</li> -->
       <!-- <li class="page__navbar__menu__option">Cadastre-se</li> -->
     </ul>
   </div>
@@ -25,8 +25,9 @@
         <mat-label>Torneio</mat-label>
         <mat-select formControlName="tournament">
           <mat-option>Nenhum</mat-option>
-          <mat-option value="icariocao">I Cariocao</mat-option>
-          <mat-option value="icuradoria">I Curadoria Lusófona</mat-option>
+          <mat-option *ngFor="let option of tournamentOptions" [value]="option.value">
+            {{ option.viewValue }}
+          </mat-option>
         </mat-select>
       </mat-form-field>
     </form>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SelectOption } from 'src/app/models/types/select-option';
 import { TournamentService } from 'src/app/services/tournament.service';
 
 @Component({
@@ -10,6 +11,8 @@ import { TournamentService } from 'src/app/services/tournament.service';
 })
 export class TabbyArchiveComponent implements OnInit {
   public form: FormGroup;
+
+  public tournamentOptions: SelectOption[] = [];
 
   public data: any;
 
@@ -28,8 +31,19 @@ export class TabbyArchiveComponent implements OnInit {
       tournament: ['']
     });
 
+    this.initOptions();
+
     this.form.controls['tournament'].valueChanges.subscribe((tournament) => {
       if (tournament) this.getTournamentTabbyData(tournament);
+    });
+  }
+
+  public initOptions() {
+    this.tournamentService.getAllTournamentOptions().subscribe((options: string[]) => {
+      this.tournamentOptions = options.map((option: string) => ({
+        value: option.split('.')[0],
+        viewValue: option.split('.')[0]
+      }));
     });
   }
 

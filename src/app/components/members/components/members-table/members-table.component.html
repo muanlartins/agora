@@ -77,6 +77,11 @@
               <div class="table__body__tr__td__details__content__name">{{ member.name }}</div>
               <div class="table__body__tr__td__details__content__society">{{ member.society }}</div>
             </div>
+            <div class="table__body__tr__td__details__description">
+              <app-markdown
+                [data]="member.description"
+              ></app-markdown>
+            </div>
           </div>
         </ng-container>
       </td>

@@ -19,6 +19,14 @@
 
   &__field {
     position: relative;
+
+    &--textarea {
+      width: 100%;
+    }
+
+    &--markdown {
+      width: 100%;
+    }
   }
 
   &__button {

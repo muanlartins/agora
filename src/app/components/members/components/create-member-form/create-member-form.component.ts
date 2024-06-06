@@ -32,6 +32,12 @@ export class CreateMemberFormComponent implements OnInit {
 
   public pfpUrl?: string;
 
+  public get description() {
+    if (this.form.controls['description']) return this.form.controls['description'].value;
+
+    return '';
+  }
+
   constructor(
     private formBuilder: FormBuilder,
     private memberService: MemberService,
@@ -50,7 +56,8 @@ export class CreateMemberFormComponent implements OnInit {
       society: ['', Validators.required],
       newSociety: [''],
       isTrainee: [false],
-      blocked: [false]
+      blocked: [false],
+      description: ['']
     });
 
     const state = getState();
@@ -60,6 +67,7 @@ export class CreateMemberFormComponent implements OnInit {
       this.form.controls['society'].patchValue(this.member.society);
       this.form.controls['isTrainee'].patchValue(this.member.isTrainee);
       this.form.controls['blocked'].patchValue(this.member.blocked);
+      this.form.controls['description'].patchValue(this.member.description);
 
       this.pfpUrl = this.member.hasPfp ? `/assets/pfps/${this.member.id}` : this.avatarIconUrl;
 
@@ -71,6 +79,8 @@ export class CreateMemberFormComponent implements OnInit {
         this.form.controls['isTrainee'].patchValue(state[this.member.id].isTrainee);
       if (state[this.member.id] && state[this.member.id].blocked)
         this.form.controls['blocked'].patchValue(state[this.member.id].blocked);
+      if (state[this.member.id] && state[this.member.id].description)
+        this.form.controls['description'].patchValue(state[this.member.id].description);
     } else if (state['member']) {
       const member = state['member'];
 
@@ -78,6 +88,7 @@ export class CreateMemberFormComponent implements OnInit {
       this.form.controls['society'].patchValue(member.society);
       this.form.controls['isTrainee'].patchValue(member.isTrainee);
       this.form.controls['blocked'].patchValue(member.blocked);
+      this.form.controls['description'].patchValue(member.description);
     }
   }
 
@@ -102,15 +113,16 @@ export class CreateMemberFormComponent implements OnInit {
       this.form.controls['society'].value;
     const isTrainee = this.form.controls['isTrainee'].value;
     const blocked = this.form.controls['blocked'].value;
+    const description = this.form.controls['description'].value;
 
     let id: string;
     if (this.isEditing) {
       const hasPfp = this.member.hasPfp;
       id = this.member.id;
-      await this.memberService.updateMember(id, name, society, isTrainee, hasPfp, blocked);
+      await this.memberService.updateMember(id, name, society, isTrainee, hasPfp, blocked, description);
     } else {
       const hasPfp: boolean = !!this.avatarFile;
-      const member: Member = await this.memberService.createMember(name, society, isTrainee, hasPfp, blocked);
+      const member: Member = await this.memberService.createMember(name, society, isTrainee, hasPfp, blocked, description);
       id = member.id;
     }
 

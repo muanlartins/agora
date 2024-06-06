@@ -4,6 +4,7 @@ import { BASE_URL } from '../utils/constants';
 
 const ENDPOINTS = {
   getTournametTabbyData: (tournament: string) => `/tournament/${tournament}`,
+  getAllTournamentOptions: '/tournaments/list'
 }
 
 @Injectable({
@@ -15,5 +16,9 @@ export class TournamentService {
 
   public getTournamentTabbyData(tournament: string) {
     return this.httpClient.get<any>(BASE_URL + ENDPOINTS.getTournametTabbyData(tournament));
+  }
+
+  public getAllTournamentOptions() {
+    return this.httpClient.get<any>(BASE_URL + ENDPOINTS.getAllTournamentOptions);
   }
 }

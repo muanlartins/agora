@@ -33,14 +33,22 @@ export class MemberService {
     return this.members$.asObservable();
   }
 
-  public async createMember(name: string, society: string, isTrainee: boolean, hasPfp: boolean, blocked: boolean) {
+  public async createMember(
+    name: string,
+    society: string,
+    isTrainee: boolean,
+    hasPfp: boolean,
+    blocked: boolean,
+    description: string
+  ) {
 
     const member = await firstValueFrom(this.httpClient.post<Member>(BASE_URL + ENDPOINTS.createMember, {
       name,
       society,
       isTrainee,
       hasPfp,
-      blocked
+      blocked,
+      description
     }));
 
     this.members$.next([...this.members$.value, member]);
@@ -48,7 +56,15 @@ export class MemberService {
     return member;
   }
 
-  public async updateMember(id: string, name: string, society: string, isTrainee: boolean, hasPfp: boolean, blocked: boolean) {
+  public async updateMember(
+    id: string,
+    name: string,
+    society: string,
+    isTrainee: boolean,
+    hasPfp: boolean,
+    blocked: boolean,
+    description: string
+  ) {
 
     await firstValueFrom(this.httpClient.put<boolean>(BASE_URL + ENDPOINTS.editMember, {
       id,
@@ -56,12 +72,13 @@ export class MemberService {
       society,
       isTrainee,
       hasPfp,
-      blocked
+      blocked,
+      description
     }));
 
     const members = [...this.members$.value];
     members.splice(members.findIndex((member) => member.id === id), 1);
-    members.push({id, name, society, isTrainee, hasPfp, blocked});
+    members.push({id, name, society, isTrainee, hasPfp, blocked, description});
 
     this.members$.next(members);
   }

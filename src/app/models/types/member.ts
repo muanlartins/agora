@@ -5,4 +5,5 @@ export type Member = {
   isTrainee: boolean;
   hasPfp: boolean;
   blocked: boolean;
+  description: string;
 }

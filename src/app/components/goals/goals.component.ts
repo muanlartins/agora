@@ -22,77 +22,81 @@ export class GoalsComponent implements OnInit {
     this.competitiveGoals = [
       {
         title: 'Ganhar 1 Título Major',
-        currentCount: 0,
+        currentCount: 2,
         totalCount: 1,
         achieved: false,
       },
       {
         title: 'Realizar 3 Breaks Major',
-        currentCount: 0,
+        currentCount: 5,
         totalCount: 3,
         achieved: false,
       },
       {
         title: 'Ganhar 3 Títulos Open',
-        currentCount: 1,
+        currentCount: 3,
         totalCount: 3,
         achieved: false,
       },
       {
         title: 'Alcançar 10 Finais Open',
-        currentCount: 6,
+        currentCount: 11,
         totalCount: 10,
         achieved: false,
       },
       {
         title: 'Realizar 10 Breaks Open',
-        currentCount: 8,
+        currentCount: 18,
         totalCount: 10,
         achieved: false,
       },
       {
         title: 'Ganhar 3 Títulos Novice',
-        currentCount: 1,
+        currentCount: 2,
         totalCount: 3,
         achieved: false,
       },
       {
         title: 'Alcançar 5 Finais Novice',
-        currentCount: 1,
+        currentCount: 4,
         totalCount: 5,
         achieved: false,
       },
       {
         title: 'Realizar 5 Breaks Novice',
-        currentCount: 1,
+        currentCount: 4,
         totalCount: 5,
         achieved: false,
       },
       {
         title: 'Participar de 5 CA Teams',
-        currentCount: 1,
+        currentCount: 4,
         totalCount: 5,
         achieved: false,
       },
       {
         title: 'Realizar 10 Breaks de Juízes',
-        currentCount: 3,
-        totalCount: 10,
-        achieved: false,
-      },
-      {
-        title: 'Alcançar 10 vezes Top 10 em campeonatos na categoria Open',
         currentCount: 9,
         totalCount: 10,
         achieved: false,
       },
       {
+        title: 'Alcançar 10 vezes Top 10 em campeonatos na categoria Open',
+        currentCount: 17,
+        totalCount: 10,
+        achieved: false,
+      },
+      {
         title: 'Alcançar 10 vezes Top 10 em campeonatos na categoria Novice',
-        currentCount: 4,
+        currentCount: 12,
         totalCount: 10,
         achieved: false,
       },
     ];
+
+    this.competitiveGoals.forEach((goal) => {
+      goal.achieved = goal.currentCount >= goal.totalCount
+    });
 
     this.managementGoals = [
       {
