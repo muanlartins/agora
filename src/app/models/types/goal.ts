@@ -1,6 +1,8 @@
 export type Goal = {
+  id: string;
   title: string;
   currentCount: number;
   totalCount: number;
-  achieved: boolean;
+  type: string;
+  description: string;
 };

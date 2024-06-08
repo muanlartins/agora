@@ -1,30 +1,59 @@
 <div class="goals">
   <app-navbar class="goals__navbar"></app-navbar>
+  <button *ngIf="isAdmin()" class="goals__button" mat-flat-button color="primary" (click)="createGoal()">Criar</button>
   <div class="goals__container">
     <mat-tab-group class="goals__container__tabs">
       <mat-tab class="goals__container__tabs__tab" label="COMPETIÇÃO">
         <div class="goals__container__tabs__tab__goals">
-          <div class="goals__container__tabs__tab__goals__goal" *ngFor="let goal of competitiveGoals">
-            <mat-checkbox color="primary" [disabled]="true" [checked]="goal.achieved">
-              <div class="goals__container__tabs__tab__goals__goal__title">
-                <span class="goals__container__tabs__tab__goals__goal__title__text">{{ goal.title }}</span>
-                <span class="goals__container__tabs__tab__goals__goal__title__counter">({{ goal.currentCount }}/{{ goal.totalCount }})</span>
-              </div>
-            </mat-checkbox>
-            <mat-progress-bar class="goals__container__tabs__tab__goals__goal__progress" mode="determinate" [value]="goal.currentCount/goal.totalCount * 100"></mat-progress-bar>
+          <div class="goals__container__tabs__tab__goals__goal" *ngFor="let goal of competitionGoals">
+            <div class="goals__container__tabs__tab__goals__goal__info">
+              <mat-checkbox color="primary" [disabled]="true" [checked]="isGoalAchieved(goal)">
+                <div class="goals__container__tabs__tab__goals__goal__info__title">
+                  <span class="goals__container__tabs__tab__goals__goal__info__title__text">{{ goal.title }}</span>
+                  <span class="goals__container__tabs__tab__goals__goal__info__title__counter">({{ goal.currentCount }}/{{ goal.totalCount }})</span>
+                </div>
+              </mat-checkbox>
+              <ng-container *ngIf="isAdmin()">
+                <img (click)="editGoal(goal.id, $event)" src="assets/edit-text.png" class="goals__container__tabs__tab__goals__goal__info__icon" />
+              </ng-container>
+              <ng-container *ngIf="isAdmin()">
+                <img (click)="deleteGoal(goal.id, $event)" src="assets/delete.png" class="goals__container__tabs__tab__goals__goal__info__icon" />
+              </ng-container>
+            </div>
+            <mat-progress-bar
+              [class.goals__container__tabs__tab__goals__goal__progress]="goal.description"
+              mode="determinate"
+              [value]="goal.currentCount/goal.totalCount * 100"
+            ></mat-progress-bar>
+            <app-markdown
+              *ngIf="goal.description"
+              class="goals__container__tabs__tab__goals__goal__markdown"
+              [data]="goal.description"
+            ></app-markdown>
           </div>
         </div>
       </mat-tab>
       <mat-tab class="goals__container__tabs__tab" label="GESTÃO" *ngIf="isAdmin()">
         <div class="goals__container__tabs__tab__goals">
           <div class="goals__container__tabs__tab__goals__goal" *ngFor="let goal of managementGoals">
-            <mat-checkbox color="primary" [disabled]="true" [checked]="goal.achieved">
-              <div class="goals__container__tabs__tab__goals__goal__title">
-                <span class="goals__container__tabs__tab__goals__goal__title__text">{{ goal.title }}</span>
-                <span class="goals__container__tabs__tab__goals__goal__title__counter">({{ goal.currentCount }}/{{ goal.totalCount }})</span>
-              </div>
-            </mat-checkbox>
+            <div class="goals__container__tabs__tab__goals__goal__info">
+              <mat-checkbox color="primary" [disabled]="true" [checked]="isGoalAchieved(goal)">
+                <div class="goals__container__tabs__tab__goals__goal__info__title">
+                  <span class="goals__container__tabs__tab__goals__goal__info__title__text">{{ goal.title }}</span>
+                  <span class="goals__container__tabs__tab__goals__goal__info__title__counter">({{ goal.currentCount }}/{{ goal.totalCount }})</span>
+                </div>
+              </mat-checkbox>
+              <ng-container *ngIf="isAdmin()">
+                <img (click)="editGoal(goal.id, $event)" src="assets/edit-text.png" class="goals__container__tabs__tab__goals__goal__info__icon" />
+              </ng-container>
+              <ng-container *ngIf="isAdmin()">
+                <img (click)="deleteGoal(goal.id, $event)" src="assets/delete.png" class="goals__container__tabs__tab__goals__goal__info__icon" />
+              </ng-container>
+            </div>
             <mat-progress-bar class="goals__container__tabs__tab__goals__goal__progress" mode="determinate" [value]="goal.currentCount/goal.totalCount * 100"></mat-progress-bar>
+            <app-markdown
+              [data]="goal.description"
+            ></app-markdown>
           </div>
         </div>
       </mat-tab>

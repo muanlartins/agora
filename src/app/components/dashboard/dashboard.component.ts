@@ -13,7 +13,7 @@ import { ArticleService } from 'src/app/services/article.service';
 import { DebateService } from 'src/app/services/debate.service';
 import { MemberService } from 'src/app/services/member.service';
 import { MONTHS, housesColors, placementColors } from 'src/app/utils/constants';
-import { GoalService } from 'src/app/services/goals.service';
+import { GoalService } from 'src/app/services/goal.service';
 import { Goal } from 'src/app/models/types/goal';
 import { NzNotificationPlacement, NzNotificationService } from 'ng-zorro-antd/notification';
 
@@ -362,7 +362,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.statistics.push({
       title: 'Total de <b>Metas Atingidas</b>',
-      value: this.goalService.getAllGoals().filter((goal: Goal) => goal.achieved).length,
+      value: 0,
     });
 
     // Total Articles Written

@@ -1,0 +1,14 @@
+.form {
+  padding: 32px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 32px;
+  align-items: center;
+
+  &__field {
+    &--title, &--textarea, &--markdown {
+      width: 100%;
+    }
+  }
+}

@@ -13,6 +13,12 @@
     width: 100%;
   }
 
+  &__button {
+    align-self: flex-start;
+    width: calc(100% - 256px);
+    margin: 16px 128px;
+  }
+
   &__container {
     display: flex;
     flex-direction: column;
@@ -35,21 +41,40 @@
           padding: 32px 0;
 
           &__goal {
-            &__title {
+            &__info {
               display: flex;
-              justify-content: row;
+              flex-direction: row;
+              justify-content: flex-start;
               align-items: center;
-              gap: 8px;
 
-              &__text {
-                font-size: 16px;
-                color: $white;
+              &__title {
+                display: flex;
+                justify-content: row;
+                align-items: center;
+                gap: 8px;
+
+                &__text {
+                  font-size: 16px;
+                  color: $white;
+                }
+
+                &__counter {
+                  font-size: 14px;
+                  color: $primary;
+                }
               }
 
-              &__counter {
-                font-size: 14px;
-                color: $primary;
+              &__icon {
+                cursor: pointer;
+                filter: $filter;
+                width: 24px;
+                height: 24px;
+                margin-left: 24px;
               }
+            }
+
+            &__progress {
+              margin-bottom: 16px;
             }
           }
         }

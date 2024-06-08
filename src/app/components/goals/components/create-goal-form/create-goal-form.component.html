@@ -1,0 +1,39 @@
+<form class="form" [formGroup]="form">
+  <mat-form-field class="form__field form__field--title">
+    <mat-label>Título</mat-label>
+    <input type="text" matInput formControlName="title" />
+  </mat-form-field>
+  <mat-form-field class="form__field">
+    <mat-label>Progresso Atual</mat-label>
+    <input type="number" matInput formControlName="currentCount" />
+  </mat-form-field>
+  <mat-form-field class="form__field">
+    <mat-label>Total</mat-label>
+    <input type="number" matInput formControlName="totalCount" />
+  </mat-form-field>
+  <mat-form-field class="form__field">
+    <mat-label>Tipo</mat-label>
+    <mat-select formControlName="type">
+      <mat-option value="competition">Competição</mat-option>
+      <mat-option value="management">Gestão</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field
+    class="form__field form__field--textarea"
+  >
+    <mat-label>Descrição</mat-label>
+    <textarea
+      matInput
+      cdkTextareaAutosize
+      #autosize="cdkTextareaAutosize"
+      cdkAutosizeMinRows="1"
+      formControlName="description"
+    ></textarea>
+  </mat-form-field>
+  <app-markdown
+    class="form__field form__field--markdown"
+    [data]="description"
+  ></app-markdown>
+  <button mat-flat-button color="primary" (click)="close()">Cancelar</button>
+  <button [disabled]="!form.valid" mat-flat-button color="primary" (click)="submit()">{{ getButtonText() }}</button>
+</form>
