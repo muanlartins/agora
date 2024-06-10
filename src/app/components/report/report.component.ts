@@ -9,11 +9,15 @@ import { Article } from 'src/app/models/types/article';
 import { Debate } from 'src/app/models/types/debate';
 import { Member } from 'src/app/models/types/member';
 import { SelectOption } from 'src/app/models/types/select-option';
-import { Statistic } from 'src/app/models/types/statistic';
 import { ArticleService } from 'src/app/services/article.service';
 import { DebateService } from 'src/app/services/debate.service';
 import { MemberService } from 'src/app/services/member.service';
 import { housesColors, placementColors } from 'src/app/utils/constants';
+
+type Statistic = {
+  title: any;
+  value: any;
+};
 
 @Component({
   selector: 'app-report',

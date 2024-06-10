@@ -1,21 +1,62 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, Query, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Chart, ChartType } from 'chart.js';
-import * as moment from 'moment';
+import { Chart, ChartType, scales } from 'chart.js';
 import { combineLatest } from 'rxjs';
 import { Article } from 'src/app/models/types/article';
 import { Debate } from 'src/app/models/types/debate';
 import { Member } from 'src/app/models/types/member';
-import { Rank } from 'src/app/models/types/rank';
 import { SelectOption } from 'src/app/models/types/select-option';
-import { Statistic } from 'src/app/models/types/statistic';
 import { ArticleService } from 'src/app/services/article.service';
 import { DebateService } from 'src/app/services/debate.service';
 import { MemberService } from 'src/app/services/member.service';
-import { MONTHS, housesColors, placementColors } from 'src/app/utils/constants';
 import { GoalService } from 'src/app/services/goal.service';
 import { Goal } from 'src/app/models/types/goal';
-import { NzNotificationPlacement, NzNotificationService } from 'ng-zorro-antd/notification';
+import { UtilService } from 'src/app/services/util.service';
+import { LoadingService } from 'src/app/services/loading.service';
+import { MONTHS, placementColors } from 'src/app/utils/constants';
+import * as moment from 'moment';
+
+type Rank = {
+  title: string;
+  disclaimer?: string;
+  placements: {
+    title: string;
+    members: Member[];
+    value: number;
+  }[];
+};
+
+type Statistic = {
+  title: string;
+  fields: {
+    title: string;
+    description?: string;
+    chart?: boolean;
+    full?: boolean;
+  }[];
+};
+
+const options = {
+  maintainAspectRatio: false,
+};
+
+const doughnutOptions = {
+  maintainAspectRatio: false,
+  scales: {
+    x: {
+      display: false
+    },
+    y: {
+      display: false
+    }
+  }
+};
+
+Chart.defaults.color = '#D9D9D9';
+Chart.defaults.borderColor = '#D9D9D920';
+
+const barBackgroundColor = '#906E2E';
+const doughnutBackgroundColor = ['#FFC040', '#906E2E']
 
 @Component({
   selector: 'app-dashboard',
@@ -25,13 +66,11 @@ import { NzNotificationPlacement, NzNotificationService } from 'ng-zorro-antd/no
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public form: FormGroup;
 
-  public monthOptions: SelectOption[] = [];
-
-  public tournamentOptions: SelectOption[] = [];
-
   public charts: Chart[] = [];
 
   public members: Member[] = [];
+
+  public filteredMembers: Member[] = [];
 
   public debates: Debate[] = [];
 
@@ -39,26 +78,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public articles: Article[] = [];
 
-  public statistics: Statistic[] = [];
+  public goals: Goal[] = [];
+
+  public societyOptions: SelectOption[] = [];
+
+  public psOptions: SelectOption[] = [];
 
   public ranks: Rank[] = [];
 
-  public loading: boolean = false;
+  public statistics: Statistic[] = [];
 
-  @ViewChild('chart0')
-  public chart0Ref: ElementRef<Chart>;
+  @ViewChildren('chart')
+  public chartRefs: QueryList<ElementRef<HTMLCanvasElement>>;
 
-  @ViewChild('chart1')
-  public chart1Ref: ElementRef<Chart>;
-
-  @ViewChild('chart2')
-  public chart2Ref: ElementRef<Chart>;
-
-  @ViewChild('chart3')
-  public chart3Ref: ElementRef<Chart>;
-
-  public get months() {
-    return MONTHS;
+  public get loading() {
+    return this.loadingService.loading$.value;
   }
 
   constructor(
@@ -66,6 +100,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private debateService: DebateService,
     private articleService: ArticleService,
     private goalService: GoalService,
+    private utilService: UtilService,
+    private loadingService: LoadingService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef
   ) {
@@ -77,347 +113,278 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.generateCharts();
     this.cdr.detectChanges();
   }
 
   ngOnDestroy(): void {
     this.charts.forEach((chart) => chart.destroy());
+    this.charts = [];
   }
 
   public initForm() {
     this.form = this.formBuilder.group({
-      month: [],
-      tournament: [''],
-      trainee: [false]
+      society: ['SDUFRJ'],
+      ps: ['']
     });
 
     this.subscribeToValueChanges();
-    this.filterDebates();
   }
 
   public subscribeToValueChanges() {
     this.form.valueChanges.subscribe(() => {
-      this.filterDebates();
+      this.filterDebatesAndMembers();
     });
   }
 
-  public filterDebates() {
-    const month = this.form.controls['month'].value;
-    const tournament = this.form.controls['tournament'].value;
-    const trainee = this.form.controls['trainee'].value;
+  public filterDebatesAndMembers() {
+    const society = this.form.controls['society'].value;
+    const ps = this.form.controls['ps'].value;
 
-    this.filteredDebates = [...this.debates];
+    this.filteredDebates = this.debates;
+    this.filteredMembers = this.members.filter((member) => !member.blocked);
 
-    if (!!month || month === 0) this.filteredDebates = this.filteredDebates.filter(
-      (debate: Debate) => moment(debate.date).month() === month
-    );
+    if (society) {
+      this.filteredDebates = this.utilService.getDebatesWithSociety(this.filteredDebates, society);
+      this.filteredMembers = this.utilService.getMembersFromSociety(this.filteredMembers, society);
+    }
 
-    if (!!tournament) this.filteredDebates = this.filteredDebates.filter((debate: Debate) =>
-      debate.tournament === tournament
-    );
+    if (ps) {
+      this.filteredDebates = this.utilService.getDebatesWithPs(this.filteredDebates, ps);
+      this.filteredMembers = this.utilService.getMembersFromPs(this.filteredMembers, ps);
+    }
 
-    this.generateRanks();
-    this.generateStatistics();
-    this.generateCharts();
+    this.initRanks();
+    this.initStatistics();
+    setTimeout(() => this.generateCharts(), 1000);
   }
 
   public initOptions() {
-    this.monthOptions = MONTHS.map((viewValue, value) => ({ value, viewValue })).filter((option) => option.value <= moment(Date.now()).month());
+    this.societyOptions = [...new Set(this.members.map((member) => member.society))].map((society) => ({
+      value: society,
+      viewValue: society
+    }));
 
-    this.tournamentOptions = [...new Set(this.filteredDebates.filter((debate: Debate) => debate.tournament).map((debate: Debate) => debate.tournament!))]
-      .map((tournament) =>({
-        value: tournament,
-        viewValue: tournament
-      }));
-  }
-
-  public getData() {
-    this.loading = true;
-
-    combineLatest([
-      this.memberService.getAllMembers(),
-      this.debateService.getAllDebates(),
-      this.articleService.getAllArticles()
-    ]).subscribe(([members, debates, articles]) => {
-      if (members && members.length && debates && debates.length && articles && articles.length) {
-        this.loading = false;
-
-        this.members = members;
-        this.debates = debates;
-        this.filteredDebates = debates;
-        this.articles = articles;
-        this.initOptions();
-
-        this.filterDebates();
-        this.generateRanks();
-        this.generateStatistics();
-        this.generateCharts();
-      }
-    });
-  }
-
-  public generateRanks() {
-    if (
-      !this.filteredDebates.length ||
-      !this.members.length ||
-      !this.articles.length
-    ) return;
-
-    this.ranks = [];
-
-    /*
-      Auxiliary Variables
-    */
-
-    const uniqueDebaters = [... new Set(this.filteredDebates.map((debate: Debate) => debate.debaters).flat())]
-      .filter((member: Member) => !member.blocked);
-
-    const uniqueActiveDebaters = uniqueDebaters.filter((uniqueDebater: Member) => this.filteredDebates.filter((debate: Debate) =>
-      debate.debaters.some((debater: Member) => debater.id === uniqueDebater.id) && debate.sps && debate.sps.length
-    ).length > 2);
-
-    const uniqueJudges = [... new Set(this.filteredDebates.map((debate: Debate) =>
-      debate.wings ? [...debate.wings, debate.chair] : [debate.chair]).flat())
-    ].filter((member: Member) => !member.blocked);
-
-    const sum = (a: number[]) => a.reduce((prev, curr) => prev + curr, 0)
-    const average = (a: number[]) => sum(a) / a.length;
-
-    const pointsIndexes = [0,1,0,1,2,3,2,3];
-
-    // Top Firsts by Debater
-
-    const debatersFirsts = uniqueDebaters.map((uniqueDebater: Member) => this.filteredDebates.filter((debate: Debate) => {
-      const debaterIndex = debate.debaters.findIndex((debater: Member) => debater.id === uniqueDebater.id);
-
-      if (debaterIndex === -1) return false;
-
-      return debate.points[pointsIndexes[debaterIndex]] === 3;
-    }).length).map((amount, index) => ({
-      member: uniqueDebaters[index],
-      amount
-    })).sort((a, b) => b.amount - a.amount);
-
-    const debatersFirstsUniqueAmounts = [... new Set(debatersFirsts.map(({ member, amount }) => amount))];
-
-    this.ranks.push({
-      title: 'Debatedores que mais <b>primeiraram</b>',
-      standings: debatersFirstsUniqueAmounts.slice(0, 3).map((uniqueAmount) => ({
-        members: debatersFirsts.filter(({ member, amount }) => uniqueAmount === amount)
-          .map(({ member, amount }) => member),
-        value: uniqueAmount
-      }))
-    });
-
-    // Top Wins by Debater
-
-    const debatersWins = uniqueDebaters.map((uniqueDebater: Member) => this.filteredDebates.filter((debate: Debate) => {
-      const debaterIndex = debate.debaters.findIndex((debater: Member) => debater.id === uniqueDebater.id);
-
-      if (debaterIndex === -1) return false;
-
-      return debate.points[pointsIndexes[debaterIndex]] >= 2;
-    }).length).map((amount, index) => ({
-      member: uniqueDebaters[index],
-      amount
-    })).sort((a, b) => b.amount - a.amount);
-
-    const debatersWinsUniqueAmounts = [... new Set(debatersWins.map(({ member, amount }) => amount))];
-
-    this.ranks.push({
-      title: 'Debatedores que mais <b>ganharam</b>',
-      standings: debatersWinsUniqueAmounts.slice(0, 3).map((uniqueAmount) => ({
-        members: debatersWins.filter(({ member, amount }) => uniqueAmount === amount)
-          .map(({ member, amount }) => member),
-        value: uniqueAmount
-      }))
-    });
-
-    // Top Active Debaters
-
-    const debatersFrequency = uniqueDebaters.map((uniqueDebater: Member) => this.filteredDebates.filter((debate: Debate) =>
-      debate.debaters.some((debater: Member) => debater.id === uniqueDebater.id)
-    ).length).map((amount, index) => ({
-      member: uniqueDebaters[index],
-      amount
-    })).sort((a, b) => b.amount - a.amount);
-
-    const debatersFrequencyUniqueAmounts = [... new Set(debatersFrequency.map(({ member, amount }) => amount))];
-
-    this.ranks.push({
-      title: 'Debatedores mais <b>ativos</b>',
-      standings: debatersFrequencyUniqueAmounts.slice(0, 3).map((uniqueAmount) => ({
-        members: debatersFrequency.filter(({ member, amount }) => uniqueAmount === amount)
-          .map(({ member, amount }) => member),
-        value: uniqueAmount
-      }))
-    });
-
-    // Best SPs Average
-
-    const spsAverages = uniqueActiveDebaters.map((uniqueActiveDebater: Member) => this.filteredDebates.filter((debate: Debate) =>
-      debate.debaters.some((debater: Member) => debater.id === uniqueActiveDebater.id) && debate.sps && debate.sps.length
-    ).map(
-      (debate: Debate) => debate.sps![debate.debaters.findIndex((debater: Member) => debater.id === uniqueActiveDebater.id)]
-    )).map((amount, index) => ({
-      member: uniqueActiveDebaters[index],
-      amount: average(amount)
-    })).sort((a, b) => b.amount - a.amount);
-
-    const uniqueSpsAverages = [... new Set(spsAverages.map(({ member, amount }) => amount))];
-
-    this.ranks.push({
-      title: 'Maiores <b>médias de SPs</b>',
-      standings: uniqueSpsAverages.slice(0, 3).map((uniqueAmount) => ({
-        members: spsAverages.filter(({ member, amount }) => uniqueAmount === amount)
-          .map(({ member, amount }) => member),
-        value: uniqueAmount.toFixed(2)
-      }))
-    });
-
-    // Best Absolute SPs
-
-    const sps = uniqueActiveDebaters.map((uniqueActiveDebater: Member) => this.filteredDebates.filter((debate: Debate) =>
-      debate.debaters.some((debater: Member) => debater.id === uniqueActiveDebater.id) && debate.sps && debate.sps.length
-    ).map(
-      (debate: Debate) => debate.sps![debate.debaters.findIndex((debater: Member) => debater.id === uniqueActiveDebater.id)]
-    )).map((amount, index) => ({
-      member: uniqueActiveDebaters[index],
-      amount: amount.sort((a, b) => b - a)[0]
-    })).sort((a, b) => b.amount - a.amount);
-
-    const uniqueSps = [... new Set(sps.map(({ member, amount }) => amount))];
-
-    this.ranks.push({
-      title: 'Maiores <b>SPs absolutos</b>',
-      standings: uniqueSps.slice(0, 3).map((uniqueAmount) => ({
-        members: sps.filter(({ member, amount }) => uniqueAmount === amount)
-          .map(({ member, amount }) => member),
-        value: uniqueAmount
-      }))
-    });
-
-    // Top Active Judges
-
-    const judgesFrequency = uniqueJudges.map((uniqueJudge: Member) => this.filteredDebates.filter((debate: Debate) =>
-      (debate.wings && debate.wings.some((debater: Member) => debater.id === uniqueJudge.id)) ||
-      debate.chair.id === uniqueJudge.id
-    ).length).map((amount, index) => ({
-      member: uniqueJudges[index],
-      amount
-    })).sort((a, b) => b.amount - a.amount);
-
-    const judgesFrequencyUniqueAmounts = [... new Set(judgesFrequency.map(({ member, amount }) => amount))];
-
-    this.ranks.push({
-      title: 'Juízes mais <b>ativos</b>',
-      standings: judgesFrequencyUniqueAmounts.slice(0, 3).map((uniqueAmount) => ({
-        members: judgesFrequency.filter(({ member, amount }) => uniqueAmount === amount)
-          .map(({ member, amount }) => member),
-        value: uniqueAmount
-      }))
-    });
-  }
-
-  public generateStatistics() {
-    if (
-      !this.filteredDebates.length ||
-      !this.members.length ||
-      !this.articles.length
-    ) return;
-
-    this.statistics = [];
-
-    /*
-      Auxiliary Variables
-    */
-
-    const uniqueActiveMembers = [... new Set(
-      this.filteredDebates.map((debate: Debate) => debate.debaters).flat().concat(
-        this.filteredDebates.filter((debate: Debate) => debate.wings && debate.wings.length).map((debate: Debate) => debate.wings!).flat()
-      ).concat (
-        this.filteredDebates.map((debate: Debate) => debate.chair).flat()
-      )
-    )]
-    .filter((member: Member) => !member.blocked);
-
-    const uniqueSocieties = [... new Set(uniqueActiveMembers.map((member: Member) => member.society))];
-
-    // Total Debates
-
-    this.statistics.push({
-      title: 'Total de <b>Treinos</b>',
-      value: this.filteredDebates.length
-    });
-
-    // Total Active Debaters
-
-    this.statistics.push({
-      title: 'Total de <b>Membros Ativos</b>',
-      value: uniqueActiveMembers.length,
-    });
-
-    // Total Goals Achieved
-
-    this.statistics.push({
-      title: 'Total de <b>Metas Atingidas</b>',
-      value: 0,
-    });
-
-    // Total Articles Written
-
-    this.statistics.push({
-      title: 'Total de <b>Artigos Escritos</b>',
-      value: this.articles.length,
-    });
-
-    // Partner Society
-
-    const partnerSocieties = uniqueSocieties.filter((society: string) => society !== 'sdufrj').map((uniqueSociety: string) => ({
-      society: uniqueSociety,
-      amount: uniqueActiveMembers.filter((member: Member) => member.society === uniqueSociety).length
-    })).sort((a, b) => b.amount - a.amount);
-
-    if (partnerSocieties.length) this.statistics.push({
-      title: 'Sociedade <b>Parceira</b>',
-      value: partnerSocieties[0].society
-    })
+    this.psOptions = [{
+      value: '2024.1',
+      viewValue: '2024.1'
+    }];
   }
 
   public generateCharts() {
-    if (
-      !this.chart0Ref ||
-      !this.chart1Ref ||
-      !this.chart2Ref ||
-      !this.chart3Ref ||
-      !this.members ||
-      !this.filteredDebates ||
-      !this.articles
-    )
-      return;
+    if (!this.chartRefs) return;
+    this.ngOnDestroy();
 
-    this.charts;
+    // Trainings Venue Pie Chart
 
-    if (this.charts.length) {
-      this.charts.forEach((chart) => chart.destroy());
-      this.charts = [];
-    }
+    this.charts.push(new Chart(this.chartRefs.toArray()[0].nativeElement, {
+      options: doughnutOptions,
+      type: 'doughnut' as ChartType,
+      data: {
+        labels: ['Remoto', 'Presencial'],
+        datasets: [
+          {
+            type: 'doughnut',
+            label: 'Quantidade',
+            data: [
+              this.filteredDebates.filter((debate) => debate.venue === 'remote').length,
+              this.filteredDebates.filter((debate) => debate.venue === 'inPerson').length
+            ],
+            backgroundColor: doughnutBackgroundColor
+          },
+        ],
+      }
+    }));
 
-    /*
-      Auxiliary Variables
-    */
+    // Trainings Frequency By Time Bar Chart
 
-    const max = (a: number[]) => Math.max(...a);
-    const sum = (a: number[]) => a.reduce((prev, curr) => prev + curr, 0);
+    const uniqueTimeValues = [...new Set(this.filteredDebates.map((debate) => debate.time))]
+      .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
-    const motionTypes = this.filteredDebates.map((debate) => debate.motionType);
-    const uniqueMotionTypes: string[] = [... new Set(motionTypes)];
+    this.charts.push(new Chart(this.chartRefs.toArray()[1].nativeElement, {
+      options,
+      type: 'bar' as ChartType,
+      data: {
+        labels: uniqueTimeValues,
+        datasets: [
+          {
+            label: 'Quantidade',
+            data: uniqueTimeValues.map((time) => this.filteredDebates.filter((debate) => debate.time === time).length),
+            backgroundColor: barBackgroundColor
+          },
+        ],
+      }
+    }));
 
-    const motionThemes = this.filteredDebates.map((debate) => debate.motionTheme);
-    const uniqueMotionThemes: string[] = [... new Set(motionThemes)];
+    // Trainings Frequency By Month Bar Chart
 
-    // Performance By House
+    const debatesFrequencyByMonth: number[] = [];
+    MONTHS.forEach(() => debatesFrequencyByMonth.push(0));
+
+    this.filteredDebates.forEach((debate) => debatesFrequencyByMonth[moment(debate.date).month()]++);
+
+    this.charts.push(new Chart(this.chartRefs.toArray()[2].nativeElement, {
+      options,
+      type: 'bar' as ChartType,
+      data: {
+        labels: MONTHS.slice(0, new Date().getMonth()+1),
+        datasets: [
+          {
+            label: 'Quantidade',
+            data: debatesFrequencyByMonth,
+            backgroundColor: barBackgroundColor,
+          },
+        ],
+      }
+    }));
+
+    // Proportion of Debaters By Scoiety Doughnut Chart
+
+    const debatersFrequencyBySociety: { [society: string]: number } = {};
+    debatersFrequencyBySociety['SDUFRJ'] = 0;
+    debatersFrequencyBySociety['Outras'] = 0;
+
+    this.filteredDebates.forEach((debate) => debate.debaters.forEach((debater) =>
+      debatersFrequencyBySociety[debater.society === 'SDUFRJ' ? 'SDUFRJ' : 'Outras']++
+    ));
+
+    this.charts.push(new Chart(this.chartRefs.toArray()[3].nativeElement, {
+      options: doughnutOptions,
+      type: 'doughnut' as ChartType,
+      data: {
+        labels: ['SDUFRJ', 'Outras'],
+        datasets: [
+          {
+            label: 'Quantidade',
+            data: [debatersFrequencyBySociety['SDUFRJ'], debatersFrequencyBySociety['Outras']],
+            backgroundColor: doughnutBackgroundColor,
+          },
+        ],
+      }
+    }));
+
+    // Proportion of Judges By Society Doughnut Chart
+
+    const judgesFrequencyBySociety: { [society: string]: number } = {};
+    judgesFrequencyBySociety['SDUFRJ'] = 0;
+    judgesFrequencyBySociety['Outras'] = 0;
+
+    this.filteredDebates.forEach((debate) => {
+      if (debate.wings && debate.wings.length)
+        debate.wings.forEach((wing) =>
+          judgesFrequencyBySociety[wing.society === 'SDUFRJ' ? 'SDUFRJ' : 'Outras']++
+        );
+      judgesFrequencyBySociety[debate.chair.society === 'SDUFRJ' ? 'SDUFRJ' : 'Outras']++
+    });
+
+    this.charts.push(new Chart(this.chartRefs.toArray()[4].nativeElement, {
+      options: doughnutOptions,
+      type: 'doughnut' as ChartType,
+      data: {
+        labels: ['SDUFRJ', 'Outras'],
+        datasets: [
+          {
+            label: 'Quantidade',
+            data: [judgesFrequencyBySociety['SDUFRJ'], judgesFrequencyBySociety['Outras']],
+            backgroundColor: doughnutBackgroundColor,
+          },
+        ],
+      }
+    }));
+
+    // Active Members Bar Chart
+
+    const participations: { [id: string]: number } = {};
+
+    this.filteredMembers.forEach((member) => participations[member.id] = this.filteredDebates.reduce((prev, curr) =>
+      prev + (
+        curr.debaters.some((debater) => debater.id === member.id) ||
+        curr.chair.id === member.id ||
+        (curr.wings && curr.wings.length && curr.wings.some((wing) => wing.id === member.id))
+        ? 1 : 0
+      ), 0
+    ));
+
+    const activeMembers = this.filteredMembers.filter((member) => participations[member.id] >= 5);
+
+    this.filteredMembers.forEach((member) => {
+      if (participations[member.id] < 5) delete participations[member.id]
+    });
+
+    const labels = Object.entries(participations).sort((a, b) => b[1] - a[1]).map((entry) => activeMembers.find((member) => member.id === entry[0])!.name);
+    const data = Object.entries(participations).sort((a, b) => b[1] - a[1]).map((entry) => entry[1]);
+
+    this.charts.push(new Chart(this.chartRefs.toArray()[5].nativeElement, {
+      options,
+      type: 'bar' as ChartType,
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Quantidade',
+            data: data,
+            backgroundColor: barBackgroundColor,
+          },
+        ],
+      }
+    }));
+
+    // Goals Achieved Proportion Doughnut Chart
+
+    const goalsAchievedFrequency: { [id: string]: number } = {};
+    goalsAchievedFrequency['achieved'] = 0;
+    goalsAchievedFrequency['non-achieved'] = 0;
+
+    this.goals.forEach((goal) => {
+      if (goal.currentCount >= goal.totalCount) goalsAchievedFrequency['achieved']++;
+      else goalsAchievedFrequency['non-achieved']++;
+    });
+
+    this.charts.push(new Chart(this.chartRefs.toArray()[6].nativeElement, {
+      options: doughnutOptions,
+      type: 'doughnut' as ChartType,
+      data: {
+        labels: ['Atingidas', 'Não Atingidas'],
+        datasets: [
+          {
+            label: 'Quantidade',
+            data: [goalsAchievedFrequency['achieved'], goalsAchievedFrequency['non-achieved']],
+            backgroundColor: doughnutBackgroundColor,
+          },
+        ],
+      }
+    }));
+
+    // Partner Societies Bar Chart
+
+    const frequencyBySociety: { [society: string]: number } = {};
+
+    [...new Set(this.members.map((member) => member.society))].forEach((society) => frequencyBySociety[society] = 0);
+
+    this.filteredDebates.forEach((debate) => {
+      if (debate.wings && debate.wings.length)
+        debate.wings.forEach((wing) =>
+          frequencyBySociety[wing.society]++
+        );
+      frequencyBySociety[debate.chair.society]++;
+      debate.debaters.forEach((debater) => frequencyBySociety[debater.society]++);
+    });
+
+    this.charts.push(new Chart(this.chartRefs.toArray()[7].nativeElement, {
+      options,
+      type: 'bar' as ChartType,
+      data: {
+        labels: Object.entries(frequencyBySociety).filter((entry) => entry[0] !== 'SDUFRJ').sort((a, b) => b[1]-a[1]).map((entry) => entry[0]),
+        datasets: [
+          {
+            label: 'Quantidade',
+            data: Object.entries(frequencyBySociety).filter((entry) => entry[0] !== 'SDUFRJ').sort((a, b) => b[1]-a[1]).map((entry) => entry[1]),
+            backgroundColor: barBackgroundColor,
+          },
+        ],
+      }
+    }));
+
+    // Results By House Bar Chart
 
     const og = [0, 0, 0, 0];
     const oo = [0, 0, 0, 0];
@@ -431,112 +398,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       co[3 - debate.points[3]] ++;
     });
 
-    this.charts.push(new Chart(this.chart0Ref.nativeElement, {
-      options: {
-        plugins: {
-          legend: {
-            labels: {
-              color: '#D9D9D9'
-            }
-          }
-        },
-        maintainAspectRatio: false,
-        scales: {
-          x: {
-            stacked: true,
-            grid: {
-              color: '#D9D9D920'
-            },
-            ticks: {
-              color: '#D9D9D9'
-            }
-          },
-          y: {
-            min: 0,
-            max: max([sum(og), sum(oo), sum(cg), sum(co)]) + 1,
-            stacked: true,
-            grid: {
-              color: '#D9D9D920'
-            },
-            ticks: {
-              color: '#D9D9D9',
-              stepSize: 1
-            }
-          }
-        },
-      },
-      data: {
-        labels: ['Primeiro', 'Segundo', 'Terceiro', 'Quarto'],
-        datasets: [
-          {
-            type: 'bar',
-            label: '1G',
-            data: og,
-            backgroundColor: housesColors[0]
-          },
-          {
-            type: 'bar',
-            label: '1O',
-            data: oo,
-            backgroundColor: housesColors[1]
-          },
-          {
-            type: 'bar',
-            label: '2G',
-            data: cg,
-            backgroundColor: housesColors[2]
-          },
-          {
-            type: 'bar',
-            label: '2O',
-            data: co,
-            backgroundColor: housesColors[3]
-          },
-        ],
-      }
-    }));
-
-    // Performance By House
-
     const firsts = [og[0], oo[0], cg[0], co[0]];
     const seconds = [og[1], oo[1], cg[1], co[1]];
     const thirds = [og[2], oo[2], cg[2], co[2]];
     const fourths = [og[3], oo[3], cg[3], co[3]];
 
-    this.charts.push(new Chart(this.chart1Ref.nativeElement, {
-      options: {
-        plugins: {
-          legend: {
-            labels: {
-              color: '#D9D9D9'
-            }
-          }
-        },
-        maintainAspectRatio: false,
-        scales: {
-          x: {
-            stacked: true,
-            grid: {
-              color: '#D9D9D920'
-            },
-            ticks: {
-              color: '#D9D9D9'
-            }
-          },
-          y: {
-            min: 0,
-            max: max([sum(firsts), sum(seconds), sum(thirds), sum(fourths)]) + 1,
-            stacked: true,
-            grid: {
-              color: '#D9D9D920'
-            },
-            ticks: {
-              color: '#D9D9D9',
-              stepSize: 1
-            }
-          }
-        },
-      },
+    this.charts.push(new Chart(this.chartRefs.toArray()[8].nativeElement, {
+      options,
       data: {
         labels: ['1G', '1O', '2G', '2O'],
         datasets: [
@@ -567,75 +435,449 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         ],
       }
     }));
+  }
 
-    // Motion Types Frequency
+  public getData() {
+    combineLatest([
+      this.memberService.getAllMembers(),
+      this.debateService.getAllDebates(),
+      this.articleService.getAllArticles(),
+      this.goalService.getAllGoals()
+    ]).subscribe(([members, debates, articles, goals]) => {
+      if (
+        members && members.length &&
+        debates && debates.length &&
+        articles && articles.length &&
+        goals && goals.length
+      ) {
+        this.members = members;
+        this.debates = debates;
+        this.filteredDebates = debates;
+        this.articles = articles;
+        this.goals = goals;
 
-    const motionTypesFrequency = uniqueMotionTypes.map((uniqueMotionType) =>
-      motionTypes.filter((motionType) => motionType === uniqueMotionType).length
-    );
+        this.initOptions();
+        this.filterDebatesAndMembers();
+        setTimeout(() => this.generateCharts(), 1000);
+      }
+    });
+  }
 
-    this.charts.push(new Chart(this.chart2Ref.nativeElement, {
-      type: 'doughnut' as ChartType,
-      options: {
-        plugins: {
-          legend: {
-            labels: {
-              color: '#D9D9D9'
-            }
-          }
+  public initRanks() {
+    this.ranks = [];
+
+    // Most Firsts
+
+    const firsts: { [id: string]: number } = {};
+    this.filteredMembers.forEach((member) => firsts[member.id] = 0);
+
+    this.filteredDebates.forEach((debate) => {
+      const winnerIndex = debate.points.findIndex((point) => point === 3);
+
+      firsts[debate.debaters[this.utilService.getFirstDebaterIndexByHouseIndex(winnerIndex)].id] ++;
+      if (
+        debate.debaters[this.utilService.getFirstDebaterIndexByHouseIndex(winnerIndex)].id !==
+        debate.debaters[this.utilService.getFirstDebaterIndexByHouseIndex(winnerIndex) + 2].id
+      )
+        firsts[debate.debaters[this.utilService.getFirstDebaterIndexByHouseIndex(winnerIndex) + 2].id] ++;
+    });
+
+    const uniqueFirstsValues = [...new Set(Object.values(firsts))].sort((a, b) => b-a);
+
+    this.ranks.push({
+      title: 'Debatedores que mais <b>primeiraram</b>',
+      placements: [
+        {
+          title: `Em <b>primeiro</b> lugar, com <b>${uniqueFirstsValues[0]}</b> primeiro${uniqueFirstsValues[0] !== 1 ? 's' : ''}`,
+          members: this.filteredMembers.filter((member) => firsts[member.id] === uniqueFirstsValues[0]),
+          value: uniqueFirstsValues[0]
         },
-        maintainAspectRatio: false,
-      },
-      data: {
-        labels: uniqueMotionTypes,
-        datasets: [
-          {
-            label: 'Frequência em Debates',
-            data: motionTypesFrequency,
-          },
-        ],
+        {
+          title: `Em <b>segundo</b> lugar, com <b>${uniqueFirstsValues[1]}</b> primeiro${uniqueFirstsValues[1] !== 1 ? 's' : ''}`,
+          members: this.filteredMembers.filter((member) => firsts[member.id] === uniqueFirstsValues[1]),
+          value: uniqueFirstsValues[1]
+        },
+        {
+          title: `Em <b>terceiro</b> lugar, com <b>${uniqueFirstsValues[2]}</b> primeiro${uniqueFirstsValues[2] !== 1 ? 's' : ''}`,
+          members: this.filteredMembers.filter((member) => firsts[member.id] === uniqueFirstsValues[2]),
+          value: uniqueFirstsValues[2]
+        },
+      ]
+    });
+
+    // Higher Firsts Average
+
+    const participationsAsDebater: { [id: string]: number } = {};
+
+    this.filteredMembers.forEach((member) => participationsAsDebater[member.id] = this.filteredDebates.reduce((prev, curr) =>
+      prev + (curr.debaters.some((debater) => debater.id === member.id) ? 1 : 0), 0
+    ));
+
+    const activeMembers = this.filteredMembers.filter((member) => participationsAsDebater[member.id] >= 5);
+
+    const firstsAverage: { [id: string]: number } = {}
+    activeMembers.forEach((member) => {
+      firstsAverage[member.id] = firsts[member.id]/participationsAsDebater[member.id];
+    });
+
+    const uniqueFirstsAverageEntries = [...new Set(Object.entries(firstsAverage))].sort((a, b) => b[1]-a[1]);
+
+    this.ranks.push({
+      title: 'Debatedores com a maior <b>média</b>¹ de <b>primeiros</b>',
+      disclaimer: '<b>¹</b> Apenas membros com <b>5</b> ou mais debates registrados entram para esse ranking',
+      placements: [
+        {
+          title: `Em <b>primeiro</b> lugar, primeirando <b>${firsts[uniqueFirstsAverageEntries[0][0]]}</b> de ${participationsAsDebater[uniqueFirstsAverageEntries[0][0]]} debates`,
+          members: activeMembers.filter((member) => firstsAverage[member.id] === uniqueFirstsAverageEntries[0][1]),
+          value: uniqueFirstsAverageEntries[0][1]
+        },
+        {
+          title: `Em <b>segundo</b> lugar, primeirando <b>${firsts[uniqueFirstsAverageEntries[1][0]]}</b> de ${participationsAsDebater[uniqueFirstsAverageEntries[1][0]]} debates`,
+          members: activeMembers.filter((member) => firstsAverage[member.id] === uniqueFirstsAverageEntries[1][1]),
+          value: uniqueFirstsAverageEntries[1][1]
+        },
+        {
+          title: `Em <b>terceiro</b> lugar, primeirando <b>${firsts[uniqueFirstsAverageEntries[2][0]]}</b> de ${participationsAsDebater[uniqueFirstsAverageEntries[2][0]]} debates`,
+          members: activeMembers.filter((member) => firstsAverage[member.id] === uniqueFirstsAverageEntries[2][1]),
+          value: uniqueFirstsAverageEntries[2][1]
+        },
+      ]
+    });
+
+    // Most Wins (firsts and seconds)
+
+    const wins: { [id: string]: number } = {};
+    this.filteredMembers.forEach((member) => wins[member.id] = 0);
+
+    this.filteredDebates.forEach((debate) => {
+      const firstPlaceIndex = debate.points.findIndex((point) => point === 3);
+      const secondPlaceIndex = debate.points.findIndex((point) => point === 2);
+
+      wins[debate.debaters[this.utilService.getFirstDebaterIndexByHouseIndex(firstPlaceIndex)].id] ++;
+      if (
+        debate.debaters[this.utilService.getFirstDebaterIndexByHouseIndex(firstPlaceIndex)].id !==
+        debate.debaters[this.utilService.getFirstDebaterIndexByHouseIndex(firstPlaceIndex) + 2].id
+      )
+        wins[debate.debaters[this.utilService.getFirstDebaterIndexByHouseIndex(firstPlaceIndex) + 2].id] ++;
+      wins[debate.debaters[this.utilService.getFirstDebaterIndexByHouseIndex(secondPlaceIndex)].id] ++;
+      if (
+        debate.debaters[this.utilService.getFirstDebaterIndexByHouseIndex(secondPlaceIndex)].id !==
+        debate.debaters[this.utilService.getFirstDebaterIndexByHouseIndex(secondPlaceIndex) + 2].id
+      )
+      wins[debate.debaters[this.utilService.getFirstDebaterIndexByHouseIndex(secondPlaceIndex) + 2].id] ++;
+    });
+
+    const uniqueWinsValues = [...new Set(Object.values(wins))].sort((a, b) => b-a);
+
+    this.ranks.push({
+      title: 'Debatedores que mais <b>ganharam</b>¹',
+      disclaimer: '<b>¹</b> Ganhar é <b>primeirar ou segundar</b>',
+      placements: [
+        {
+          title: `Em <b>primeiro</b> lugar, com <b>${uniqueWinsValues[0]}</b> vitória${uniqueWinsValues[0] !== 1 ? 's' : ''}`,
+          members: this.filteredMembers.filter((member) => wins[member.id] === uniqueWinsValues[0]),
+          value: uniqueWinsValues[0]
+        },
+        {
+          title: `Em <b>segundo</b> lugar, com <b>${uniqueWinsValues[1]}</b> vitória${uniqueWinsValues[1] !== 1 ? 's' : ''}`,
+          members: this.filteredMembers.filter((member) => wins[member.id] === uniqueWinsValues[1]),
+          value: uniqueWinsValues[1]
+        },
+        {
+          title: `Em <b>terceiro</b> lugar, com <b>${uniqueWinsValues[2]}</b> vitória${uniqueWinsValues[2] !== 1 ? 's' : ''}`,
+          members: this.filteredMembers.filter((member) => wins[member.id] === uniqueWinsValues[2]),
+          value: uniqueWinsValues[2]
+        },
+      ]
+    });
+
+    // Higher Wins Average
+
+    const winsAverage: { [id: string]: number } = {}
+    activeMembers.forEach((member) => {
+      winsAverage[member.id] = wins[member.id]/participationsAsDebater[member.id];
+    });
+
+    const uniqueWinsAverageEntries = [...new Set(Object.entries(winsAverage))].sort((a, b) => b[1]-a[1]);
+
+    this.ranks.push({
+      title: 'Debatedores com a maior <b>média</b>¹ de <b>vitórias</b>²',
+      disclaimer: `
+        <b>¹</b> Apenas membros com <b>5</b> ou mais debates registrados entram para esse ranking<br>
+        <b>²</b> Ganhar é <b>primeirar ou segundar</b>
+      `,
+      placements: [
+        {
+          title: `Em <b>primeiro</b> lugar, ganhando <b>${wins[uniqueWinsAverageEntries[0][0]]}</b> de ${participationsAsDebater[uniqueWinsAverageEntries[0][0]]} debates`,
+          members: activeMembers.filter((member) => winsAverage[member.id] === uniqueWinsAverageEntries[0][1]),
+          value: uniqueWinsAverageEntries[0][1]
+        },
+        {
+          title: `Em <b>segundo</b> lugar, ganhando <b>${wins[uniqueWinsAverageEntries[1][0]]}</b> de ${participationsAsDebater[uniqueWinsAverageEntries[1][0]]} debates`,
+          members: activeMembers.filter((member) => winsAverage[member.id] === uniqueWinsAverageEntries[1][1]),
+          value: uniqueWinsAverageEntries[1][1]
+        },
+        {
+          title: `Em <b>terceiro</b> lugar, ganhando <b>${wins[uniqueWinsAverageEntries[2][0]]}</b> de ${participationsAsDebater[uniqueWinsAverageEntries[2][0]]} debates`,
+          members: activeMembers.filter((member) => winsAverage[member.id] === uniqueWinsAverageEntries[2][1]),
+          value: uniqueWinsAverageEntries[2][1]
+        },
+      ]
+    });
+
+    // Most Active Debaters
+
+    const uniqueParticipationsAsDebaterValues = [...new Set(Object.values(participationsAsDebater))].sort((a, b) => b-a);
+
+    this.ranks.push({
+      title: 'Debatedores mais <b>ativos</b>¹',
+      disclaimer: `
+        <b>¹</b> Participação nos debates
+      `,
+      placements: [
+        {
+          title: `Em <b>primeiro</b> lugar, com <b>${uniqueParticipationsAsDebaterValues[0]}</b> ${uniqueParticipationsAsDebaterValues[0] !== 1 ? 'participações' : 'participação'}`,
+          members: this.filteredMembers.filter((member) => participationsAsDebater[member.id] === uniqueParticipationsAsDebaterValues[0]),
+          value: uniqueParticipationsAsDebaterValues[0]
+        },
+        {
+          title: `Em <b>segundo</b> lugar, com <b>${uniqueParticipationsAsDebaterValues[1]}</b> ${uniqueParticipationsAsDebaterValues[1] !== 1 ? 'participações' : 'participação'}`,
+          members: this.filteredMembers.filter((member) => participationsAsDebater[member.id] === uniqueParticipationsAsDebaterValues[1]),
+          value: uniqueParticipationsAsDebaterValues[1]
+        },
+        {
+          title: `Em <b>terceiro</b> lugar, com <b>${uniqueParticipationsAsDebaterValues[2]}</b> ${uniqueParticipationsAsDebaterValues[2] !== 1 ? 'participações' : 'participação'}`,
+          members: this.filteredMembers.filter((member) => participationsAsDebater[member.id] === uniqueParticipationsAsDebaterValues[2]),
+          value: uniqueParticipationsAsDebaterValues[2]
+        },
+      ]
+    });
+
+    // Most Active Judges
+
+    const participationsAsJudge: { [id: string]: number } = {};
+
+    this.filteredMembers.forEach((member) => participationsAsJudge[member.id] = this.filteredDebates.reduce((prev, curr) =>
+      prev + ((curr.wings && curr.wings.some((debater) => debater.id === member.id)) || curr.chair.id === member.id ? 1 : 0), 0
+    ));
+
+    const uniqueParticipationsAsJudgeValues = [...new Set(Object.values(participationsAsJudge))].sort((a, b) => b-a);
+
+    this.ranks.push({
+      title: 'Juízes mais <b>ativos</b>¹',
+      disclaimer: `
+        <b>¹</b> Participação nos debates
+      `,
+      placements: [
+        {
+          title: `Em <b>primeiro</b> lugar, com <b>${uniqueParticipationsAsJudgeValues[0]}</b> ${uniqueParticipationsAsJudgeValues[0] !== 1 ? 'participações' : 'participação'}`,
+          members: this.filteredMembers.filter((member) => participationsAsJudge[member.id] === uniqueParticipationsAsJudgeValues[0]),
+          value: uniqueParticipationsAsJudgeValues[0]
+        },
+        {
+          title: `Em <b>segundo</b> lugar, com <b>${uniqueParticipationsAsJudgeValues[1]}</b> ${uniqueParticipationsAsJudgeValues[1] !== 1 ? 'participações' : 'participação'}`,
+          members: this.filteredMembers.filter((member) => participationsAsJudge[member.id] === uniqueParticipationsAsJudgeValues[1]),
+          value: uniqueParticipationsAsJudgeValues[1]
+        },
+        {
+          title: `Em <b>terceiro</b> lugar, com <b>${uniqueParticipationsAsJudgeValues[2]}</b> ${uniqueParticipationsAsJudgeValues[2] !== 1 ? 'participações' : 'participação'}`,
+          members: this.filteredMembers.filter((member) => participationsAsJudge[member.id] === uniqueParticipationsAsJudgeValues[2]),
+          value: uniqueParticipationsAsJudgeValues[2]
+        },
+      ]
+    });
+
+    // Highest SPs Average
+
+    const participationsAsDebaterIncludingIron: { [id: string]: number } = {};
+    Object.keys(participationsAsDebater).forEach((id) => participationsAsDebaterIncludingIron[id] = participationsAsDebater[id]);
+
+    this.filteredDebates.forEach((debate) => [...new Set(debate.debaters)].forEach((debater) => {
+      if (this.utilService.isDebaterIronOnDebate(debate, debater)) participationsAsDebaterIncludingIron[debater.id] ++;
+    }));
+
+    const spsAverage: { [id: string]: number } = {};
+
+    activeMembers.forEach((member) => spsAverage[member.id] = 0);
+
+    this.filteredDebates.forEach((debate) => debate.debaters.forEach((debater, index) => {
+      if (debate.sps && debate.sps.length) {
+        if (index-2 >= 0 && debate.debaters[index-2].id === debate.debaters[index].id) return;
+
+        spsAverage[debater.id] += debate.sps[index];
       }
     }));
 
-    // Motion Themes Frequency
+    activeMembers.forEach((member) => spsAverage[member.id] /= participationsAsDebater[member.id]);
 
-    const motionThemesFrequency = uniqueMotionThemes.map((uniqueMotionTheme) =>
-      motionThemes.filter((motionTheme) => motionTheme === uniqueMotionTheme).length
-    );
+    const uniqueSpsAverageValues = [...new Set(Object.values(spsAverage))].sort((a, b) => b-a);
 
-    this.charts.push(new Chart(this.chart3Ref.nativeElement, {
-      type: 'doughnut' as ChartType,
-      options: {
-        plugins: {
-          legend: {
-            labels: {
-              color: '#D9D9D9'
-            }
-          }
+    this.ranks.push({
+      title: 'Maiores <b>médias</b>¹ de <b>Speaker Points</b>',
+      disclaimer: `
+        <b>¹</b> Apenas membros com <b>5</b> ou mais debates registrados entram para esse ranking
+      `,
+      placements: [
+        {
+          title: `Em <b>primeiro</b> lugar, com uma média de <b>${uniqueSpsAverageValues[0].toFixed(2)}</b> speaker points`,
+          members: activeMembers.filter((member) => spsAverage[member.id] === uniqueSpsAverageValues[0]),
+          value: uniqueSpsAverageValues[0]
         },
-        maintainAspectRatio: false,
-      },
-      data: {
-        labels: uniqueMotionThemes,
-        datasets: [
-          {
-            label: 'Frequência em Debates',
-            data: motionThemesFrequency,
-          },
-        ],
-      }
+        {
+          title: `Em <b>segundo</b> lugar, com uma média de <b>${uniqueSpsAverageValues[1].toFixed(2)}</b> speaker points`,
+          members: activeMembers.filter((member) => spsAverage[member.id] === uniqueSpsAverageValues[1]),
+          value: uniqueSpsAverageValues[1]
+        },
+        {
+          title: `Em <b>terceiro</b> lugar, com uma média de <b>${uniqueSpsAverageValues[2].toFixed(2)}</b> speaker points`,
+          members: activeMembers.filter((member) => spsAverage[member.id] === uniqueSpsAverageValues[2]),
+          value: uniqueSpsAverageValues[2]
+        },
+      ]
+    });
+
+    // Highest Highest SPs
+
+    const highestSps: { [id: string]: number } = {};
+
+    activeMembers.forEach((member) => highestSps[member.id] = 0);
+
+    this.filteredDebates.forEach((debate) => debate.debaters.forEach((debater, index) => {
+      if (debate.sps && debate.sps.length)
+        highestSps[debater.id] = Math.max(debate.sps[index], highestSps[debater.id]);
     }));
+
+    const uniqueHighestSpsValues = [...new Set(Object.values(highestSps))].sort((a, b) => b-a);
+
+    this.ranks.push({
+      title: 'Maiores¹ <b>Speaker Points absolutos</b>',
+      disclaimer: `
+        <b>¹</b> Apenas membros com <b>5</b> ou mais debates registrados entram para esse ranking
+      `,
+      placements: [
+        {
+          title: `Em <b>primeiro</b> lugar, com <b>${uniqueHighestSpsValues[0]}</b> speaker points`,
+          members: activeMembers.filter((member) => highestSps[member.id] === uniqueHighestSpsValues[0]),
+          value: uniqueHighestSpsValues[0]
+        },
+        {
+          title: `Em <b>segundo</b> lugar, com <b>${uniqueHighestSpsValues[1]}</b> speaker points`,
+          members: activeMembers.filter((member) => highestSps[member.id] === uniqueHighestSpsValues[1]),
+          value: uniqueHighestSpsValues[1]
+        },
+        {
+          title: `Em <b>terceiro</b> lugar, com <b>${uniqueHighestSpsValues[2]}</b> speaker points`,
+          members: activeMembers.filter((member) => highestSps[member.id] === uniqueHighestSpsValues[2]),
+          value: uniqueHighestSpsValues[2]
+        },
+      ]
+    });
+
+    this.ranks.forEach((rank) => rank.placements = rank.placements.filter((placement) => !!placement.value))
   }
 
-  public getPlacementIconUrl(index: number) {
-    if (index === 0) return 'assets/first.png';
-    if (index === 1) return 'assets/second.png';
-    if (index === 2) return 'assets/third.png';
+  public initStatistics() {
+    this.statistics = [];
 
-    return '';
+    // Trainings
+
+    this.statistics.push({
+      title: `Foram realizados <b>${this.filteredDebates.length} Treinos</b>`,
+      fields: [
+        {
+          title: 'Frequência dos Treinos por <b>Horário</b>',
+          chart: true,
+        },
+        {
+          title: 'Frequência dos Treinos por <b>Mês</b>',
+          chart: true,
+        },
+        {
+          title: 'Proporção de Treinos <b>Presenciais</b>',
+          chart: true,
+        },
+        {
+          title: 'Proporção de <b>Debatedores</b> por <b>Sociedade</b>',
+          chart: true,
+        },
+        {
+          title: 'Proporção de <b>Juízes</b> por <b>Sociedade</b>',
+          chart: true,
+        }
+      ]
+    });
+
+    // Active Members
+
+    this.statistics.push({
+      title: `Temos <b>${
+        this.filteredMembers.filter((member) => this.filteredDebates.reduce((prev, curr) =>
+          prev + (
+            curr.debaters.some((debater) => debater.id === member.id) ||
+            curr.chair.id === member.id ||
+            (curr.wings && curr.wings.length && curr.wings.some((wing) => wing.id === member.id))
+            ? 1 : 0
+          ), 0) >= 5
+        ).length
+      } membros ativos</b> atualmente`,
+      fields: [
+        {
+          title: '<b>Atividade</b> dos Membros',
+          chart: true,
+          full: true
+        },
+      ]
+    });
+
+    // Goals
+
+    this.statistics.push({
+      title: `Atingimos <b>${this.goals.filter((goal) => goal.currentCount >= goal.totalCount).length} Metas</b> de <b>${this.goals.length}</b>`,
+      fields: [
+        {
+          title: 'Proporção de <b>Metas Atingidas</b>',
+          chart: true,
+          full: true
+        }
+      ]
+    });
+
+    // Partner Society
+
+    this.statistics.push({
+      title: `Sociedades <b>Parceiras</b>`,
+      fields: [
+        {
+          title: 'Frequência de Participação das Sociedades',
+          chart: true,
+          full: true
+        }
+      ]
+    });
+
+    // General Statistics
+
+    this.statistics.push({
+      title: `Estatísticas <b>Gerais</b> dos Debates`,
+      fields: [
+        {
+          title: 'Resultado dos Debates (por casa)',
+          chart: true,
+          full: true
+        },
+      ]
+    });
   }
 
-  public showCharts() {
-    return this.charts && this.charts.length;
+  public getPfpSizeByIndex(index: number) {
+    return 128 - 16*index;
+  }
+
+  public getIconNameByIndex(index: number) {
+    if (index === 0) return 'first.png';
+    if (index === 1) return 'second.png';
+    if (index === 2) return 'third.png';
+
+    return;
   }
 }

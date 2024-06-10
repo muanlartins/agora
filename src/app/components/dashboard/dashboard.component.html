@@ -3,110 +3,95 @@
   <div class="page__content">
     <div class="page__content__header" [formGroup]="form">
       <mat-form-field class="page__content__header__input">
-        <mat-label>Mês</mat-label>
-        <mat-select formControlName="month">
+        <mat-label>Sociedade</mat-label>
+        <mat-select formControlName="society">
           <mat-option>Nenhum</mat-option>
-          <mat-option *ngFor="let option of monthOptions" [value]="option.value">
+          <mat-option *ngFor="let option of societyOptions" [value]="option.value">
             {{ option.viewValue }}
           </mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field class="page__content__header__input">
-        <mat-label>Torneio</mat-label>
-        <mat-select formControlName="tournament">
+        <mat-label>Processo Seletivo</mat-label>
+        <mat-select formControlName="ps">
           <mat-option>Nenhum</mat-option>
-          <mat-option *ngFor="let option of tournamentOptions" [value]="option.value">
+          <mat-option *ngFor="let option of psOptions" [value]="option.value">
             {{ option.viewValue }}
           </mat-option>
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="page__content__body" [style.opacity]="loading ? 0 : 1">
-      <div class="page__content__body__ranks">
-        <div *ngFor="let rank of ranks" class="page__content__body__ranks__rank">
-          <div class="page__content__body__ranks__rank__title" [innerHTML]="rank.title"></div>
-          <div class="page__content__body__ranks__rank__standings">
+    <div class="page__content__ranks">
+      <div class="page__content__ranks__rank" *ngFor="let rank of ranks">
+        <div class="page__content__ranks__rank__title" [innerHTML]="rank.title"></div>
+        <div class="page__content__ranks__rank__disclaimer" [innerHTML]="rank.disclaimer"></div>
+        <div class="page__content__ranks__rank__placements">
+          <div class="page__content__ranks__rank__placements__placement" *ngFor="let placement of rank.placements; index as index">
             <div
-              *ngFor="let standing of rank.standings; index as index"
-              class="page__content__body__ranks__rank__standings__standing"
-              [ngClass]="'page__content__body__ranks__rank__standings__standing--' + index"
-            >
-              <img
-                class="page__content__body__ranks__rank__standings__standing__image"
-                [src]="getPlacementIconUrl(index)"
-              />
-              <div
-                class="page__content__body__ranks__rank__standings__standing__value"
-                [ngClass]="{'page__content__body__ranks__rank__standings__standing__value--big': standing.value.length > 2}"
-              >
-                {{ standing.value }}
-              </div>
-              <div class="page__content__body__ranks__rank__standings__standing__content">
-                <div class="page__content__body__ranks__rank__standings__standing__content__members">
+              [class]="
+                'page__content__ranks__rank__placements__placement__title ' +
+                'page__content__ranks__rank__placements__placement__title--' + index
+              "
+              [innerHTML]="placement.title"
+            ></div>
+            <div class="page__content__ranks__rank__placements__placement__members">
+              <div class="page__content__ranks__rank__placements__placement__members__member" *ngFor="let member of placement.members">
+                <div class="page__content__ranks__rank__placements__placement__members__member__pfp">
+                  <app-pfp
+                    class="page__content__ranks__rank__placements__placement__members__member__pfp"
+                    [id]="member.id"
+                    [hasPfp]="member.hasPfp"
+                    [size]="getPfpSizeByIndex(index)"
+                  ></app-pfp>
+                  <img
+                    [class]="
+                      'page__content__ranks__rank__placements__placement__members__member__pfp__icon ' +
+                      'page__content__ranks__rank__placements__placement__members__member__pfp__icon--' + index
+                    "
+                    [src]="'/assets/' + getIconNameByIndex(index)"
+                  />
+                </div>
+                <div class="page__content__ranks__rank__placements__placement__members__member__description">
                   <div
-                    *ngFor="let member of standing.members"
-                    class="page__content__body__ranks__rank__standings__standing__content__members__member"
-                  >
-                    <app-pfp [id]="member.id" [hasPfp]="member.hasPfp" [size]="48"></app-pfp>
-                    <div
-                      class="page__content__body__ranks__rank__standings__standing__content__members__member__name"
-                    > {{ member.name }} </div>
-                  </div>
+                    [class]="
+                      'page__content__ranks__rank__placements__placement__members__member__description__name ' +
+                      'page__content__ranks__rank__placements__placement__members__member__description__name--' + index
+                    "
+                  >{{ member.name }}</div>
+                  <div
+                    [class]="
+                      'page__content__ranks__rank__placements__placement__members__member__description__society ' +
+                      'page__content__ranks__rank__placements__placement__members__member__description__society--' + index
+                    "
+                  >{{ member.society }}</div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="page__content__body__statistics">
-        <div *ngFor="let statistic of statistics" class="page__content__body__statistics__statistic">
-          <div class="page__content__body__statistics__statistic__title" [innerHTML]="statistic.title"></div>
-          <div class="page__content__body__statistics__statistic__value">{{ statistic.value }}</div>
-        </div>
-      </div>
-      <div class="page__content__body__charts" [style.opacity]="showCharts() ? 1 : 0">
-        <div class="page__content__body__charts__chart">
-          <div class="page__content__body__charts__chart__title">
-            Resultado dos debates (por posição)
-          </div>
-          <div class="page__content__body__charts__chart__description">
-            Proporção das casas nos resultados dos debates para cada posição
-          </div>
-          <div class="page__content__body__charts__chart__chart">
-            <canvas #chart0></canvas>
-          </div>
-        </div>
-        <div class="page__content__body__charts__chart">
-          <div class="page__content__body__charts__chart__title">
-            Resultado dos debates (por casa)
-          </div>
-          <div class="page__content__body__charts__chart__description">
-            Proporção de posições nos resultados dos debates para cada casa
-          </div>
-          <div class="page__content__body__charts__chart__chart">
-            <canvas #chart1></canvas>
-          </div>
-        </div>
-        <div class="page__content__body__charts__chart">
-          <div class="page__content__body__charts__chart__title">
-            Prefixos de Moções
-          </div>
-          <div class="page__content__body__charts__chart__description">
-            Proporção dos tipos das moções escolhidas nos debates
-          </div>
-          <div class="page__content__body__charts__chart__chart">
-            <canvas #chart2></canvas>
-          </div>
-        </div>
-        <div class="page__content__body__charts__chart">
-          <div class="page__content__body__charts__chart__title">
-            Temas de Moções
-          </div>
-          <div class="page__content__body__charts__chart__description">
-            Proporção dos temas das moções escolhidas nos debates
-          </div>
-          <div class="page__content__body__charts__chart__chart">
-            <canvas #chart3></canvas>
+    </div>
+    <div *ngIf="!loading" class="page__content__divider"></div>
+    <div class="page__content__statistics">
+      <div class="page__content__statistics__statistic" *ngFor="let statistic of statistics">
+        <div class="page__content__statistics__statistic__title" [innerHTML]="statistic.title"></div>
+        <div class="page__content__statistics__statistic__fields">
+          <div
+            class="page__content__statistics__statistic__fields__field"
+            [class.page__content__statistics__statistic__fields__field--full]="field.full"
+            *ngFor="let field of statistic.fields"
+          >
+            <div class="page__content__statistics__statistic__fields__field__title" [innerHTML]="field.title"></div>
+            <div *ngIf="field.description" class="page__content__statistics__statistic__fields__field__description">
+              {{ field.description }}
+            </div>
+            <div *ngIf="field.chart" class="page__content__statistics__statistic__fields__field__chart">
+              <canvas
+                class="page__content__statistics__statistic__fields__field__chart__canvas"
+                [class.page__content__statistics__statistic__fields__field__chart__canvas--full]="field.full"
+                #chart
+              ></canvas>
+            </div>
           </div>
         </div>
       </div>
