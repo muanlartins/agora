@@ -6,7 +6,6 @@ import { DebateHouse } from 'src/app/models/enums/debate-house';
 import { DebatePosition } from 'src/app/models/enums/debate-position';
 import { DebateStyle } from 'src/app/models/enums/debate-style';
 import { DebateVenue } from 'src/app/models/enums/debate-venue';
-import { MotionTheme } from 'src/app/models/enums/motion-theme';
 import { SelectOption } from 'src/app/models/types/select-option';
 import { Member } from 'src/app/models/types/member';
 import { MemberService } from 'src/app/services/member.service';
@@ -37,6 +36,8 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
   public tournamentOptions: SelectOption[] = [];
 
   public motionTypeOptions: SelectOption[] = [];
+
+  public motionThemeOptions: SelectOption[] = [];
 
   public societyOptions: SelectOption[] = [];
 
@@ -127,10 +128,6 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
     return DebateVenue;
   }
 
-  get motionTheme() {
-    return MotionTheme;
-  }
-
   constructor(
     private formBuilder: FormBuilder,
     private memberService: MemberService,
@@ -163,6 +160,7 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
         motionType: ['', Validators.required],
         newMotionType: [''],
         motionTheme: ['', Validators.required],
+        newMotionTheme: [''],
         motion: ['', Validators.required],
         infoSlides: this.formBuilder.array([]),
         tournament: ['Interno', Validators.required],
@@ -209,17 +207,30 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
         return a.value.toLowerCase().localeCompare(b.value.toLowerCase())
       });
 
-    this.motionTypeOptions = [...new Set(debates.map((debate) => debate.motionType))]
-      .filter((motionType) => motionType !== null)
-      .map((motionType) => ({
-        value: motionType,
-        viewValue: motionType
-      })).sort((a, b) => {
-        if (b.value === 'Novo Tipo') return 1;
+      this.motionTypeOptions = [...new Set(debates.map((debate) => debate.motionType))]
+        .filter((motionType) => motionType !== null)
+        .map((motionType) => ({
+          value: motionType,
+          viewValue: motionType
+        })).sort((a, b) => {
+          if (b.value === 'Novo Tipo') return 1;
 
-        return a.value.toLowerCase().localeCompare(b.value.toLowerCase())
-      });
+          return a.value.toLowerCase().localeCompare(b.value.toLowerCase())
+        });
+
+      this.motionThemeOptions = [...new Set(debates.map((debate) => debate.motionTheme))]
+        .filter((motionTheme) => motionTheme !== null)
+        .map((motionTheme) => ({
+          value: motionTheme,
+          viewValue: motionTheme
+        })).sort((a, b) => {
+          if (b.value === 'Novo Tema') return 1;
+
+          return a.value.toLowerCase().localeCompare(b.value.toLowerCase())
+        });
     });
+
+
   }
 
   public getAllMembers() {
@@ -671,7 +682,10 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
       this.showNewMotionTypeFormField() ?
       this.debateFormGroup.controls['newMotionType'].value :
       this.debateFormGroup.controls['motionType'].value;
-    const motionTheme: keyof typeof MotionTheme = this.debateFormGroup.controls['motionTheme'].value;
+    const motionTheme: string =
+      this.showNewMotionThemeFormField() ?
+      this.debateFormGroup.controls['newMotionTheme'].value :
+      this.debateFormGroup.controls['motionTheme'].value;
     const motion: string = this.debateFormGroup.controls['motion'].value;
     const infoSlides: string[] = this.infoSlidesFormArray.controls.map((control) => control.value);
     const tournament: string =
@@ -823,6 +837,10 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
     return this.debateFormGroup.controls['motionType'].value === 'Novo Tipo';
   }
 
+  public showNewMotionThemeFormField() {
+    return this.debateFormGroup.controls['motionTheme'].value === 'Novo Tema';
+  }
+
   public close() {
     this.dialog.open(ConfirmModalComponent, {
       data: {
@@ -837,9 +855,11 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
               style: this.debateFormGroup.controls['style'].value,
               venue: this.debateFormGroup.controls['venue'].value,
               motionType: this.showNewMotionTypeFormField() ?
-                  this.debateFormGroup.controls['newMotionType'].value :
-                  this.debateFormGroup.controls['motionType'].value,
-              motionTheme: this.debateFormGroup.controls['motionTheme'].value,
+                this.debateFormGroup.controls['newMotionType'].value :
+                this.debateFormGroup.controls['motionType'].value,
+              motionTheme: this.showNewMotionThemeFormField() ?
+                this.debateFormGroup.controls['newMotionTheme'].value :
+                this.debateFormGroup.controls['motionTheme'].value,
               motion: this.debateFormGroup.controls['motion'].value,
               infoSlides: this.infoSlidesFormArray.controls.map((control) => control.value),
               tournament: this.showNewTournamentFormField() ?

@@ -6,6 +6,9 @@ import { Member } from "../models/types/member";
 
 const ENDPOINTS = {
   getAllMembers: '/members',
+  getMember: (id: string) => `/member/${id}`,
+  checkHashedId: (id: string, hashedId: string) => `/member/${id}/private/${hashedId}`,
+  getHashedId: (id: string) => `/member/private/${id}`,
   createMember: '/member',
   editMember: '/member',
   deleteMember: (id: string) => `/member/${id}`,
@@ -94,5 +97,17 @@ export class MemberService {
     members.splice(members.findIndex((member) => member.id === id), 1);
 
     this.members$.next(members);
+  }
+
+  public async getMember(id: string) {
+    return await firstValueFrom(this.httpClient.get<Member>(BASE_URL + ENDPOINTS.getMember(id)));
+  }
+
+  public async checkHashedId(id: string, hashedId: string) {
+    return await firstValueFrom(this.httpClient.get<boolean>(BASE_URL + ENDPOINTS.checkHashedId(id, hashedId)));
+  }
+
+  public async getHashedId(id: string) {
+    return await firstValueFrom(this.httpClient.post<string>(BASE_URL + ENDPOINTS.getHashedId(id), {}));
   }
 }

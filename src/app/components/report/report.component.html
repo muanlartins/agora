@@ -1,7 +1,7 @@
 <div class="page">
   <app-navbar class="page__navbar"></app-navbar>
   <div class="page__content" [formGroup]="form">
-    <div class="page__content__header">
+    <div class="page__content__header" *ngIf="isAdmin">
       <mat-form-field class="page__content__header__input">
         <mat-label>Membro</mat-label>
         <mat-select formControlName="member">
@@ -19,20 +19,20 @@
     </div>
     <div class="page__content__body">
       <div class="page__content__body__upper" *ngIf="member">
-        <div class="page__content__body__upper__member">
+        <div class="page__content__body__upper__member" [class.page__content__body__upper__member--no-border]="!isAdmin">
           <app-pfp class="page__content__body__upper__member__pfp" [id]="member.id" [size]="192" [hasPfp]="member.hasPfp" shape="square"></app-pfp>
           <div class="page__content__body__upper__member__name">{{ member.name }}
             <span class="page__content__body__upper__member__name__society">{{ member.society }}</span>
           </div>
         </div>
-        <div class="page__content__body__upper__statistics">
+        <div class="page__content__body__upper__statistics" *ngIf="isAdmin">
           <div class="page__content__body__upper__statistics__statistic page__content__body__upper__statistics__statistic--100">Como debatedor(a)</div>
           <div *ngFor="let statistic of debaterStatistics" class="page__content__body__upper__statistics__statistic">
             <div class="page__content__body__upper__statistics__statistic__title">{{ statistic.title }}</div>
             <div class="page__content__body__upper__statistics__statistic__value">{{ statistic.value }}</div>
           </div>
         </div>
-        <div class="page__content__body__upper__statistics">
+        <div class="page__content__body__upper__statistics" *ngIf="isAdmin">
           <div class="page__content__body__upper__statistics__statistic page__content__body__upper__statistics__statistic--100">Como juíz(a)</div>
           <div *ngFor="let statistic of judgeStatistics" class="page__content__body__upper__statistics__statistic">
             <div class="page__content__body__upper__statistics__statistic__title">{{ statistic.title }}</div>
@@ -41,11 +41,27 @@
         </div>
       </div>
       <div class="page__content__body__middle" *ngIf="member">
+        <mat-form-field
+          class="page__content__body__middle__field"
+          *ngIf="checked"
+        >
+          <mat-label>Descrição</mat-label>
+          <textarea
+            matInput
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="1"
+            formControlName="description"
+          ></textarea>
+        </mat-form-field>
         <app-markdown
+          class="page__content__body__middle__markdown"
+          [class.page__content__body__middle__markdown--full]="!checked"
           [data]="member.description"
         ></app-markdown>
       </div>
-      <div class="page__content__body__lower" [style.opacity]="member ? 1 : 0">
+      <button *ngIf="checked" class="page__content__body__button" mat-flat-button color="primary" (click)="saveDescription()">Salvar</button>
+      <div class="page__content__body__lower" [style.opacity]="member ? 1 : 0" *ngIf="isAdmin">
         <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__section">
           Como debatedor(a)
         </div>
@@ -57,7 +73,7 @@
             Speaker points obtidos pelo membro como debatedor
           </div>
           <div class="page__content__body__lower__chart__chart">
-            <canvas #chart0></canvas>
+            <canvas #chart></canvas>
           </div>
         </div>
         <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__chart">
@@ -68,7 +84,7 @@
             Resultado do membro como debatedor nos debates
           </div>
           <div class="page__content__body__lower__chart__chart">
-            <canvas #chart1></canvas>
+            <canvas #chart></canvas>
           </div>
         </div>
         <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__chart">
@@ -79,7 +95,7 @@
             Frequência com as diferentes duplas do membro
           </div>
           <div class="page__content__body__lower__chart__chart">
-            <canvas #chart2></canvas>
+            <canvas #chart></canvas>
           </div>
         </div>
         <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__chart">
@@ -90,7 +106,7 @@
             Performance do membro como debatedor nas quatro casas
           </div>
           <div class="page__content__body__lower__chart__chart">
-            <canvas #chart3></canvas>
+            <canvas #chart></canvas>
           </div>
         </div>
         <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__chart">
@@ -101,7 +117,7 @@
             Performance do membro com as diferentes duplas
           </div>
           <div class="page__content__body__lower__chart__chart">
-            <canvas #chart4></canvas>
+            <canvas #chart></canvas>
           </div>
         </div>
         <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__chart">
@@ -112,7 +128,7 @@
             Performance do membro com diferentes tipos de moção
           </div>
           <div class="page__content__body__lower__chart__chart">
-            <canvas #chart5></canvas>
+            <canvas #chart></canvas>
           </div>
         </div>
         <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__lower__chart">
@@ -123,7 +139,7 @@
             Performance do membro com diferentes temas de moção
           </div>
           <div class="page__content__body__lower__chart__chart">
-            <canvas #chart6></canvas>
+            <canvas #chart></canvas>
           </div>
         </div>
         <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__lower__section">
@@ -137,7 +153,7 @@
             Speaker points concedidos pelo membro como juíz
           </div>
           <div class="page__content__body__lower__chart__chart">
-            <canvas #chart7></canvas>
+            <canvas #chart></canvas>
           </div>
         </div>
         <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__lower__chart">
@@ -148,7 +164,7 @@
             Proporção das casas nos resultados dos debates para cada posição
           </div>
           <div class="page__content__body__lower__chart__chart">
-            <canvas #chart8></canvas>
+            <canvas #chart></canvas>
           </div>
         </div>
         <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__lower__chart">
@@ -159,7 +175,7 @@
             Proporção de posições nos resultados dos debates para cada casa
           </div>
           <div class="page__content__body__lower__chart__chart">
-            <canvas #chart9></canvas>
+            <canvas #chart></canvas>
           </div>
         </div>
         <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__lower__chart">
@@ -170,7 +186,7 @@
             Proporção dos tipos das moções escolhidas pelo membro como juíz
           </div>
           <div class="page__content__body__lower__chart__chart">
-            <canvas #chart10></canvas>
+            <canvas #chart></canvas>
           </div>
         </div>
         <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__lower__chart">
@@ -181,7 +197,7 @@
             Proporção dos temas das moções escolhidas pelo membro como juíz
           </div>
           <div class="page__content__body__lower__chart__chart">
-            <canvas #chart11></canvas>
+            <canvas #chart></canvas>
           </div>
         </div>
       </div>

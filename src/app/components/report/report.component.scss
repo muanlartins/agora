@@ -20,6 +20,7 @@
     align-items: center;
     width: calc(100% - 256px);
     margin: 0 128px;
+    padding-bottom: 32px;
 
     &__header {
       width: 100%;
@@ -59,6 +60,10 @@
           max-width: 70%;
           padding-right: 64px;
           border-right: 1px solid $secondary;
+
+          &--no-border {
+            border-right: none;
+          }
 
           &__name {
             display: flex;
@@ -116,6 +121,22 @@
         }
       }
 
+      &__middle {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+
+        &__markdown {
+          &--full {
+            grid-column: 1 / span 2;
+          }
+        }
+      }
+
+      &__button {
+        width: 100%;
+      }
+
       &__lower {
         width: 100%;
         display: flex;
@@ -123,8 +144,6 @@
         justify-content: space-between;
         flex-wrap: wrap;
         gap: 32px;
-        border-top: 1px solid $secondary;
-        padding-top: 64px;
 
         &__chart {
           display: flex;

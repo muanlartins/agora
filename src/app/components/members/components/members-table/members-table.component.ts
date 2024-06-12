@@ -14,6 +14,8 @@ import { ConfirmModalComponent } from '../confirm-modal/confirm-modal.component'
 import { isAdmin } from 'src/app/utils/auth';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import * as removeAccents from 'remove-accents';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,7 +64,9 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
     private memberService: MemberService,
     private debateService: DebateService,
     private dialog: MatDialog,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private clipboard: Clipboard,
+    private notificationService: NotificationService
   ) {
 
   }
@@ -125,6 +129,8 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
       'name',
       'society',
       'debates',
+      'public-url-copy',
+      'private-url-copy',
       'edit',
       'delete'
     ];
@@ -164,6 +170,22 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
     if (column === 'debates') return this.debatesParticipations[element.id];
 
     return '';
+  }
+
+  public async copyPublicUrl(id: string, event: Event) {
+    event.stopPropagation();
+
+    this.clipboard.copy(`https://agoradebates.com/member/${id}`);
+    this.notificationService.createSuccessNotification('A <b>URL Pública</b> foi copiada com sucesso.');
+  }
+
+  public async copyPrivateUrl(id: string, event: Event) {
+    event.stopPropagation();
+
+    const hashedId = (await this.memberService.getHashedId(id));
+
+    this.clipboard.copy(`https://agoradebates.com/member/${id}/private/${hashedId}`);
+    this.notificationService.createSuccessNotification('A <b>URL Privada</b> foi copiada com sucesso.');
   }
 
   public editMember(id: string, event: Event) {
@@ -234,5 +256,13 @@ export class MembersTableComponent implements OnInit, AfterViewInit {
 
   public showDelete(column: string, id: string) {
     return column === 'delete' && this.debatesParticipations[id] === 0 && isAdmin();
+  }
+
+  public showPublicUrlCopy(column: string) {
+    return column === 'public-url-copy';
+  }
+
+  public showPrivateUrlCopy(column: string) {
+    return column === 'private-url-copy' && isAdmin();
   }
 }

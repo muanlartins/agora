@@ -24,7 +24,8 @@ const routes: Routes = [
   { path: 'goals', component: GoalsComponent, canActivate: [LoginGuard] },
   { path: 'articles', component: ArticlesComponent, canActivate: [LoginGuard] },
   { path: 'member', component: ReportComponent, canActivate: [LoginGuard, AdminGuard] },
-  { path: 'member/:id', component: ReportComponent, canActivate: [LoginGuard, AdminGuard] },
+  { path: 'member/:id', component: ReportComponent },
+  { path: 'member/:id/private/:hashedId', component: ReportComponent },
 ];
 
 @NgModule({

@@ -63,11 +63,27 @@
         <mat-form-field class="form__stepper__step__debate__input">
           <mat-label>Tema da Moção</mat-label>
           <mat-select formControlName="motionTheme">
-            <ng-container *ngFor="let entry of motionTheme | keyvalue">
-              <mat-option [value]="entry.key">{{ entry.value }}</mat-option>
-            </ng-container>
+            <mat-option *ngFor="let option of motionThemeOptions" [value]="option.value">
+              {{ option.viewValue }}
+            </mat-option>
+            <mat-option value="Novo Tema">
+              Novo Tema
+            </mat-option>
           </mat-select>
           <mat-error>O tema da moção é obrigatório</mat-error>
+        </mat-form-field>
+        <mat-form-field
+          *ngIf="showNewMotionThemeFormField()"
+          class="form__stepper__step__debate__input"
+        >
+          <mat-label>Novo Tema de Moção</mat-label>
+          <textarea
+            matInput
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="1"
+            formControlName="newMotionTheme"
+          ></textarea>
         </mat-form-field>
         <mat-form-field
           class="form__stepper__step__debate__input form__stepper__step__debate__input--motion"

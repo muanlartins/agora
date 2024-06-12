@@ -1,10 +1,9 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Chart, ChartType } from 'chart.js';
 import * as removeAccents from 'remove-accents';
 import { combineLatest } from 'rxjs';
-import { MotionTheme } from 'src/app/models/enums/motion-theme';
 import { Article } from 'src/app/models/types/article';
 import { Debate } from 'src/app/models/types/debate';
 import { Member } from 'src/app/models/types/member';
@@ -12,6 +11,7 @@ import { SelectOption } from 'src/app/models/types/select-option';
 import { ArticleService } from 'src/app/services/article.service';
 import { DebateService } from 'src/app/services/debate.service';
 import { MemberService } from 'src/app/services/member.service';
+import { isAdmin } from 'src/app/utils/auth';
 import { housesColors, placementColors } from 'src/app/utils/constants';
 
 type Statistic = {
@@ -47,44 +47,27 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public charts: Chart[] = [];
 
-  @ViewChild('chart0')
-  public chart0Ref: ElementRef<HTMLCanvasElement>;
+  public hashedId: string;
 
-  @ViewChild('chart1')
-  public chart1Ref: ElementRef<HTMLCanvasElement>;
+  public checked: boolean = false;
 
-  @ViewChild('chart2')
-  public chart2Ref: ElementRef<HTMLCanvasElement>;
-
-  @ViewChild('chart3')
-  public chart3Ref: ElementRef<HTMLCanvasElement>;
-
-  @ViewChild('chart4')
-  public chart4Ref: ElementRef<HTMLCanvasElement>;
-
-  @ViewChild('chart5')
-  public chart5Ref: ElementRef<HTMLCanvasElement>;
-
-  @ViewChild('chart6')
-  public chart6Ref: ElementRef<HTMLCanvasElement>;
-
-  @ViewChild('chart7')
-  public chart7Ref: ElementRef<HTMLCanvasElement>;
-
-  @ViewChild('chart8')
-  public chart8Ref: ElementRef<HTMLCanvasElement>;
-
-  @ViewChild('chart9')
-  public chart9Ref: ElementRef<HTMLCanvasElement>;
-
-  @ViewChild('chart10')
-  public chart10Ref: ElementRef<HTMLCanvasElement>;
-
-  @ViewChild('chart11')
-  public chart11Ref: ElementRef<HTMLCanvasElement>;
+  @ViewChildren('chart')
+  public chartRefs: QueryList<ElementRef<HTMLCanvasElement>>;
 
   public get id() {
     return this.form.controls['member'].value;
+  }
+
+  public get isAdmin() {
+    return isAdmin();
+  }
+
+  public get description() {
+    return this.form.controls['description'].value;
+  }
+
+  public set description(description: string) {
+    this.form.controls['description'].patchValue(description);
   }
 
   public constructor(
@@ -99,11 +82,12 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public ngOnInit(): void {
     this.initForm();
-    this.getData();
+    if (this.isAdmin) this.getData();
   }
 
   public ngOnDestroy(): void {
     this.charts.forEach((chart) => chart.destroy());
+    this.charts = [];
   }
 
   public ngAfterViewInit(): void {
@@ -111,20 +95,40 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   public initForm() {
-    this.form =this.formBuilder.group({
+    this.form = this.formBuilder.group({
       member: [''],
-      memberFilter: ['']
-    });
+      memberFilter: [''],
+      description: [
+        `> ***TÍTULOS***
+- Exemplo de Título Ano
 
+> ***BREAKS***
+
+> ***TOP SPEAKER***
+
+> ***ADJUDICAÇÃO***
+
+> ***ORGANIZAÇÃO***
+
+> ***HISTÓRICO DE GESTÃO***
+        `
+      ]
+    });
 
     this.subscribeToValueChanges();
   }
 
   public subscribeToValueChanges() {
     this.route.params.subscribe((params: any) => {
-      if (params && params.id) {
+      if (params && params.id && params.hashedId) {
         this.form.controls['member'].patchValue(params.id);
-      } else {
+        this.hashedId = params.hashedId;
+        if (!this.isAdmin) this.getMember();
+      } else if (params && params.id) {
+        this.form.controls['member'].patchValue(params.id);
+        if (!this.isAdmin) this.getMember();
+      }
+        else {
         this.form.controls['member'].patchValue('');
       }
     });
@@ -138,6 +142,10 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
         this.router.navigate(['/member']);
     });
 
+    this.form.controls['description'].valueChanges.subscribe((description) => {
+      this.member.description = description;
+    });
+
     this.form.controls['memberFilter'].valueChanges.subscribe((name: string) => {
       this.filteredMembers = this.members.filter((member: Member) =>
         removeAccents(member.name.toLowerCase()).includes(removeAccents(name.toLowerCase()))
@@ -145,6 +153,12 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.initOptions();
     })
+  }
+
+  public async getMember() {
+    this.member = (await this.memberService.getMember(this.id));
+
+    if (this.hashedId) this.checkHashedId();
   }
 
   public getData() {
@@ -280,18 +294,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public generateGraphs() {
     if (
-      !this.chart0Ref ||
-      !this.chart1Ref ||
-      !this.chart2Ref ||
-      !this.chart3Ref ||
-      !this.chart4Ref ||
-      !this.chart5Ref ||
-      !this.chart6Ref ||
-      !this.chart7Ref ||
-      !this.chart8Ref ||
-      !this.chart9Ref ||
-      !this.chart10Ref ||
-      !this.chart11Ref ||
+      !this.chartRefs ||
+      !this.chartRefs.toArray().length ||
       !this.members ||
       !this.debates ||
       !this.articles ||
@@ -299,8 +303,6 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       !this.member
     )
       return;
-
-    this.charts;
 
     if (this.charts.length) {
       this.charts.forEach((chart) => chart.destroy());
@@ -393,7 +395,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     const minSp = min(sps);
     const spAverage = average(sps);
 
-    this.charts.push(new Chart(this.chart0Ref.nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[0].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -463,7 +465,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debatesAsCo.filter((debate: Debate) => debate.points[3] <= 1).length,
     ];
 
-    this.charts.push(new Chart(this.chart1Ref.nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[1].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -538,7 +540,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debatesAsCo.filter((debate: Debate) => debate.points[3] == 0).length,
     ];
 
-    this.charts.push(new Chart(this.chart2Ref.nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[2].nativeElement, {
       type: 'doughnut' as ChartType,
       options: {
         plugins: {
@@ -566,7 +568,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     const duosNames = uniqueDuos.map((duo) => duo.name);
     const duosAmounts = uniqueDuos.map((uniqueDuo) => duos.filter((duo) => duo.id === uniqueDuo.id).length);
 
-    this.charts.push(new Chart(this.chart3Ref.nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[3].nativeElement, {
       type: 'doughnut' as ChartType,
       options: {
         plugins: {
@@ -599,7 +601,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debate.points[pointsIndexes[debate.debaters.findIndex((debater: Member) => debater.id === duo.id)]] <= 1
     ).length);
 
-    this.charts.push(new Chart(this.chart4Ref.nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[4].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -662,7 +664,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debate.points[pointsIndexes[debate.debaters.findIndex((debater: Member) => debater.id === this.member.id)]] <= 1
     ).length);
 
-    this.charts.push(new Chart(this.chart5Ref.nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[5].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -725,7 +727,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debate.points[pointsIndexes[debate.debaters.findIndex((debater: Member) => debater.id === this.member.id)]] <= 1
     ).length);
 
-    this.charts.push(new Chart(this.chart6Ref.nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[6].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -760,7 +762,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
         },
       },
       data: {
-        labels: uniqueMotionThemesAsDebater.map((motionTheme: string) => MotionTheme[motionTheme as keyof typeof MotionTheme]),
+        labels: uniqueMotionThemesAsDebater,
         datasets: [
           {
             type: 'bar',
@@ -786,7 +788,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const spAverageAsJudge = Number(average(sps).toFixed(2));
 
-    this.charts.push(new Chart(this.chart7Ref.nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[7].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -856,7 +858,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       co[3 - debate.points[3]] ++;
     });
 
-    this.charts.push(new Chart(this.chart8Ref.nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[8].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -928,7 +930,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     const thirds = [og[2], oo[2], cg[2], co[2]];
     const fourths = [og[3], oo[3], cg[3], co[3]];
 
-    this.charts.push(new Chart(this.chart9Ref.nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[9].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -999,7 +1001,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       motionTypesAsJudge.filter((motionType) => motionType === uniqueMotionType).length
     );
 
-    this.charts.push(new Chart(this.chart10Ref.nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[10].nativeElement, {
       type: 'doughnut' as ChartType,
       options: {
         plugins: {
@@ -1028,7 +1030,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       motionThemesAsJudge.filter((motionTheme) => motionTheme === uniqueMotionTheme).length
     );
 
-    this.charts.push(new Chart(this.chart11Ref.nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[11].nativeElement, {
       type: 'doughnut' as ChartType,
       options: {
         plugins: {
@@ -1041,7 +1043,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
         maintainAspectRatio: false,
       },
       data: {
-        labels: uniqueMotionThemesAsJudge.map((theme: string) => MotionTheme[theme as keyof typeof MotionTheme]),
+        labels: uniqueMotionThemesAsJudge,
         datasets: [
           {
             label: 'Frequência em Debates',
@@ -1067,5 +1069,24 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       (debate.wings && debate.wings.findIndex((member: Member) => member.id === this.member.id) !== -1)  ||
       debate.chair.id === this.member.id
     ).length;
+  }
+
+  public async checkHashedId() {
+    this.checked = (await this.memberService.checkHashedId(this.id, this.hashedId));
+
+    if (this.checked)
+      this.description = this.member.description;
+  }
+
+  public async saveDescription() {
+    await this.memberService.updateMember(
+      this.member.id,
+      this.member.name,
+      this.member.society,
+      this.member.isTrainee,
+      this.member.hasPfp,
+      this.member.blocked,
+      this.member.description
+    );
   }
 }

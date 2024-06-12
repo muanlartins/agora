@@ -5,7 +5,6 @@ import { BASE_URL } from "../utils/constants";
 import { Debate } from "../models/types/debate";
 import { DebateStyle } from "../models/enums/debate-style";
 import { DebateVenue } from "../models/enums/debate-venue";
-import { MotionTheme } from "../models/enums/motion-theme";
 import { Member } from "../models/types/member";
 import { MemberService } from "./member.service";
 
@@ -53,7 +52,7 @@ export class DebateService {
     style: keyof typeof DebateStyle,
     venue: keyof typeof DebateVenue,
     motionType: string,
-    motionTheme: keyof typeof MotionTheme,
+    motionTheme: string,
     motion: string,
     infoSlides: string[],
     debaters: Member[],
@@ -90,7 +89,7 @@ export class DebateService {
     style: keyof typeof DebateStyle,
     venue: keyof typeof DebateVenue,
     motionType: string,
-    motionTheme: keyof typeof MotionTheme,
+    motionTheme: string,
     motion: string,
     infoSlides: string[],
     debaters: Member[],

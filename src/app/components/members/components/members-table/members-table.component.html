@@ -41,7 +41,9 @@
         mat-header-cell
         *matHeaderCellDef
         [mat-sort-header]="column"
-      >{{ label[column] }}</th>
+      >
+        {{ label[column] }}
+      </th>
       <td
         class="table__body__tr__td"
         [ngClass]="'table__body__tr__td--' + index"
@@ -49,6 +51,22 @@
         *matCellDef="let element"
       >
         {{ getColumnData(element, column) }}
+        <ng-container *ngIf="showPublicUrlCopy(column)">
+          <button
+            mat-flat-button
+            color="primary"
+            (click)="copyPublicUrl(element.id, $event)"
+            class="table__body__tr__td__button"
+          >URL Pública</button>
+        </ng-container>
+        <ng-container *ngIf="showPrivateUrlCopy(column)">
+          <button
+            mat-flat-button
+            color="primary"
+            (click)="copyPrivateUrl(element.id, $event)"
+            class="table__body__tr__td__button"
+          >URL Privada</button>
+        </ng-container>
         <ng-container *ngIf="showEdit(column)">
           <img (click)="editMember(element.id, $event)" src="assets/edit-text.png" class="table__body__tr__td__img" />
         </ng-container>

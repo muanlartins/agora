@@ -11,7 +11,6 @@ import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment';
 import { DebateStyle } from 'src/app/models/enums/debate-style';
 import { DebateVenue } from 'src/app/models/enums/debate-venue';
-import { MotionTheme } from 'src/app/models/enums/motion-theme';
 import { DebatePosition } from 'src/app/models/enums/debate-position';
 import { ConfirmModalComponent } from 'src/app/components/members/components/confirm-modal/confirm-modal.component';
 import { isAdmin } from 'src/app/utils/auth';
@@ -58,10 +57,6 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
 
   public get DebateVenue() {
     return DebateVenue;
-  }
-
-  public get MotionTheme() {
-    return MotionTheme;
   }
 
   public constructor(
@@ -265,7 +260,7 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
         .minute(Number(debate.time.split(':')[1]))
         .locale('pt-br')
         .format(`LLL`)}</b>, moção <b>${debate.motion}
-        (${MotionTheme[debate.motionTheme]})</b>, chair <b>${debate.chair.name} (${debate.chair.society})</b> e debatedores
+        (${debate.motionTheme})</b>, chair <b>${debate.chair.name} (${debate.chair.society})</b> e debatedores
         <b>${debate.debaters.map((member) => `${member.name} (${member.society})`).join(', ')}</b>?`,
       positiveCallback: async () => {
         await this.debateService.deleteDebate(id);

@@ -520,26 +520,26 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       firstsAverage[member.id] = firsts[member.id]/participationsAsDebater[member.id];
     });
 
-    const uniqueFirstsAverageEntries = [...new Set(Object.entries(firstsAverage))].sort((a, b) => b[1]-a[1]);
+    const uniqueFirstsAverageValues = [...new Set(Object.values(firstsAverage))].sort((a, b) => b-a);
 
     this.ranks.push({
       title: 'Debatedores com a maior <b>média</b>¹ de <b>primeiros</b>',
       disclaimer: '<b>¹</b> Apenas membros com <b>5</b> ou mais debates registrados entram para esse ranking',
       placements: [
         {
-          title: `Em <b>primeiro</b> lugar, primeirando <b>${firsts[uniqueFirstsAverageEntries[0][0]]}</b> de ${participationsAsDebater[uniqueFirstsAverageEntries[0][0]]} debates`,
-          members: activeMembers.filter((member) => firstsAverage[member.id] === uniqueFirstsAverageEntries[0][1]),
-          value: uniqueFirstsAverageEntries[0][1]
+          title: `Em <b>primeiro</b> lugar, com uma média de <b>${Number(uniqueFirstsAverageValues[0].toFixed(2))*100}%</b> de primeiros`,
+          members: activeMembers.filter((member) => firstsAverage[member.id] === uniqueFirstsAverageValues[0]),
+          value: uniqueFirstsAverageValues[0]
         },
         {
-          title: `Em <b>segundo</b> lugar, primeirando <b>${firsts[uniqueFirstsAverageEntries[1][0]]}</b> de ${participationsAsDebater[uniqueFirstsAverageEntries[1][0]]} debates`,
-          members: activeMembers.filter((member) => firstsAverage[member.id] === uniqueFirstsAverageEntries[1][1]),
-          value: uniqueFirstsAverageEntries[1][1]
+          title: `Em <b>segundo</b> lugar, com uma média de <b>${Number(uniqueFirstsAverageValues[1].toFixed(2))*100}%</b> de primeiros`,
+          members: activeMembers.filter((member) => firstsAverage[member.id] === uniqueFirstsAverageValues[1]),
+          value: uniqueFirstsAverageValues[1]
         },
         {
-          title: `Em <b>terceiro</b> lugar, primeirando <b>${firsts[uniqueFirstsAverageEntries[2][0]]}</b> de ${participationsAsDebater[uniqueFirstsAverageEntries[2][0]]} debates`,
-          members: activeMembers.filter((member) => firstsAverage[member.id] === uniqueFirstsAverageEntries[2][1]),
-          value: uniqueFirstsAverageEntries[2][1]
+          title: `Em <b>terceiro</b> lugar, com uma média de <b>${Number(uniqueFirstsAverageValues[2].toFixed(2))*100}%</b> de primeiros`,
+          members: activeMembers.filter((member) => firstsAverage[member.id] === uniqueFirstsAverageValues[2]),
+          value: uniqueFirstsAverageValues[2]
         },
       ]
     });
@@ -598,7 +598,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       winsAverage[member.id] = wins[member.id]/participationsAsDebater[member.id];
     });
 
-    const uniqueWinsAverageEntries = [...new Set(Object.entries(winsAverage))].sort((a, b) => b[1]-a[1]);
+    const uniqueWinsAverageValues = [...new Set(Object.values(winsAverage))].sort((a, b) => b-a);
 
     this.ranks.push({
       title: 'Debatedores com a maior <b>média</b>¹ de <b>vitórias</b>²',
@@ -608,19 +608,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       `,
       placements: [
         {
-          title: `Em <b>primeiro</b> lugar, ganhando <b>${wins[uniqueWinsAverageEntries[0][0]]}</b> de ${participationsAsDebater[uniqueWinsAverageEntries[0][0]]} debates`,
-          members: activeMembers.filter((member) => winsAverage[member.id] === uniqueWinsAverageEntries[0][1]),
-          value: uniqueWinsAverageEntries[0][1]
+          title: `Em <b>primeiro</b> lugar, com uma média de <b>${Number(uniqueWinsAverageValues[0].toFixed(2))*100}%</b> de vitórias`,
+          members: activeMembers.filter((member) => winsAverage[member.id] === uniqueWinsAverageValues[0]),
+          value: uniqueWinsAverageValues[0]
         },
         {
-          title: `Em <b>segundo</b> lugar, ganhando <b>${wins[uniqueWinsAverageEntries[1][0]]}</b> de ${participationsAsDebater[uniqueWinsAverageEntries[1][0]]} debates`,
-          members: activeMembers.filter((member) => winsAverage[member.id] === uniqueWinsAverageEntries[1][1]),
-          value: uniqueWinsAverageEntries[1][1]
+          title: `Em <b>segundo</b> lugar, com uma média de <b>${Number(uniqueWinsAverageValues[1].toFixed(2))*100}%</b> de vitórias`,
+          members: activeMembers.filter((member) => winsAverage[member.id] === uniqueWinsAverageValues[1]),
+          value: uniqueWinsAverageValues[1]
         },
         {
-          title: `Em <b>terceiro</b> lugar, ganhando <b>${wins[uniqueWinsAverageEntries[2][0]]}</b> de ${participationsAsDebater[uniqueWinsAverageEntries[2][0]]} debates`,
-          members: activeMembers.filter((member) => winsAverage[member.id] === uniqueWinsAverageEntries[2][1]),
-          value: uniqueWinsAverageEntries[2][1]
+          title: `Em <b>terceiro</b> lugar, com uma média de <b>${Number(uniqueWinsAverageValues[2].toFixed(2))*100}%</b> de vitórias`,
+          members: activeMembers.filter((member) => winsAverage[member.id] === uniqueWinsAverageValues[2]),
+          value: uniqueWinsAverageValues[2]
         },
       ]
     });
