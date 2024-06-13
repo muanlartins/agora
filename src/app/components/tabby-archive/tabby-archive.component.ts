@@ -1,8 +1,94 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SelectOption } from 'src/app/models/types/select-option';
 import { TournamentService } from 'src/app/services/tournament.service';
+
+type Institution = {
+  id: string;
+  name: string;
+};
+
+type Participant = {
+  id: string;
+  name: string;
+  society: string;
+  speakerCategories?: string[];
+};
+
+type Adjudicator = Omit<Participant, 'speakerCategories'>;
+type Speaker = Required<Participant>;
+
+type Team = {
+  id: string;
+  name: string;
+  speakers: Speaker[];
+};
+
+type Motion = {
+  id: string;
+  motion: string;
+};
+
+type Venue = {
+  id: string;
+  venue: string;
+};
+
+type SpeakerCategory = {
+  id: string;
+  speakerCategory: string;
+};
+
+type BreakCategory = {
+  id: string;
+  breakCategory: string;
+};
+
+type DebateSide = {
+    sideTeam: {
+      id: string;
+      name: string;
+      speakers: Speaker[];
+      breakCategories: string[];
+    };
+    sideSpeakers: {
+      speechSpeaker: Speaker;
+      speechSps: string;
+    }[];
+    sideSps: string;
+    sideRank: string;
+  };
+
+type Debate = {
+  debateId: string;
+  debateWings: Adjudicator[];
+  debateChair: Adjudicator;
+  debateVenue: string;
+  debateMotion: string;
+  debateSides: DebateSide[];
+};
+
+type Round = {
+  roundName: string;
+  roundAbbreviation: string;
+  isEliminationRound: boolean;
+  debates: Debate[];
+};
+
+type TabbyData = {
+  institutions: Institution[];
+  adjudicators: Adjudicator[];
+  speakers: Speaker[];
+  participants: Participant[];
+  teams: Team[];
+  motions: Motion[];
+  venues: Venue[];
+  speakerCategories: SpeakerCategory[];
+  breakCategories: BreakCategory[];
+  tournamentName: string;
+  rounds: Round[];
+};
 
 @Component({
   selector: 'app-tabby-archive',
@@ -14,7 +100,22 @@ export class TabbyArchiveComponent implements OnInit {
 
   public tournamentOptions: SelectOption[] = [];
 
-  public data: any;
+  public data: TabbyData;
+
+  public sps: { [id: string]: {
+    average: number;
+    sd: number;
+    [round: string]: number;
+  } } = {};
+
+  @ViewChild('introduction')
+  public introductionRef: ElementRef<HTMLElement>;
+
+  @ViewChildren('round')
+  public roundRefs: QueryList<ElementRef<HTMLElement>>;
+
+  @ViewChildren('subtitle')
+  public subtitleRefs: QueryList<ElementRef<HTMLElement>>;
 
   constructor(
     private router: Router,
@@ -50,6 +151,32 @@ export class TabbyArchiveComponent implements OnInit {
   public getTournamentTabbyData(tournament: string) {
     this.tournamentService.getTournamentTabbyData(tournament).subscribe((data: any) => {
       this.data = data;
+
+      this.calculateStatistics();
+
+      this.data.teams = this.data.teams.sort(
+        (a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+      );
+
+      this.data.adjudicators = this.data.adjudicators.sort(
+        (a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+      );
+
+      this.data.speakers = this.data.speakers.sort(
+        (a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+      );
+    });
+  }
+
+  public getTopSpeakers() {
+    return this.data.speakers.sort((a, b) => {
+      if (this.sps[a.id].average > this.sps[b.id].average) return -1;
+      else if (this.sps[a.id].average < this.sps[b.id].average) return 1;
+      else {
+        if (this.sps[a.id].sd > this.sps[b.id].sd) return 1;
+        else if (this.sps[a.id].sd < this.sps[b.id].sd) return -1;
+        return 0;
+      }
     });
   }
 
@@ -68,7 +195,7 @@ export class TabbyArchiveComponent implements OnInit {
     }
   }
 
-  public getSideRank(rank: '1' | '2' | '3' | '4') {
+  public getSideRank(rank: string) {
     switch (rank) {
       case '1':
         return 'Primeirou';
@@ -79,9 +206,81 @@ export class TabbyArchiveComponent implements OnInit {
       case '4':
         return 'Quartou';
     }
+    return;
   }
 
   public goToLandingPage() {
     this.router.navigate([""]);
+  }
+
+  public scrollToRound(index: number) {
+    this.roundRefs.toArray()[index].nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  public scrollToSubtitle(index: number) {
+    this.subtitleRefs.toArray()[index].nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  public scrollToIntroduction() {
+    this.introductionRef.nativeElement.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  public calculateStatistics() {
+    const totalSps: { [id: string]: number } = {};
+
+    this.data.speakers.forEach((speaker) => {
+      totalSps[speaker.id] = 0;
+      this.sps[speaker.id] = { average: 0, sd: 0 };
+    });
+
+    let nonEliminationRounds = 0;
+    this.data.rounds.forEach((round) => {
+      if(!round.isEliminationRound) nonEliminationRounds++;
+    });
+
+    this.data.rounds.forEach((round) => {
+      if (round.isEliminationRound) return;
+
+      round.debates.forEach((debate) => {
+        debate.debateSides.forEach((debateSide) => {
+          if (
+            [...new Set(debateSide.sideSpeakers.map((speaker) => speaker.speechSpeaker.id))].length ===
+            debateSide.sideSpeakers.map((speaker) => speaker.speechSpeaker.id).length
+          )
+            debateSide.sideSpeakers.forEach((sideSpeaker) => {
+              this.sps[sideSpeaker.speechSpeaker.id][round.roundAbbreviation] = Number(sideSpeaker.speechSps);
+              totalSps[sideSpeaker.speechSpeaker.id] += Number(sideSpeaker.speechSps);
+            });
+          else {
+            this.sps[debateSide.sideSpeakers[0].speechSpeaker.id][round.roundAbbreviation] =
+              Math.max(Number(debateSide.sideSpeakers[0].speechSps), Number(debateSide.sideSpeakers[1].speechSps));
+            totalSps[debateSide.sideSpeakers[0].speechSpeaker.id] +=
+              Math.max(Number(debateSide.sideSpeakers[0].speechSps), Number(debateSide.sideSpeakers[1].speechSps));
+          }
+        });
+      });
+    });
+
+    this.data.speakers.forEach((speaker) => {
+      this.sps[speaker.id].average = Number((totalSps[speaker.id]/nonEliminationRounds).toFixed(2));
+    });
+
+    this.data.rounds.forEach((round) => {
+      if (round.isEliminationRound) return;
+
+      this.data.speakers.forEach((speaker) => {
+        this.sps[speaker.id].sd +=
+          (this.sps[speaker.id].average - this.sps[speaker.id][round.roundAbbreviation])**2;
+      });
+    });
+
+    this.data.speakers.forEach((speaker) => {
+      this.sps[speaker.id].sd /= nonEliminationRounds;
+      this.sps[speaker.id].sd = Math.sqrt(this.sps[speaker.id].sd);
+    });
+  }
+
+  public getNonElinimationRounds() {
+    return this.data.rounds.filter((round) => !round.isEliminationRound);
   }
 }

@@ -93,9 +93,10 @@ $my-theme: mat.define-dark-theme((
 	margin: 0;
 	padding: 0;
   font-family: 'Poppins';
+  scroll-margin-top: 16px;
 }
 
-html, body { height: 100%; }
+html, body { height: 100%; scroll-behavior: smooth; }
 
 .cdk-drag-preview {
   box-sizing: border-box;

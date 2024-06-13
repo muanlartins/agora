@@ -527,17 +527,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       disclaimer: '<b>¹</b> Apenas membros com <b>5</b> ou mais debates registrados entram para esse ranking',
       placements: [
         {
-          title: `Em <b>primeiro</b> lugar, com uma média de <b>${Number(uniqueFirstsAverageValues[0].toFixed(2))*100}%</b> de primeiros`,
+          title: `Em <b>primeiro</b> lugar, com uma média de <b>${Number((uniqueFirstsAverageValues[0]*100).toFixed(2))}%</b> de primeiros`,
           members: activeMembers.filter((member) => firstsAverage[member.id] === uniqueFirstsAverageValues[0]),
           value: uniqueFirstsAverageValues[0]
         },
         {
-          title: `Em <b>segundo</b> lugar, com uma média de <b>${Number(uniqueFirstsAverageValues[1].toFixed(2))*100}%</b> de primeiros`,
+          title: `Em <b>segundo</b> lugar, com uma média de <b>${Number((uniqueFirstsAverageValues[1]*100).toFixed(2))}%</b> de primeiros`,
           members: activeMembers.filter((member) => firstsAverage[member.id] === uniqueFirstsAverageValues[1]),
           value: uniqueFirstsAverageValues[1]
         },
         {
-          title: `Em <b>terceiro</b> lugar, com uma média de <b>${Number(uniqueFirstsAverageValues[2].toFixed(2))*100}%</b> de primeiros`,
+          title: `Em <b>terceiro</b> lugar, com uma média de <b>${Number((uniqueFirstsAverageValues[2]*100).toFixed(2))}%</b> de primeiros`,
           members: activeMembers.filter((member) => firstsAverage[member.id] === uniqueFirstsAverageValues[2]),
           value: uniqueFirstsAverageValues[2]
         },
@@ -608,17 +608,17 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       `,
       placements: [
         {
-          title: `Em <b>primeiro</b> lugar, com uma média de <b>${Number(uniqueWinsAverageValues[0].toFixed(2))*100}%</b> de vitórias`,
+          title: `Em <b>primeiro</b> lugar, com uma média de <b>${Number((uniqueWinsAverageValues[0]*100).toFixed(2))}%</b> de vitórias`,
           members: activeMembers.filter((member) => winsAverage[member.id] === uniqueWinsAverageValues[0]),
           value: uniqueWinsAverageValues[0]
         },
         {
-          title: `Em <b>segundo</b> lugar, com uma média de <b>${Number(uniqueWinsAverageValues[1].toFixed(2))*100}%</b> de vitórias`,
+          title: `Em <b>segundo</b> lugar, com uma média de <b>${Number((uniqueWinsAverageValues[1]*100).toFixed(2))}%</b> de vitórias`,
           members: activeMembers.filter((member) => winsAverage[member.id] === uniqueWinsAverageValues[1]),
           value: uniqueWinsAverageValues[1]
         },
         {
-          title: `Em <b>terceiro</b> lugar, com uma média de <b>${Number(uniqueWinsAverageValues[2].toFixed(2))*100}%</b> de vitórias`,
+          title: `Em <b>terceiro</b> lugar, com uma média de <b>${Number((uniqueWinsAverageValues[2]*100).toFixed(2))}%</b> de vitórias`,
           members: activeMembers.filter((member) => winsAverage[member.id] === uniqueWinsAverageValues[2]),
           value: uniqueWinsAverageValues[2]
         },

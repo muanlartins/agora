@@ -71,242 +71,144 @@
     }
   }
 
-  &__content {
-    background: $condebprimary;
+  &__introduction {
+    padding: 64px 128px 16px 128px;
     width: calc(100% - 256px);
-    padding: 64px 128px;
-    min-height: 100vh;
 
-    &__introduction {
-      &__title {
-        font-size: 32px;
-        color: $primary;
-      }
+    &__title {
+      font-size: 32px;
+      color: $primary;
+    }
 
-      &__description {
-        font-size: 20px;
-        color: $white;
-        margin-top: 16px;
-      }
+    &__description {
+      font-size: 20px;
+      color: $white;
+      margin-top: 16px;
     }
 
     &__form {
       margin-top: 32px;
     }
-
-    &__tournament {
-      margin-top: 32px;
-
-      &__title {
-        font-size: 40px;
-        color: $primary;
-      }
-
-      &__rounds {
-        &__round {
-          margin-top: 32px;
-
-          &__name {
-            font-size: 24px;
-            color: $condebwhite;
-          }
-
-          &__debates {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            margin-top: 16px;
-            gap: 64px;
-            flex-wrap: wrap;
-
-            &__debate {
-              padding: 32px;
-              border: 1px solid $condebwhite;
-              border-radius: 5px;
-
-              &__venue {
-                color: $primary;
-              }
-
-              &__motion {
-                margin-top: 8px;
-                color: $condebwhite;
-              }
-
-              &__side {
-                margin-top: 16px;
-
-                &__title {
-                  font-size: 20px;
-                  color: $primary;
-
-                  span {
-                    font-size: 20px;
-                  }
-
-                  .primary {
-                    color: $primary;
-                  }
-
-                  .condebsecondary {
-                    color: $condebsecondary;
-                  }
-                }
-
-                &__team {
-                  margin-top: 8px;
-                  color: $condebwhite;
-                }
-
-                &__speakers {
-                  &__speaker {
-                    margin-top: 16px;
-                    color: $condebwhite;
-
-                    span {
-                      color: $primary;
-                    }
-
-                    .condebsecondary {
-                      color: $condebsecondary;
-                    }
-                  }
-                }
-              }
-
-              &__adjudicators {
-                margin-top: 32px;
-
-                &__title {
-                  color: $primary;
-                  font-size: 24px;
-                }
-
-                &__chair {
-                  margin-top: 8px;
-                  font-size: 18px;
-                  color: $condebwhite;
-
-                  .primary {
-                    color: $primary;
-                  }
-
-                  .condebsecondary {
-                    color: $condebsecondary;
-                  }
-                }
-
-                &__wings {
-                  &__wing {
-                    margin-top: 8px;
-                    color: $condebwhite;
-
-                    .condebsecondary {
-                      color: $condebsecondary;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
   }
-}
 
-@media (width < 1600px) {
-  .page {
-    &__content {
-      &__tournament {
-        &__rounds {
-          &__round {
-            &__debates {
-              grid-template-columns: repeat(1, 1fr);
-            }
-          }
-        }
-      }
-    }
-  }
-}
+  &__body {
+    display: grid;
+    gap: 64px;
+    grid-template-columns: max-content 1fr;
+    padding: 32px 128px;
 
-@media (width < 1024px) {
-  .page {
-    &__navbar {
-      padding: 16px 32px;
-      flex-wrap: wrap;
+    &__sidebar {
+      &__content {
+        position: sticky;
+        top: 16px;
 
-      &__logo {
-        &__agora {
-          height: 40px;
-        }
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 16px;
 
-        &__condeb {
-          height: 32px;
-        }
-      }
-
-      &__menu {
-
-
-        display: none;
-      }
-    }
-
-    &__content {
-      background: $condebprimary;
-      width: calc(100% - 64px);
-      padding: 16px 32px;
-      min-height: 100vh;
-
-      &__introduction {
-        &__title {
-          font-size: 24px;
-          color: $primary;
-        }
-
-        &__description {
-          font-size: 16px;
+        &__subtitle {
+          font-size: 20px;
           color: $white;
-          margin-top: 16px;
+          cursor: pointer;
+          transition: $transition;
+
+          &:hover {
+            color: $primary;
+          }
+        }
+
+        &__items {
+          padding-left: 16px;
+
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: flex-start;
+          gap: 8px;
+
+          &__item {
+            font-size: 20px;
+            color: $white;
+            cursor: pointer;
+            transition: $transition;
+
+            &:hover {
+              color: $primary;
+            }
+          }
         }
       }
-
-      &__form {
-        margin-top: 32px;
       }
 
-      &__tournament {
-        margin-top: 32px;
+    &__content {
+      width: 100%;
 
+      &__tournament {
         &__title {
-          font-size: 32px;
+          font-size: 48px;
           color: $primary;
         }
 
-        &__rounds {
+        &__subtitle {
+          font-size: 40px;
           margin-top: 32px;
+          color: $white;
+        }
 
+        &__list {
+          margin-top: 32px;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: flex-start;
+          gap: 8px;
+
+          &__item {
+            &__value {
+              font-size: 20px;
+              color: $white;
+
+              &--condebsecondary {
+                color: $condebsecondary;
+              }
+
+              &--primary {
+                color: $primary;
+                text-transform: capitalize;
+              }
+            }
+
+            &__subvalues {
+              margin: 16px 0;
+              &__subvalue {
+                color: $white;
+              }
+            }
+          }
+        }
+
+        &__rounds {
           &__round {
             margin-top: 32px;
 
             &__name {
-              font-size: 20px;
+              font-size: 24px;
               color: $condebwhite;
             }
 
             &__debates {
               display: grid;
-              grid-template-columns: repeat(1, 1fr);
+              grid-template-columns: repeat(2, 1fr);
               margin-top: 16px;
-              gap: 32px;
+              gap: 64px;
               flex-wrap: wrap;
 
               &__debate {
-                padding: 16px;
+                padding: 32px;
                 border: 1px solid $condebwhite;
                 border-radius: 5px;
-                font-size: 14px;
 
                 &__venue {
                   color: $primary;
@@ -321,11 +223,11 @@
                   margin-top: 16px;
 
                   &__title {
-                    font-size: 16px;
+                    font-size: 20px;
                     color: $primary;
 
                     span {
-                      font-size: 16px;
+                      font-size: 20px;
                     }
 
                     .primary {
@@ -363,12 +265,12 @@
 
                   &__title {
                     color: $primary;
-                    font-size: 20px;
+                    font-size: 24px;
                   }
 
                   &__chair {
                     margin-top: 8px;
-                    font-size: 16px;
+                    font-size: 18px;
                     color: $condebwhite;
 
                     .primary {
@@ -399,4 +301,3 @@
     }
   }
 }
-
