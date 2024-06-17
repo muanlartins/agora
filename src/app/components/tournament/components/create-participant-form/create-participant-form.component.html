@@ -43,11 +43,10 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-checkbox
-    class="form__field"
-    color="primary"
-    formControlName="mvp"
-  >MVP (destaque)</mat-checkbox>
+  <mat-form-field class="form__field">
+    <mat-label>Emoji</mat-label>
+    <input matInput formControlName="emoji" />
+  </mat-form-field>
   <mat-form-field  class="form__field form__field--select">
     <mat-label>Dupla</mat-label>
     <mat-select formControlName="duoId">

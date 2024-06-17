@@ -145,12 +145,8 @@ export class TournamentComponent implements OnInit {
   public getAllParticipants() {
     this.participantService.getAllParticipants().subscribe((participants) => {
       this.participants = participants.sort((a, b) =>
-        moment(b.subscribedAt, "DD/MM/YYYY HH:mm").toDate().getTime() - moment(a.subscribedAt, "DD/MM/YYYY HH:mm").toDate().getTime()
-      ).sort((a, b) => {
-        if (a.mvp) return -1;
-        if (b.mvp) return 1;
-        return 0;
-      });
+        a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+      );
 
       this.filteredParticipants = [...this.participants];
 

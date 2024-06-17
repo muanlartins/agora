@@ -59,7 +59,7 @@ export class CreateParticipantFormComponent implements OnInit {
       newSociety: [''],
       category: [''],
       roles: [[]],
-      mvp: [false],
+      emoji: [''],
       duoId: [''],
     });
 
@@ -72,7 +72,7 @@ export class CreateParticipantFormComponent implements OnInit {
       this.form.controls['society'].patchValue(this.participant.society);
       this.form.controls['category'].patchValue(this.participant.category);
       this.form.controls['roles'].patchValue(this.participant.roles);
-      this.form.controls['mvp'].patchValue(this.participant.mvp);
+      this.form.controls['emoji'].patchValue(this.participant.emoji);
       this.form.controls['duoId'].patchValue(this.participant.duoId);
 
       if (state[this.participant.id] && state[this.participant.id].name)
@@ -83,8 +83,8 @@ export class CreateParticipantFormComponent implements OnInit {
         this.form.controls['category'].patchValue(state[this.participant.id].category);
       if (state[this.participant.id] && state[this.participant.id].roles)
         this.form.controls['roles'].patchValue(state[this.participant.id].roles);
-      if (state[this.participant.id] && state[this.participant.id].mvp)
-        this.form.controls['mvp'].patchValue(state[this.participant.id].mvp);
+      if (state[this.participant.id] && state[this.participant.id].emoji)
+        this.form.controls['emoji'].patchValue(state[this.participant.id].emoji);
       if (state[this.participant.id] && state[this.participant.id].duoId)
         this.form.controls['duoId'].patchValue(state[this.participant.id].duoId);
     } else if (state['participant']) {
@@ -94,7 +94,7 @@ export class CreateParticipantFormComponent implements OnInit {
       this.form.controls['society'].patchValue(participant.society);
       this.form.controls['category'].patchValue(participant.category);
       this.form.controls['roles'].patchValue(participant.roles);
-      this.form.controls['mvp'].patchValue(participant.mvp);
+      this.form.controls['emoji'].patchValue(participant.emoji);
       this.form.controls['duoId'].patchValue(participant.duoId);
     }
   }
@@ -131,7 +131,7 @@ export class CreateParticipantFormComponent implements OnInit {
       this.form.controls['society'].value;
     const category = this.form.controls['category'].value;
     const roles = this.form.controls['roles'].value;
-    const mvp = this.form.controls['mvp'].value;
+    const emoji = this.form.controls['emoji'].value;
     const duoId = this.form.controls['duoId'].value;
 
     let id: string;
@@ -148,7 +148,7 @@ export class CreateParticipantFormComponent implements OnInit {
         hasPfp: hasPfp,
         category: category,
         roles: roles,
-        mvp: mvp,
+        emoji: emoji,
         duoId: duoId
       };
 
@@ -164,7 +164,7 @@ export class CreateParticipantFormComponent implements OnInit {
         hasPfp: false,
         category: category,
         roles: roles,
-        mvp: mvp,
+        emoji: emoji,
         duoId: duoId
       };
 

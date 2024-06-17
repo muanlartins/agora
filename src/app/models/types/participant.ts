@@ -11,5 +11,5 @@ export type Participant = {
   duoId?: string;
   category?: ParticipantCategory;
   roles?: TournamentRole[];
-  mvp?: boolean;
+  emoji?: string;
 }
