@@ -51,6 +51,23 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <mat-form-field class="page__content__filters__filter">
+        <mat-label>Categoria</mat-label>
+        <mat-select formControlName="category">
+          <mat-option>Nenhuma</mat-option>
+          <mat-option *ngFor="let option of categoryOptions" [value]="option.value">
+            {{ option.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="page__content__filters__filter">
+        <mat-label>Função</mat-label>
+        <mat-select formControlName="roles" multiple>
+          <mat-option *ngFor="let option of roleOptions" [value]="option.value">
+            {{ option.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
       <div class="page__content__filters__buttons">
         <button
           *ngIf="isAdmin()"

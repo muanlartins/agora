@@ -10,7 +10,7 @@ import { CreateParticipantModalComponent } from './components/create-participant
 import { ConfirmModalComponent } from '../members/components/confirm-modal/confirm-modal.component';
 import * as removeAccents from 'remove-accents';
 import { RegisterDuoModalComponent } from './components/register-duo-modal/register-duo-modal.component';
-import { getTournamentRoleViewValue } from 'src/app/models/enums/tournament-role';
+import { TournamentRole, getTournamentRoleViewValue } from 'src/app/models/enums/tournament-role';
 import { ParticipantCategory, getParticipantCategoryViewValue } from 'src/app/models/enums/participant-category';
 import { Router } from '@angular/router';
 
@@ -35,6 +35,10 @@ export class TournamentComponent implements OnInit {
   public form: FormGroup;
 
   public societyOptions: SelectOption[];
+
+  public categoryOptions: SelectOption[];
+
+  public roleOptions: SelectOption[];
 
   public get getTournamentRoleViewValue() {
     return getTournamentRoleViewValue;
@@ -66,18 +70,30 @@ export class TournamentComponent implements OnInit {
   public initForm() {
     this.form = this.formBuilder.group({
       name: [''],
-      society: ['']
+      society: [''],
+      category: [''],
+      roles: [[]]
     });
 
     this.subscribeToValueChanges();
   }
 
   public initOptions() {
-    this.societyOptions = [... new Set(this.participants.map((participant) => participant.society))]
+    this.societyOptions = [...new Set(this.participants.map((participant) => participant.society))]
       .map((society) => ({
         value: society,
         viewValue: society
       }));
+
+    this.categoryOptions = Object.values(ParticipantCategory).map((category) => ({
+      value: category,
+      viewValue: getParticipantCategoryViewValue(category)
+    }));
+
+    this.roleOptions = Object.values(TournamentRole).map((role) => ({
+      value: role,
+      viewValue: getTournamentRoleViewValue(role)
+    }));
   }
 
   public subscribeToValueChanges() {
@@ -89,6 +105,8 @@ export class TournamentComponent implements OnInit {
 
     const name = this.form.controls['name'].value;
     const society = this.form.controls['society'].value;
+    const category = this.form.controls['category'].value;
+    const roles: TournamentRole[] = this.form.controls['roles'].value;
 
     if (name)
       this.filteredParticipants = this.filteredParticipants.filter(
@@ -97,6 +115,15 @@ export class TournamentComponent implements OnInit {
     if (society)
       this.filteredParticipants = this.filteredParticipants.filter(
         (participant: Participant) => participant.society === society
+      );
+    if (category)
+      this.filteredParticipants = this.filteredParticipants.filter(
+        (participant: Participant) => participant.category === category
+      );
+    if (roles)
+      this.filteredParticipants = this.filteredParticipants.filter(
+        (participant: Participant) =>
+          roles.every((role) => participant.roles && participant.roles.includes(role))
       );
   }
 
