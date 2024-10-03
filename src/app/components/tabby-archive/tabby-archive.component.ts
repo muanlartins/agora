@@ -108,6 +108,13 @@ export class TabbyArchiveComponent implements OnInit {
     [round: string]: number;
   } } = {};
 
+  public points: { [id: string]: {
+    total: number;
+    [round: string]: number;
+    firsts: number;
+    seconds: number;
+  } } = {};
+
   @ViewChild('introduction')
   public introductionRef: ElementRef<HTMLElement>;
 
@@ -168,7 +175,7 @@ export class TabbyArchiveComponent implements OnInit {
     });
   }
 
-  public getTopSpeakers() {
+  public getTopSpeakersOpen() {
     return this.data.speakers.sort((a, b) => {
       if (this.sps[a.id].average > this.sps[b.id].average) return -1;
       else if (this.sps[a.id].average < this.sps[b.id].average) return 1;
@@ -176,6 +183,34 @@ export class TabbyArchiveComponent implements OnInit {
         if (this.sps[a.id].sd > this.sps[b.id].sd) return 1;
         else if (this.sps[a.id].sd < this.sps[b.id].sd) return -1;
         return 0;
+      }
+    });
+  }
+
+  public getTopSpeakersNovice() {
+    return this.getTopSpeakersOpen().filter((speaker) =>
+      speaker.speakerCategories &&
+      (
+        speaker.speakerCategories.includes('Novice') ||
+        speaker.speakerCategories.includes('Novices') ||
+        speaker.speakerCategories.includes('Iniciado') ||
+        speaker.speakerCategories.includes('Iniciados')
+      )
+    );
+  }
+
+  public getTeamStandingsOpen() {
+    return this.data.teams.sort((a, b) => {
+      if (this.points[a.id].total > this.points[b.id].total) return -1;
+      else if (this.points[a.id].total < this.points[b.id].total) return 1;
+      else {
+        if (this.points[a.id].firsts > this.points[b.id].firsts) return 1;
+        else if (this.points[a.id].firsts < this.points[b.id].firsts) return -1;
+        else {
+          if (this.points[a.id].seconds > this.points[b.id].seconds) return 1;
+          else if (this.points[a.id].seconds < this.points[b.id].seconds) return -1;
+          return 0;
+        }
       }
     });
   }
@@ -226,6 +261,7 @@ export class TabbyArchiveComponent implements OnInit {
   }
 
   public calculateStatistics() {
+    // Debaters SPs
     const totalSps: { [id: string]: number } = {};
 
     this.data.speakers.forEach((speaker) => {
@@ -277,6 +313,31 @@ export class TabbyArchiveComponent implements OnInit {
     this.data.speakers.forEach((speaker) => {
       this.sps[speaker.id].sd /= nonEliminationRounds;
       this.sps[speaker.id].sd = Math.sqrt(this.sps[speaker.id].sd);
+    });
+
+    // Team Standings
+
+    this.data.teams.forEach((team) => {
+      this.points[team.id] = {
+        total: 0,
+        firsts: 0,
+        seconds: 0,
+      };
+    });
+
+    this.data.rounds.forEach((round) => {
+      if (round.isEliminationRound) return;
+
+      round.debates.forEach((debate) => {
+        debate.debateSides.forEach((debateSide) => {
+          const points = 4 - Number(debateSide.sideRank);
+
+          this.points[debateSide.sideTeam.id].total += points;
+          this.points[debateSide.sideTeam.id].firsts += (points === 3 ? 1 : 0);
+          this.points[debateSide.sideTeam.id].seconds += (points === 2 ? 1 : 0);
+          this.points[debateSide.sideTeam.id][round.roundAbbreviation] = points;
+        });
+      });
     });
   }
 

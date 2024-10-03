@@ -1,9 +1,4 @@
 <div class="page">
-  <!-- <div class="page__banner">
-    <p class="page__banner__text">
-      <b>PSEL</b> 2024.1 está <b>aberto</b>! Inscreva-se <a class="page__banner__text__link" target="_blank" href="https://forms.gle/GyJ7noXP1rr8qCNc7">aqui</a>!
-    </p>
-  </div> -->
   <div class="page__navbar">
     <div class="page__navbar__logo">
       <img src="assets/agora-logo.png" class="page__navbar__logo__agora" (click)="goToLandingPage()" />
@@ -36,7 +31,7 @@
     </label>
   </div> -->
   <div class="page__content">
-    <div class="page__content__title">Inscritos no Campeonato de Metadebate</div>
+    <div class="page__content__title">Inscritos no Rio Open</div>
     <form class="page__content__filters" [formGroup]="form">
       <mat-form-field class="page__content__filters__filter">
         <mat-label>Nome</mat-label>
@@ -111,7 +106,7 @@
             {{ getTournamentRoleViewValue(role) }}
           </div>
         </div>
-        <div *ngIf="participant.duoId" class="page__content__participants__participant__duo">
+        <div *ngIf="participant.duoId && getParticipantDuo(participant)" class="page__content__participants__participant__duo">
           <span>Dupla:</span> {{ getParticipantDuo(participant) }}
         </div>
         <div class="page__content__participants__participant__date">

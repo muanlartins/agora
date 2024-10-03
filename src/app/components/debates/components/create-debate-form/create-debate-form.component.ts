@@ -169,7 +169,8 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
       debaters: this.formBuilder.group({
         filters: this.formBuilder.group({
           name: [''],
-          society: ['']
+          society: [''],
+          isTrainee: [false]
         }),
         debaters: this.formBuilder.array([]),
         sps: this.formBuilder.array([]),
@@ -241,6 +242,7 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
 
       this.initDebaters();
       this.initJudgeOptions();
+      this.initSocietyOptions();
       this.subscribeToValueChanges();
     });
   }
@@ -311,6 +313,10 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
     });
 
     this.debatersFilterFormGroup.controls['society'].valueChanges.subscribe(() => {
+      this.applyFilters();
+    });
+
+    this.debatersFilterFormGroup.controls['isTrainee'].valueChanges.subscribe(() => {
       this.applyFilters();
     });
 
@@ -464,6 +470,11 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
     if (this.debatersFilterFormGroup.controls['society'].value) {
       const filter = this.debatersFilterFormGroup.controls['society'].value;
       this.filteredDebaters = this.filteredDebaters.filter((debater: Member) => debater.society === filter)
+    }
+
+    if (this.debatersFilterFormGroup.controls['isTrainee'].value) {
+      const filter = this.debatersFilterFormGroup.controls['isTrainee'].value;
+      this.filteredDebaters = this.filteredDebaters.filter((debater: Member) => debater.isTrainee === filter)
     }
   }
 

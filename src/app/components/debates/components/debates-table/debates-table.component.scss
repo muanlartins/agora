@@ -1,15 +1,5 @@
 @import 'src/variables.scss';
 
-.form {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-
-  &__input {
-    width: 240px;
-  }
-}
-
 .table {
   position: relative;
   width: 100%;

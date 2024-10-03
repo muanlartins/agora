@@ -157,14 +157,30 @@
               </ng-container>
             </mat-select>
           </mat-form-field>
+          <mat-checkbox
+            class="form__stepper__step__debaters__filters__field"
+            color="primary"
+            formControlName="isTrainee"
+          >
+            Trainees
+          </mat-checkbox>
         </div>
         <div class="form__stepper__step__debaters__all" formArrayName="debaters" >
           <div class="form__stepper__step__debaters__all__label">Selecione os participantes do debate:</div>
           <mat-checkbox
+            class="form__stepper__step__debaters__all__checkbox"
             *ngFor="let debater of filteredDebaters; index as index"
             color="primary"
             [formControlName]="getFilteredDebaterIndex(index)"
-          >{{ debater.name }}</mat-checkbox>
+          >
+            <app-pfp
+              class="form__stepper__step__debaters__all__checkbox__pfp"
+              [id]="debater.id"
+              [hasPfp]="debater.hasPfp"
+              [size]="32"
+            ></app-pfp>
+            {{ debater.name }} ({{ debater.society }})
+          </mat-checkbox>
         </div>
         <div
           class="form__stepper__step__debaters__iron"

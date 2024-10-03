@@ -1,0 +1,19 @@
+@import 'src/variables.scss';
+
+.banner {
+  height: 64px;
+  background: $primary;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__text {
+    color: black;
+    font-size: 24px;
+
+    &__link {
+      color: $link;
+    }
+  }
+}

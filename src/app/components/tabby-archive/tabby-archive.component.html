@@ -1,4 +1,5 @@
 <div class="page">
+  <app-banner></app-banner>
   <div class="page__navbar">
     <div class="page__navbar__logo">
       <img src="assets/agora-logo-white.png" class="page__navbar__logo__agora" (click)="goToLandingPage()" />
@@ -45,7 +46,9 @@
             {{ round.roundName }} ({{round.roundAbbreviation}})
           </li>
         </ul>
-        <div class="page__body__sidebar__content__subtitle" (click)="scrollToSubtitle(6)">Top Speakers</div>
+        <div class="page__body__sidebar__content__subtitle" (click)="scrollToSubtitle(6)">Team Standings Open</div>
+        <div class="page__body__sidebar__content__subtitle" (click)="scrollToSubtitle(7)">Top Speakers Open</div>
+        <div class="page__body__sidebar__content__subtitle" (click)="scrollToSubtitle(8)">Top Speakers Novice</div>
       </div>
     </div>
     <div class="page__body__content">
@@ -165,10 +168,47 @@
           </div>
         </div>
         <div #subtitle class="page__body__content__tournament__subtitle">
-          Top Speakers
+          Team Standings Open
         </div>
         <div class="page__body__content__tournament__list">
-          <div class="page__body__content__tournament__list__item" *ngFor="let speaker of getTopSpeakers(); index as index">
+          <div class="page__body__content__tournament__list__item" *ngFor="let team of getTeamStandingsOpen(); index as index">
+            <div class="page__body__content__tournament__list__item__value">
+              <span class="page__body__content__tournament__list__item__value--primary">{{ index+1 }}.</span>
+              {{ team.name }}
+              <span class="page__body__content__tournament__list__item__value--condebsecondary">({{ team.speakers[0].name }} e {{ team.speakers[1].name }})</span>
+            </div>
+            <div class="page__body__content__tournament__list__item__subvalues">
+              <div class="page__body__content__tournament__list__item__subvalues__subvalue">Pontos: {{ points[team.id].total }}</div>
+              <div class="page__body__content__tournament__list__item__subvalues__subvalue" *ngFor="let round of getNonElinimationRounds()">
+                {{ round.roundAbbreviation }}: {{ points[team.id][round.roundAbbreviation] }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div #subtitle class="page__body__content__tournament__subtitle">
+          Top Speakers Open
+        </div>
+        <div class="page__body__content__tournament__list">
+          <div class="page__body__content__tournament__list__item" *ngFor="let speaker of getTopSpeakersOpen(); index as index">
+            <div class="page__body__content__tournament__list__item__value">
+              <span class="page__body__content__tournament__list__item__value--primary">{{ index+1 }}.</span>
+              {{ speaker.name }}
+              <span class="page__body__content__tournament__list__item__value--condebsecondary">({{ speaker.society }})</span>
+            </div>
+            <div class="page__body__content__tournament__list__item__subvalues">
+              <div class="page__body__content__tournament__list__item__subvalues__subvalue">Média: {{ sps[speaker.id].average }}</div>
+              <div class="page__body__content__tournament__list__item__subvalues__subvalue">Desvio Padrão: {{ sps[speaker.id].sd }}</div>
+              <div class="page__body__content__tournament__list__item__subvalues__subvalue" *ngFor="let round of getNonElinimationRounds()">
+                {{ round.roundAbbreviation }}: {{ sps[speaker.id][round.roundAbbreviation] }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div #subtitle class="page__body__content__tournament__subtitle">
+          Top Speakers Novice
+        </div>
+        <div class="page__body__content__tournament__list">
+          <div class="page__body__content__tournament__list__item" *ngFor="let speaker of getTopSpeakersNovice(); index as index">
             <div class="page__body__content__tournament__list__item__value">
               <span class="page__body__content__tournament__list__item__value--primary">{{ index+1 }}.</span>
               {{ speaker.name }}

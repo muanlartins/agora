@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Chart, ChartType } from 'chart.js';
+import * as moment from 'moment';
 import * as removeAccents from 'remove-accents';
 import { combineLatest } from 'rxjs';
 import { Article } from 'src/app/models/types/article';
@@ -11,14 +12,36 @@ import { SelectOption } from 'src/app/models/types/select-option';
 import { ArticleService } from 'src/app/services/article.service';
 import { DebateService } from 'src/app/services/debate.service';
 import { MemberService } from 'src/app/services/member.service';
+import { UtilService } from 'src/app/services/util.service';
 import { isAdmin } from 'src/app/utils/auth';
-import { housesColors, placementColors } from 'src/app/utils/constants';
+import { MONTHS, housesColors, placementColors } from 'src/app/utils/constants';
 
 type Statistic = {
   title: any;
   value: any;
 };
 
+const options = {
+  maintainAspectRatio: false,
+};
+
+const doughnutOptions = {
+  maintainAspectRatio: false,
+  scales: {
+    x: {
+      display: false
+    },
+    y: {
+      display: false
+    }
+  }
+};
+
+Chart.defaults.color = '#D9D9D9';
+Chart.defaults.borderColor = '#D9D9D920';
+
+const barBackgroundColor = '#906E2E';
+const doughnutBackgroundColor = ['#FFC040', '#906E2E']
 @Component({
   selector: 'app-report',
   templateUrl: './report.component.html',
@@ -38,6 +61,10 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   public filteredMembers: Member[];
 
   public debates: Debate[];
+
+  public debatesParticipatedAsDebater: Debate[];
+
+  public debatesParticipatedAsJudge: Debate[];
 
   public articles: Article[];
 
@@ -76,7 +103,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private memberService: MemberService,
     private debateService: DebateService,
-    private articleService: ArticleService
+    private articleService: ArticleService,
+    private utilService: UtilService
   ) {
   }
 
@@ -98,21 +126,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     this.form = this.formBuilder.group({
       member: [''],
       memberFilter: [''],
-      description: [
-        `> ***TÍTULOS***
-- Exemplo de Título Ano
-
-> ***BREAKS***
-
-> ***TOP SPEAKER***
-
-> ***ADJUDICAÇÃO***
-
-> ***ORGANIZAÇÃO***
-
-> ***HISTÓRICO DE GESTÃO***
-        `
-      ]
+      description: ['']
     });
 
     this.subscribeToValueChanges();
@@ -174,7 +188,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
         this.members = members;
         this.filteredMembers = members;
-        this.debates = debates;
+        this.debates = this.utilService.sortDebates(debates);
         this.articles = articles;
         this.initOptions();
 
@@ -325,10 +339,14 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debate.debaters && debate.debaters.findIndex((member: Member) => member.id === this.member.id) !== -1
     );
 
+    this.debatesParticipatedAsDebater = debatesAsDebater;
+
     const debatesAsJudge: Debate[] = this.debates.filter((debate: Debate) =>
       (debate.wings && debate.wings.findIndex((member: Member) => member.id === this.member.id) !== -1)  ||
       debate.chair.id === this.member.id
     );
+
+    this.debatesParticipatedAsJudge = debatesAsJudge;
 
     const debatesAsOg: Debate[] = debatesAsDebater.filter((debate: Debate) =>
       debate.debaters && (debate.debaters.findIndex((member: Member) => member.id === this.member.id) === 0
@@ -375,6 +393,10 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const uniqueMotionThemesAsDebater: string[] = [... new Set(motionThemesAsDebater)];
 
+    const chairsAsDebater: Member[] = debatesAsDebater.map((debate) => debate.chair);
+
+    const uniqueChairsAsDebater: Member[] = [... new Set(chairsAsDebater)];
+
     const motionTypesAsJudge: string[] = debatesAsJudge.map((debate) => debate.motionType);
 
     const uniqueMotionTypesAsJudge: string[] = [... new Set(motionTypesAsJudge)];
@@ -383,9 +405,51 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const uniqueMotionThemesAsJudge: string[] = [... new Set(motionThemesAsJudge)];
 
+    let graphsAmount = 0;
+
+    const uniqueTimeValues = [...new Set(debatesAsDebater.map((debate) => debate.time))]
+      .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
+      options,
+      type: 'bar' as ChartType,
+      data: {
+        labels: uniqueTimeValues,
+        datasets: [
+          {
+            label: 'Quantidade',
+            data: uniqueTimeValues.map((time) => debatesAsDebater.filter((debate) => debate.time === time).length),
+            backgroundColor: barBackgroundColor
+          },
+        ],
+      }
+    }));
+
+    // Trainings Frequency By Month Bar Chart
+
+    const debatesFrequencyByMonth: number[] = [];
+    MONTHS.forEach(() => debatesFrequencyByMonth.push(0));
+
+    debatesAsDebater.forEach((debate) => debatesFrequencyByMonth[moment(debate.date).month()]++);
+
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
+      options,
+      type: 'bar' as ChartType,
+      data: {
+        labels: MONTHS.slice(0, new Date().getMonth()+1),
+        datasets: [
+          {
+            label: 'Quantidade',
+            data: debatesFrequencyByMonth,
+            backgroundColor: barBackgroundColor,
+          },
+        ],
+      }
+    }));
+
     // SPs
 
-    const sps = debatesAsDebater.map((debate) => {
+    const sps = [...debatesAsDebater].reverse().map((debate) => {
       const index = debate.debaters.findIndex((debater) => debater.id === this.member.id)!;
 
       return debate.sps![index];
@@ -395,7 +459,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     const minSp = min(sps);
     const spAverage = average(sps);
 
-    this.charts.push(new Chart(this.chartRefs.toArray()[0].nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -415,7 +479,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           },
           y: {
-            min: 60,
+            min: 50,
             max: 84,
             grid: {
               color: '#D9D9D920'
@@ -449,6 +513,128 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }));
 
+    // SPs by Month
+
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: '#D9D9D9'
+            }
+          }
+        },
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            grid: {
+              color: '#D9D9D920'
+            },
+            ticks: {
+              color: '#D9D9D9'
+            }
+          },
+          y: {
+            min: minSp-1,
+            max: maxSp+1,
+            grid: {
+              color: '#D9D9D920'
+            },
+            ticks: {
+              color: '#D9D9D9',
+              stepSize: 1
+            }
+          }
+        },
+      },
+      data: {
+        labels: [...debatesAsDebater].reverse().map((debate) => moment(debate.date).format("DD MMM")),
+        datasets: [
+          {
+            type: 'line',
+            label: 'SPs',
+            data: sps,
+          },
+        ],
+      }
+    }));
+
+
+    // Placements
+
+    const placements = [
+      debatesAsOg.filter((debate: Debate) => debate.points[0] == 3).length +
+      debatesAsOo.filter((debate: Debate) => debate.points[1] == 3).length +
+      debatesAsCg.filter((debate: Debate) => debate.points[2] == 3).length +
+      debatesAsCo.filter((debate: Debate) => debate.points[3] == 3).length,
+
+      debatesAsOg.filter((debate: Debate) => debate.points[0] == 2).length +
+      debatesAsOo.filter((debate: Debate) => debate.points[1] == 2).length +
+      debatesAsCg.filter((debate: Debate) => debate.points[2] == 2).length +
+      debatesAsCo.filter((debate: Debate) => debate.points[3] == 2).length,
+
+      debatesAsOg.filter((debate: Debate) => debate.points[0] == 1).length +
+      debatesAsOo.filter((debate: Debate) => debate.points[1] == 1).length +
+      debatesAsCg.filter((debate: Debate) => debate.points[2] == 1).length +
+      debatesAsCo.filter((debate: Debate) => debate.points[3] == 1).length,
+
+      debatesAsOg.filter((debate: Debate) => debate.points[0] == 0).length +
+      debatesAsOo.filter((debate: Debate) => debate.points[1] == 0).length +
+      debatesAsCg.filter((debate: Debate) => debate.points[2] == 0).length +
+      debatesAsCo.filter((debate: Debate) => debate.points[3] == 0).length,
+    ];
+
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
+      type: 'doughnut' as ChartType,
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: '#D9D9D9'
+            }
+          }
+        },
+        maintainAspectRatio: false,
+      },
+      data: {
+        labels: ['Primeiro', 'Segundo', 'Terceiro', 'Quarto'],
+        datasets: [
+          {
+            label: 'Colocação',
+            data: placements,
+          },
+        ],
+      }
+    }));
+
+    // Duos Frequency
+
+    const duosNames = uniqueDuos.map((duo) => duo.name);
+    const duosAmounts = uniqueDuos.map((uniqueDuo) => duos.filter((duo) => duo.id === uniqueDuo.id).length);
+
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
+      type: 'doughnut' as ChartType,
+      options: {
+        plugins: {
+          legend: {
+            labels: {
+              color: '#D9D9D9'
+            }
+          }
+        },
+        maintainAspectRatio: false,
+      },
+      data: {
+        labels: duosNames,
+        datasets: [
+          {
+            label: 'Frequência',
+            data: duosAmounts,
+          },
+        ],
+      }
+    }));
+
     // Houses
 
     const housesWon = [
@@ -465,7 +651,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debatesAsCo.filter((debate: Debate) => debate.points[3] <= 1).length,
     ];
 
-    this.charts.push(new Chart(this.chartRefs.toArray()[1].nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -516,81 +702,6 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }));
 
-    // Placements
-
-    const placements = [
-      debatesAsOg.filter((debate: Debate) => debate.points[0] == 3).length +
-      debatesAsOo.filter((debate: Debate) => debate.points[1] == 3).length +
-      debatesAsCg.filter((debate: Debate) => debate.points[2] == 3).length +
-      debatesAsCo.filter((debate: Debate) => debate.points[3] == 3).length,
-
-      debatesAsOg.filter((debate: Debate) => debate.points[0] == 2).length +
-      debatesAsOo.filter((debate: Debate) => debate.points[1] == 2).length +
-      debatesAsCg.filter((debate: Debate) => debate.points[2] == 2).length +
-      debatesAsCo.filter((debate: Debate) => debate.points[3] == 2).length,
-
-      debatesAsOg.filter((debate: Debate) => debate.points[0] == 1).length +
-      debatesAsOo.filter((debate: Debate) => debate.points[1] == 1).length +
-      debatesAsCg.filter((debate: Debate) => debate.points[2] == 1).length +
-      debatesAsCo.filter((debate: Debate) => debate.points[3] == 1).length,
-
-      debatesAsOg.filter((debate: Debate) => debate.points[0] == 0).length +
-      debatesAsOo.filter((debate: Debate) => debate.points[1] == 0).length +
-      debatesAsCg.filter((debate: Debate) => debate.points[2] == 0).length +
-      debatesAsCo.filter((debate: Debate) => debate.points[3] == 0).length,
-    ];
-
-    this.charts.push(new Chart(this.chartRefs.toArray()[2].nativeElement, {
-      type: 'doughnut' as ChartType,
-      options: {
-        plugins: {
-          legend: {
-            labels: {
-              color: '#D9D9D9'
-            }
-          }
-        },
-        maintainAspectRatio: false,
-      },
-      data: {
-        labels: ['Primeiro', 'Segundo', 'Terceiro', 'Quarto'],
-        datasets: [
-          {
-            label: 'Colocação',
-            data: placements,
-          },
-        ],
-      }
-    }));
-
-    // Duos Frequency
-
-    const duosNames = uniqueDuos.map((duo) => duo.name);
-    const duosAmounts = uniqueDuos.map((uniqueDuo) => duos.filter((duo) => duo.id === uniqueDuo.id).length);
-
-    this.charts.push(new Chart(this.chartRefs.toArray()[3].nativeElement, {
-      type: 'doughnut' as ChartType,
-      options: {
-        plugins: {
-          legend: {
-            labels: {
-              color: '#D9D9D9'
-            }
-          }
-        },
-        maintainAspectRatio: false,
-      },
-      data: {
-        labels: duosNames,
-        datasets: [
-          {
-            label: 'Frequência',
-            data: duosAmounts,
-          },
-        ],
-      }
-    }));
-
     // Wins and Losses by Duo
 
     const debatesWonByDuo = uniqueDuos.map((duo: Member) => debatesByDuo[duo.id].filter((debate: Debate) =>
@@ -601,7 +712,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debate.points[pointsIndexes[debate.debaters.findIndex((debater: Member) => debater.id === duo.id)]] <= 1
     ).length);
 
-    this.charts.push(new Chart(this.chartRefs.toArray()[4].nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -664,7 +775,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debate.points[pointsIndexes[debate.debaters.findIndex((debater: Member) => debater.id === this.member.id)]] <= 1
     ).length);
 
-    this.charts.push(new Chart(this.chartRefs.toArray()[5].nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -727,7 +838,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       debate.points[pointsIndexes[debate.debaters.findIndex((debater: Member) => debater.id === this.member.id)]] <= 1
     ).length);
 
-    this.charts.push(new Chart(this.chartRefs.toArray()[6].nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -778,6 +889,69 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }));
 
+        // Performance by Adjudicator
+
+        const debatesWonByChair = uniqueChairsAsDebater.map((chair: Member) => debatesAsDebater.filter((debate: Debate) =>
+          debate.chair.id === chair.id &&
+          debate.points[pointsIndexes[debate.debaters.findIndex((debater: Member) => debater.id === this.member.id)]] >= 2
+        ).length);
+
+        const debatesLostByChair = uniqueChairsAsDebater.map((chair: Member) => debatesAsDebater.filter((debate: Debate) =>
+          debate.chair.id === chair.id &&
+          debate.points[pointsIndexes[debate.debaters.findIndex((debater: Member) => debater.id === this.member.id)]] <= 1
+        ).length);
+
+        this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
+          options: {
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#D9D9D9'
+                }
+              }
+            },
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                stacked: true,
+                grid: {
+                  color: '#D9D9D920'
+                },
+                ticks: {
+                  color: '#D9D9D9'
+                }
+              },
+              y: {
+                min: 0,
+                max: max(debatesWonByChair.map((amount, i) => amount + debatesLostByChair[i])) + 1,
+                stacked: true,
+                grid: {
+                  color: '#D9D9D920'
+                },
+                ticks: {
+                  color: '#D9D9D9',
+                  stepSize: 1
+                }
+              }
+            },
+          },
+          data: {
+            labels: uniqueChairsAsDebater.map((chair) => chair.name),
+            datasets: [
+              {
+                type: 'bar',
+                label: 'Vitórias (1º e 2º)',
+                data: debatesWonByChair,
+              },
+              {
+                type: 'bar',
+                label: 'Derrotas (3º e 4º)',
+                data: debatesLostByChair,
+              },
+            ],
+          }
+        }));
+
     // Max/Min/Average SP given by Judge
 
     const spsAsJudge = debatesAsJudge.map((debate) => debate.sps!).flat();
@@ -788,7 +962,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
     const spAverageAsJudge = Number(average(sps).toFixed(2));
 
-    this.charts.push(new Chart(this.chartRefs.toArray()[7].nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -808,7 +982,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
             }
           },
           y: {
-            min: 60,
+            min: 50,
             max: 84,
             grid: {
               color: '#D9D9D920'
@@ -842,8 +1016,6 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     }));
 
-    // Placements as Judge
-
     // Performance By House
 
     const og = [0, 0, 0, 0];
@@ -858,7 +1030,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       co[3 - debate.points[3]] ++;
     });
 
-    this.charts.push(new Chart(this.chartRefs.toArray()[8].nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -930,7 +1102,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     const thirds = [og[2], oo[2], cg[2], co[2]];
     const fourths = [og[3], oo[3], cg[3], co[3]];
 
-    this.charts.push(new Chart(this.chartRefs.toArray()[9].nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
       options: {
         plugins: {
           legend: {
@@ -1001,7 +1173,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       motionTypesAsJudge.filter((motionType) => motionType === uniqueMotionType).length
     );
 
-    this.charts.push(new Chart(this.chartRefs.toArray()[10].nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
       type: 'doughnut' as ChartType,
       options: {
         plugins: {
@@ -1030,7 +1202,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       motionThemesAsJudge.filter((motionTheme) => motionTheme === uniqueMotionTheme).length
     );
 
-    this.charts.push(new Chart(this.chartRefs.toArray()[11].nativeElement, {
+    this.charts.push(new Chart(this.chartRefs.toArray()[graphsAmount++].nativeElement, {
       type: 'doughnut' as ChartType,
       options: {
         plugins: {
@@ -1074,8 +1246,22 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   public async checkHashedId() {
     this.checked = (await this.memberService.checkHashedId(this.id, this.hashedId));
 
-    if (this.checked)
-      this.description = this.member.description;
+    if (this.checked) {
+      if (this.member.description) this.description = this.member.description;
+      else this.description = `> ***TÍTULOS***
+- Exemplo de Título Ano
+
+> ***BREAKS***
+
+> ***TOP SPEAKER***
+
+> ***ADJUDICAÇÃO***
+
+> ***ORGANIZAÇÃO***
+
+> ***HISTÓRICO DE GESTÃO***
+      `;
+    }
   }
 
   public async saveDescription() {

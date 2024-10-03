@@ -222,7 +222,7 @@ export class TournamentComponent implements OnInit {
   }
 
   public getParticipantDuo(participant: Participant) {
-    return this.participants.find((duoParticipant: Participant) => duoParticipant.id === participant.duoId)!.name;
+    return this.participants.find((duoParticipant: Participant) => duoParticipant.id === participant.duoId)?.name;
   }
 
   public goToLandingPage() {

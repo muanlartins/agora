@@ -18,6 +18,16 @@
     margin: 0 128px;
     width: calc(100% - 256px);
 
+    &__form {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+
+      &__input {
+        width: 240px;
+      }
+    }
+
     &__table {
       width: 100%;
     }

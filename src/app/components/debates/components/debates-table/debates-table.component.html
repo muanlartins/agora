@@ -1,16 +1,4 @@
-<form [formGroup]="form" class="form">
-  <!-- <mat-form-field class="form__input">
-    <mat-label>Ano</mat-label>
-    <mat-select formControlName="year">
-      <mat-option>Remover Filtro</mat-option>
-      <mat-option value="2024">2024</mat-option>
-    </mat-select>
-  </mat-form-field> -->
-  <div></div>
-  <button *ngIf="isAdmin()" class="form__button" mat-flat-button color="primary" (click)="openCreateDebateModal()">Criar</button>
-</form>
-
-<div style="position: relative; min-height: 500px;">
+<div style="position: relative;">
   <table class="table" mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>
     <tr class="table__head__tr" mat-header-row *matHeaderRowDef="columns"></tr>
 

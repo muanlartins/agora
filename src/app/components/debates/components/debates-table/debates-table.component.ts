@@ -1,5 +1,5 @@
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -28,14 +28,18 @@ import { isAdmin } from 'src/app/utils/auth';
     ]),
   ],
 })
-export class DebatesTableComponent implements OnInit, AfterViewInit {
+export class DebatesTableComponent implements OnInit, OnChanges, AfterViewInit {
   @ViewChild(MatPaginator, { static: true })
   public paginator: MatPaginator;
 
   @ViewChild(MatSort, { static: true })
   public sort: MatSort;
 
+  @Input()
   public debates: Debate[];
+
+  @Input()
+  public display: boolean = false;
 
   public form: FormGroup;
 
@@ -72,11 +76,15 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
     this.initForm();
   }
 
+  public ngOnChanges(changes: SimpleChanges): void {
+    if (changes['debates'] && this.debates) {
+      this.setDataSource();
+    }
+  }
+
   public ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
-    this.getAllDebates();
   }
 
   public initForm() {
@@ -119,22 +127,6 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
     }
 
     return '';
-  }
-
-  public getAllDebates() {
-    this.debateService.getAllDebates().subscribe({
-      next: (debates: Debate[]) => {
-        this.debates = debates.sort((a, b) =>
-          this.getDatetimeMoment(b.date, b.time).toDate().getTime() - this.getDatetimeMoment(a.date, a.time).toDate().getTime()
-        );
-
-        this.setDataSource();
-      },
-    });
-  }
-
-  public openCreateDebateModal() {
-    this.dialog.open(CreateDebateModalComponent, { height : '90%', disableClose: true });
   }
 
   public getDatetimeMoment(date: string, time: string) {
@@ -275,10 +267,10 @@ export class DebatesTableComponent implements OnInit, AfterViewInit {
   }
 
   public showEdit(column: string) {
-    return column === 'edit' && isAdmin();
+    return column === 'edit' && isAdmin() && !this.display;
   }
 
   public showDelete(column: string) {
-    return column === 'delete' && isAdmin();
+    return column === 'delete' && isAdmin() && !this.display;
   }
 }

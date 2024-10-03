@@ -15,7 +15,7 @@ import { TabbyArchiveComponent } from './components/tabby-archive/tabby-archive.
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: "full" },
-  { path: 'metadebate', component: TournamentComponent },
+  { path: 'rio-open', component: TournamentComponent },
   { path: 'login', component: LoginComponent, data: {} },
   { path: 'tabby-archive', component: TabbyArchiveComponent, data: {} },
   { path: 'dashboard', component: DashboardComponent, canActivate: [LoginGuard] },

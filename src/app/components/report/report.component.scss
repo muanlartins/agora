@@ -43,6 +43,18 @@
       justify-content: flex-start;
       gap: 64px;
 
+      &__profile {
+        width: 100%;
+      }
+
+      &__debates {
+        &__title {
+          font-size: 32px;
+          color: $primary;
+          line-height: 100%;
+        }
+      }
+
       &__upper {
         width: 100%;
         display: flex;
@@ -56,14 +68,6 @@
           justify-content: flex-start;
           align-items: center;
           gap: 32px;
-          min-width: max-content;
-          max-width: 70%;
-          padding-right: 64px;
-          border-right: 1px solid $secondary;
-
-          &--no-border {
-            border-right: none;
-          }
 
           &__name {
             display: flex;
@@ -83,45 +87,45 @@
           }
         }
 
-        &__statistics {
-          padding-left: 64px;
+        // &__statistics {
+        //   padding-left: 64px;
 
-          display: flex;
-          flex-direction: row;
-          flex-wrap: wrap;
-          justify-content: flex-start;
-          align-items: center;
+        //   display: flex;
+        //   flex-direction: row;
+        //   flex-wrap: wrap;
+        //   justify-content: flex-start;
+        //   align-items: center;
 
-          &__statistic {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: flex-start;
-            gap: 8px;
-            padding: 16px;
-            color: $white;
-            font-size: 20px;
+        //   &__statistic {
+        //     display: flex;
+        //     flex-direction: column;
+        //     justify-content: flex-start;
+        //     align-items: flex-start;
+        //     gap: 8px;
+        //     padding: 16px;
+        //     color: $white;
+        //     font-size: 20px;
 
-            &--100 {
-              width: 100%;
-            }
+        //     &--100 {
+        //       width: 100%;
+        //     }
 
-            &__title {
-              font-size: 16px;
-              color: $primary;
-              line-height: 100%;
-            }
+        //     &__title {
+        //       font-size: 16px;
+        //       color: $primary;
+        //       line-height: 100%;
+        //     }
 
-            &__value {
-              font-size: 20px;
-              color: $white;
-              line-height: 100%;
-            }
-          }
-        }
+        //     &__value {
+        //       font-size: 20px;
+        //       color: $white;
+        //       line-height: 100%;
+        //     }
+        //   }
+        // }
       }
 
-      &__middle {
+      &__description {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 32px;
@@ -137,7 +141,7 @@
         width: 100%;
       }
 
-      &__lower {
+      &__statistics {
         width: 100%;
         display: flex;
         flex-direction: row;

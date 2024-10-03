@@ -81,12 +81,19 @@
 
         &__all {
           display: grid;
-          grid-template-columns: repeat(6, 1fr);
+          grid-template-columns: repeat(3, 1fr);
           gap: 8px;
+          width: 100%;
 
           &__label {
             font-weight: 500;
-            grid-column: 1 / span 6;
+            grid-column: 1 / span 3;
+          }
+
+          &__checkbox {
+            &__pfp {
+              padding-right: 8px;
+            }
           }
         }
 
