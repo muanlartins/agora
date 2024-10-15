@@ -25,7 +25,7 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/tab-deb'),
+      dir: require('path').join(__dirname, './coverage/agora'),
       subdir: '.',
       reporters: [
         { type: 'html' },
