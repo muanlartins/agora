@@ -43,11 +43,11 @@
         </div>
       </div> -->
       <div class="page__content__body__debates" *ngIf="member">
-        <ng-container *ngIf="debatesParticipatedAsDebater.length">
+        <ng-container *ngIf="debatesParticipatedAsDebater?.length">
           <div class="page__content__body__debates__title">Debates participados como Debatedor</div>
           <app-debates-table [debates]="debatesParticipatedAsDebater" [display]="true"></app-debates-table>
         </ng-container>
-        <ng-container *ngIf="debatesParticipatedAsJudge.length">
+        <ng-container *ngIf="debatesParticipatedAsJudge?.length">
           <div class="page__content__body__debates__title">Debates participados como Juíz</div>
           <app-debates-table [debates]="debatesParticipatedAsJudge" [display]="true"></app-debates-table>
         </ng-container>
