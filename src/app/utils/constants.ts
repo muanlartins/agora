@@ -1,4 +1,4 @@
-export const BASE_URL = "https://5zst7ojlempww3j5lfopsfo6qm0ollga.lambda-url.us-east-2.on.aws/";
+export const BASE_URL = "https://5zst7ojlempww3j5lfopsfo6qm0ollga.lambda-url.us-east-2.on.aws";
 // export const BASE_URL = "http://localhost:5191";
 
 export const MONTHS = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
