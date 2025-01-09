@@ -16,10 +16,10 @@ export class NotificationService {
     )
   }
 
-  public createErrorNotification() {
+  public createErrorNotification(error: string) {
     this.nzNotificationService.error(
       'Erro',
-      'Algo deu errado',
+      error,
       { nzClass: 'nz-notification', nzPlacement: 'bottomRight' }
     )
   }

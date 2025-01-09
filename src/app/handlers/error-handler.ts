@@ -6,8 +6,6 @@ export class CustomErrorHandler implements ErrorHandler {
   constructor(private notificationService: NotificationService) {}
 
   handleError(error: Error) {
-    console.error(error);
-
-    this.notificationService.createErrorNotification();
+    this.notificationService.createErrorNotification(error.message);
   }
 }

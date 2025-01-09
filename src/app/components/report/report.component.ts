@@ -12,6 +12,7 @@ import { SelectOption } from 'src/app/models/types/select-option';
 import { ArticleService } from 'src/app/services/article.service';
 import { DebateService } from 'src/app/services/debate.service';
 import { MemberService } from 'src/app/services/member.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { UtilService } from 'src/app/services/util.service';
 import { isAdmin } from 'src/app/utils/auth';
 import { MONTHS, housesColors, placementColors } from 'src/app/utils/constants';
@@ -104,7 +105,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     private memberService: MemberService,
     private debateService: DebateService,
     private articleService: ArticleService,
-    private utilService: UtilService
+    private utilService: UtilService,
+    private notificationService: NotificationService
   ) {
   }
 
@@ -1274,5 +1276,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       this.member.blocked,
       this.member.description
     );
+
+    this.notificationService.createSuccessNotification("Descrição atualizada com sucesso.");
   }
 }

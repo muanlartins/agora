@@ -6,11 +6,11 @@ import { Member } from "../models/types/member";
 
 const ENDPOINTS = {
   getAllMembers: '/members',
-  getMember: (id: string) => `/member/${id}`,
-  checkHashedId: (id: string, hashedId: string) => `/member/${id}/private/${hashedId}`,
+  getMember: (id: string) => `/public/member/${id}`,
+  checkHashedId: (id: string, hashedId: string) => `/public/member/${id}/private/${hashedId}`,
   getHashedId: (id: string) => `/member/private/${id}`,
   createMember: '/member',
-  editMember: '/member',
+  editMember: '/public/member',
   deleteMember: (id: string) => `/member/${id}`,
   updatePfp: `/member/pfp`
 }

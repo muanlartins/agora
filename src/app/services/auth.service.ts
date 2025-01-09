@@ -6,7 +6,7 @@ import { BASE_URL } from '../utils/constants';
 import { Router } from '@angular/router';
 
 const ENDPOINTS = {
-  login: '/auth/login',
+  login: '/public/auth/login',
 }
 
 @Injectable({

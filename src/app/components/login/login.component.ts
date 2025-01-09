@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Token } from 'src/app/models/types/token';
 import { AuthService } from 'src/app/services/auth.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { getToken, setToken } from 'src/app/utils/token';
 
 @Component({
@@ -19,6 +20,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private router: Router,
     private authService: AuthService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +49,9 @@ export class LoginComponent implements OnInit {
       next: (token: Token) => {
         setToken(token);
         this.checkLogin();
+      },
+      error: (response: HttpErrorResponse) => {
+        this.notificationService.createErrorNotification(response.error);
       }
     });
   }

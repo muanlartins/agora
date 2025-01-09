@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { BASE_URL } from '../utils/constants';
 
 const ENDPOINTS = {
-  getTournametTabbyData: (tournament: string) => `/tournament/${tournament}`,
-  getAllTournamentOptions: '/tournaments/list'
+  getTournametTabbyData: (tournament: string) => `/public/tournament/${tournament}`,
+  getAllTournamentOptions: '/public/tournaments/list'
 }
 
 @Injectable({

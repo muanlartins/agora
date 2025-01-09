@@ -5,7 +5,7 @@ import { BASE_URL } from '../utils/constants';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 
 const ENDPOINTS = {
-  getAllParticipants: '/participants',
+  getAllParticipants: '/public/participants',
   uploadParticipants: (tournament: string) => `/participants/${tournament}`,
   uploadParticipantPfp: (tournament: string) => `/participant/${tournament}/pfp`,
   createParticipant: '/participant',
