@@ -7,6 +7,7 @@ import * as moment from "moment";
 
 const ENDPOINTS = {
   getAllArticles: '/articles',
+  getArticle: (id: string) => `/public/article/${id}`,
   createArticle: '/article',
   editArticle: '/article',
   deleteArticle: (id: string) => `/article/${id}`
@@ -69,5 +70,9 @@ export class ArticleService {
     articles.splice(articles.findIndex((article) => article.id === id), 1);
 
     this.articles$.next(articles);
+  }
+
+  public async getArticle(id: string) {
+    return await firstValueFrom(this.httpClient.get<Article>(BASE_URL + ENDPOINTS.getArticle(id)));
   }
 }

@@ -16,6 +16,7 @@ import * as moment from 'moment';
 import { ConfirmModalComponent } from 'src/app/components/members/components/confirm-modal/confirm-modal.component';
 import { CreateArticleModalComponent } from '../create-article-modal/create-article-modal.component';
 import { ArticleModalComponent } from '../article-modal/article-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,6 +63,7 @@ export class ArticlesTableComponent implements OnInit, AfterViewInit {
   public loading: boolean = false;
 
   public constructor(
+    private router: Router,
     private formBuilder: FormBuilder,
     private articleService: ArticleService,
     private memberService: MemberService,
@@ -193,14 +195,8 @@ export class ArticlesTableComponent implements OnInit, AfterViewInit {
     return isAdmin();
   }
 
-  public openArticleModal(id: string) {
-    const article = this.articles.find((article) => article.id === id)!;
-    const member = this.members.find((member) => member.id === article.authorId)!;
-
-    this.dialog.open(ArticleModalComponent, { width: '70vw', maxHeight: '80vh', autoFocus: false, data: {
-      article: article,
-      member: member,
-    } });
+  public goToArticlePage(id: string) {
+    this.router.navigate([`/article/${id}`]);
   }
 
   public showEdit(column: string) {

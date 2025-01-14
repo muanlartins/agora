@@ -512,7 +512,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filteredMembers.forEach((member) => participationsAsDebater[member.id] = this.filteredDebates.reduce((prev, curr) =>
       prev + (curr.debaters.some((debater) => debater.id === member.id) ? 1 : 0), 0
     ));
-
+    
     const activeMembers = this.filteredMembers.filter((member) => participationsAsDebater[member.id] >= 5);
 
     const firstsAverage: { [id: string]: number } = {}

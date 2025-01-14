@@ -1,4 +1,4 @@
-# Deploy to S3
+## Deploy
 
-1. ng build
-2. Upload dist folder to bucket
+1. `npm run build`
+2. Upload dist folder to S3 bucket

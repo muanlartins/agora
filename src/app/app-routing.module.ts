@@ -12,6 +12,7 @@ import { AdminGuard } from './guards/admin.guard';
 import { ReportComponent } from './components/report/report.component';
 import { TournamentComponent } from './components/tournament/tournament.component';
 import { TabbyArchiveComponent } from './components/tabby-archive/tabby-archive.component';
+import { ArticleComponent } from './components/articles/components/article/article.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: "full" },
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'members', component: MembersComponent, canActivate: [LoginGuard] },
   { path: 'goals', component: GoalsComponent, canActivate: [LoginGuard] },
   { path: 'articles', component: ArticlesComponent, canActivate: [LoginGuard] },
+  { path: 'article/:id', component: ArticleComponent },
   { path: 'member', component: ReportComponent, canActivate: [LoginGuard, AdminGuard] },
   { path: 'member/:id', component: ReportComponent },
   { path: 'member/:id/private/:hashedId', component: ReportComponent },

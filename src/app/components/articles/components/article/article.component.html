@@ -1,4 +1,12 @@
 <div class="article" *ngIf="article && member">
+  <button
+    *ngIf="isUser()"
+    class="article__button"
+    mat-raised-button
+    color="primary"
+    type="submit"
+    (click)="goToArticlesPage()"
+  >Voltar</button>
   <div class="article__details">
     <div class="article__details__detail">
       <div class="article__details__detail__title">Criado em</div>
@@ -7,7 +15,7 @@
     <div class="article__details__detail">
       <div class="article__details__detail__title">Autor</div>
       <div class="article__details__detail__value">
-        <app-pfp [id]="article.authorId" [hasPfp]="member.hasPfp" [size]="48"></app-pfp>
+        <app-pfp [id]="article.authorId" [hasPfp]="member.hasPfp" [size]="32"></app-pfp>
         {{ member.name }}
       </div>
     </div>

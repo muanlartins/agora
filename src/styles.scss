@@ -96,7 +96,10 @@ $my-theme: mat.define-dark-theme((
   scroll-margin-top: 16px;
 }
 
-html, body { height: 100%; scroll-behavior: smooth; }
+html, body {
+  height: 100%;
+  scroll-behavior: smooth;
+}
 
 .cdk-drag-preview {
   box-sizing: border-box;
@@ -228,4 +231,26 @@ table {
 }
 b {
   font-weight: bold;
+}
+
+html {
+  font-size: 16px;
+}
+
+@media (width <= $large) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (width <= $medium) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (width <= $small) {
+  html {
+    font-size: 14px;
+  }
 }
