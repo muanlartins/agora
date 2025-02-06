@@ -2,36 +2,36 @@
 
 ::ng-deep .markdown-content {
   display: block;
-  margin-bottom: -24px;
+  margin-bottom: -1.5rem;
 
   h1 {
-    font-size: 32px;
+    font-size: 2rem;
     color: $white;
-    margin-bottom: 12px;
+    margin-bottom: 0.75rem;
     font-weight: bold;
     line-height: 125%;
   }
 
   h2 {
-    font-size: 24px;
+    font-size: 1.5rem;
     color: $white;
-    margin-bottom: 12px;
+    margin-bottom: 0.75rem;
     font-weight: bold;
     line-height: 125%;
   }
 
   h3 {
-    font-size: 20px;
+    font-size: 1.25rem;
     color: $white;
-    margin-bottom: 12px;
+    margin-bottom: 0.75rem;
     font-weight: bold;
     line-height: 125%;
   }
 
   p {
-    font-size: 16px;
+    font-size: 1rem;
     color: $white;
-    margin-bottom: 24px;
+    margin-bottom: 1.5rem;
     line-height: 125%;
   }
 
@@ -44,42 +44,42 @@
   }
 
   hr {
-    margin-bottom: 24px;
+    margin-bottom: 1.5rem;
   }
 
   blockquote {
     background: $brown;
-    border-left: 8px solid $secondary;
+    border-left: 0.5rem solid $secondary;
 
     blockquote {
-      margin-left: 24px;
+      margin-left: 1.5rem;
     }
 
     p, h1, h2, h3 {
       &:first-child {
-        padding-top: 16px;
+        padding-top: 1rem;
       }
 
       &:last-child {
-        padding-bottom: 16px;
+        padding-bottom: 1rem;
       }
 
-      padding-left: 12px;
+      padding-left: 0.75rem;
       color: $white;
     }
   }
 
   ol, ul {
     color: $white;
-    margin-left: 32px;
-    margin-bottom: 24px;
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
 
     ol, ul {
-      margin-top: 8px;
+      margin-top: 0.5rem;
     }
 
     li {
-      margin-bottom: 8px;
+      margin-bottom: 0.5rem;
       line-height: 125%;
 
       p:last-child {
@@ -87,7 +87,7 @@
       }
 
       p:not(:last-child) {
-        margin-bottom: 8px;
+        margin-bottom: 0.5rem;
       }
     }
   }

@@ -245,12 +245,6 @@ html {
 
 @media (width <= $medium) {
   html {
-    font-size: 15px;
-  }
-}
-
-@media (width <= $small) {
-  html {
     font-size: 14px;
   }
 }
