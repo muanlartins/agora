@@ -5,7 +5,7 @@
   overflow-x: hidden;
 
   &__banner {
-    height: 64px;
+    height: 4rem;
     background: $primary;
     width: 100%;
     display: flex;
@@ -14,7 +14,7 @@
 
     &__text {
       color: black;
-      font-size: 24px;
+      font-size: 1.5rem;
 
       &__link {
         color: $link;
@@ -27,24 +27,24 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 64px 128px;
+    padding: 2rem 1rem;
 
     &__logo {
       display: flex;
       justify-content: flex-start;
       align-items: flex-end;
-      gap: 24px;
+      gap: 1rem;
 
       &__agora {
-        padding-bottom: 16px;
-        height: 60px;
+        padding-bottom: 0.5rem;
+        height: 3rem;
         cursor: pointer;
       }
 
       &__sd {
-        width: 48px;
-        height: 48px;
-        padding: 16px 0 16px 24px;
+        width: 2rem;
+        height: 2rem;
+        padding: 0.5rem 0 0.625rem 1rem;
         border-left: 1px solid $secondary;
       }
     }
@@ -58,28 +58,33 @@
 
       &__option {
         color: $primary;
-        font-size: 18px;
+        font-size: 1rem;
         line-height: 100%;
-        padding: 16px 24px;
+        padding: 0.5rem 1rem;
         border-right: 1px solid $secondary;
         cursor: pointer;
 
         transition: $transition;
 
         &:hover {
-          text-shadow: 0 0 12px $primary, 0 0 24px $primary;
+          text-shadow: 0 0 0.75rem $primary, 0 0 1.5rem $primary;
         }
 
         &--condeb {
           color: $condebsecondary;
 
           &:hover {
-            text-shadow: 0 0 12px $condebsecondary, 0 0 24px $condebsecondary;
+            text-shadow: 0 0 0.75rem $condebsecondary, 0 0 1.5rem $condebsecondary;
           }
+        }
+
+        &:first-child {
+          padding-left: 0;
         }
 
         &:last-child {
           border-right: none;
+          padding-right: 0;
         }
       }
     }
@@ -90,41 +95,41 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 0 128px 0 128px;
-    gap: 128px;
+    padding: 2rem 1rem;
+    gap: 2rem;
 
     &__content {
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
       align-items: flex-start;
-      gap: 32px;
+      gap: 2rem;
 
       &__title {
         display: flex;
 
         &__text {
-          font-size: 48px;
+          font-size: 2rem;
           line-height: 100%;
           color: $primary;
         }
       }
 
       &__description {
-        font-size: 24px;
+        font-size: 1.5rem;
         line-height: 125%;
         color: $white;
       }
 
       &__caption {
-        font-size: 18px;
+        font-size: 1.125rem;
         line-height: 100%;
         color: $white;
       }
     }
 
     &__image {
-      height: 600px;
+      height: 20rem;
     }
   }
 
@@ -143,48 +148,56 @@
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    margin: 128px 0;
-    gap: 128px;
+    padding: 2rem 0;
+    gap: 2rem;
 
     &__title {
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      gap: 16px;
+      gap: 1rem;
+      padding: 0 1rem;
 
       &__text {
-        font-size: 48px;
+        font-size: 2rem;
         line-height: 100%;
         color: $primary;
+        text-align: center;
       }
     }
 
     &__content {
-      padding: 0 128px;
+      padding: 2rem 1rem;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 128px;
+      align-items: center;
+      gap: 2rem;
 
       &__card {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
-        gap: 32px;
+        gap: 2rem;
+        width: 100%;
+
+        &__icon {
+          height: 6rem;
+        }
 
         &__title {
-          font-size: 24px;
+          font-size: 1.5rem;
           color: $primary;
           line-height: 100%;
         }
 
         &__description {
-          font-size: 18px;
+          font-size: 1.125rem;
           color: $white;
           line-height: 125%;
+          text-align: justify;
         }
       }
     }
@@ -196,46 +209,52 @@
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    margin: 128px 0;
-    gap: 128px;
+    padding: 2rem 0;
+    gap: 2rem;
 
     &__title {
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
-      gap: 16px;
+      gap: 1rem;
+      padding: 0 1rem;
 
       &__text {
-        font-size: 48px;
+        font-size: 2rem;
         line-height: 100%;
         color: $primary;
+        text-align: center;
       }
     }
 
     &__content {
-      padding: 0 128px;
+      padding: 2rem 1rem;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 256px;
+      align-items: center;
+      gap: 2rem;
 
       &__card {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
-        gap: 32px;
+        gap: 2rem;
+
+        &__image {
+          width: 20rem;
+        }
 
         &__title {
-          font-size: 24px;
+          font-size: 1.5rem;
           color: $primary;
           line-height: 100%;
         }
 
         &__description {
-          font-size: 18px;
+          font-size: 1.125rem;
           color: $white;
           line-height: 125%;
         }
@@ -248,23 +267,25 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 64px 128px;
+    padding: 2rem 1rem;
     background: $secondary;
 
     &__logo {
       display: flex;
       justify-content: flex-start;
       align-items: flex-end;
-      gap: 24px;
+      gap: 1.5rem;
 
       &__agora {
-        padding-bottom: 16px;
+        padding-bottom: 0.5rem;
+        height: 3rem;
+        cursor: pointer;
       }
 
       &__sd {
-        width: 48px;
-        height: 48px;
-        padding: 16px 0 16px 24px;
+        width: 2rem;
+        height: 2rem;
+        padding: 0.5rem 0 0.625rem 1rem;
         border-left: 1px solid $black;
       }
     }
@@ -274,16 +295,16 @@
       flex-direction: column;
       justify-content: flex-start;
       align-items: flex-end;
-      gap: 16px;
+      gap: 1rem;
 
       &__copyright {
-        font-size: 18px;
+        font-size: 1.125rem;
         color: $black;
         line-height: 100%;
       }
 
       &__author {
-        font-size: 14px;
+        font-size: 0.875rem;
         color: $black;
         line-height: 100%;
       }
@@ -292,11 +313,60 @@
 }
 
 ::ng-deep .typed-cursor {
-  font-size: 48px;
+  font-size: 2rem;
   line-height: 100%;
   color: $primary;
 }
 
 ::ng-deep .typed-cursor--blink {
   animation: typedjsBlink 1.2s infinite !important;
+}
+
+@media (width <= $medium) {
+  .page {
+    &__overview {
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+
+      &__content {
+        align-items: center;
+
+        &__description {
+          text-align: justify;
+        }
+      }
+    }
+  
+    &__info {
+      &__content {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+
+        &__card {
+          align-items: center;
+        }
+      }
+    }
+  
+    &__members {
+      &__content {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+      }
+    }
+  
+    &__footer {
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 1rem;
+
+      &__credits {
+        align-items: center;
+      }
+    }
+  }
 }
