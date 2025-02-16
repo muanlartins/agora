@@ -5,7 +5,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 64px 128px;
+  padding: 1rem;
   background: $black;
 
   &__logo {
@@ -13,28 +13,50 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: flex-end;
-    gap: 24px;
+    gap: 1.5rem;
 
     &__agora {
-      padding-bottom: 16px;
-      height: 60px;
+      padding-bottom: 1rem;
+      height: 4rem;
       cursor: pointer;
     }
 
     &__sd {
-      width: 48px;
-      height: 48px;
-      padding: 16px 0 16px 24px;
+      width: 3rem;
+      height: 3rem;
+      padding: 1rem 0 1rem 1.5rem;
       border-left: 1px solid $secondary;
     }
   }
 
-  &__menu {
+  &__pages {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
     list-style: none;
+
+    &:has(+ .navbar__menu .navbar__menu__input:checked) {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 1rem;
+
+      position: absolute;
+      z-index: 1;
+      width: 100%;
+      min-height: calc(100vh - 6rem);
+      max-height: 100%;
+      inset: 0 0 0 0;
+      padding: 5rem 0 1rem 0;
+      list-style: none;
+      background: $brown;
+    }
+
+    &:has(+ .navbar__menu .navbar__menu__input:checked) &__option {
+      border-right: none;
+    }
 
     &__option {
       color: $primary;
@@ -53,6 +75,69 @@
       &:last-child {
         border-right: none;
       }
+    }
+  }
+
+  &__menu {
+    display: none;
+
+    position: relative;
+    z-index: 1;
+    width: 1.5rem;
+    height: 1.5rem;
+
+    &__hamburger {
+      position: absolute;
+      width: 1.5rem;
+      height: 0.25rem;
+      border-radius: 0.125rem;
+      background: $primary;
+      transition: ease 0.3s;
+
+      &--top {
+        inset: 0.125rem 0 0 0;
+
+        &:has(+ * + * + .navbar__menu__input:checked) {
+          background: $primary;
+          transform: translateY(0.5rem) rotate(45deg);
+        }
+      }
+
+      &--mid {
+        inset: 0.625rem 0 0 0;
+
+        &:has(+ * + .navbar__menu__input:checked) {
+          background: $primary;
+          opacity: 0;
+        }
+      }
+
+      &--bot {
+        inset: 1.125rem 0 0 0;
+
+        &:has(+ .navbar__menu__input:checked) {
+          background: $primary;
+          transform: translateY(-0.5rem) rotate(-45deg);
+        }
+      }
+    }
+
+    &__input {
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+    }
+  }
+}
+
+@media (width <= $medium) {
+  .navbar {
+    &__pages {
+      display: none;
+    }
+
+    &__menu {
+      display: block;
     }
   }
 }

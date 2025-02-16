@@ -3,27 +3,30 @@
     <img src="assets/agora-logo.png" class="navbar__logo__agora" routerLink="/" />
     <img src="assets/sd-logo.png" class="navbar__logo__sd" />
   </div>
-  <ul class="navbar__menu">
-    <li class="navbar__menu__option" routerLink="/dashboard" routerLinkActive="navbar__menu__option--active">
+  <ul class="navbar__pages">
+    <li class="navbar__pages__option" routerLink="/dashboard" routerLinkActive="navbar__pages__option--active">
       Dashboard
     </li>
-    <li class="navbar__menu__option" routerLink="/articles" routerLinkActive="navbar__menu__option--active">
+    <li class="navbar__pages__option" routerLink="/articles" routerLinkActive="navbar__pages__option--active">
       Artigos
     </li>
-    <li class="navbar__menu__option" routerLink="/goals" routerLinkActive="navbar__menu__option--active">
+    <li class="navbar__pages__option" routerLink="/goals" routerLinkActive="navbar__pages__option--active">
       Metas
     </li>
-    <li class="navbar__menu__option" routerLink="/debates" routerLinkActive="navbar__menu__option--active">
+    <li class="navbar__pages__option" routerLink="/debates" routerLinkActive="navbar__pages__option--active">
       Debates
     </li>
-    <li class="navbar__menu__option" routerLink="/members" routerLinkActive="navbar__menu__option--active">
+    <li class="navbar__pages__option" routerLink="/members" routerLinkActive="navbar__pages__option--active">
       Membros
     </li>
-    <li *ngIf="isAdmin()" class="navbar__menu__option" routerLink="/member" routerLinkActive="navbar__menu__option--active">
+    <li *ngIf="isAdmin()" class="navbar__pages__option" routerLink="/member" routerLinkActive="navbar__pages__option--active">
       Relatório
     </li>
-    <!-- <li class="navbar__menu__option" routerLink="/rio-open" routerLinkActive="navbar__menu__option--active">
-      Rio Open
-    </li> -->
   </ul>
+  <div class="navbar__menu" [formGroup]="form">
+    <span class="navbar__menu__hamburger navbar__menu__hamburger--top"></span>
+    <span class="navbar__menu__hamburger navbar__menu__hamburger--mid"></span>
+    <span class="navbar__menu__hamburger navbar__menu__hamburger--bot"></span>
+    <input class="navbar__menu__input" type="checkbox" formControlName="checkbox" />
+  </div>
 </div>

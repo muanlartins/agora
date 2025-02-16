@@ -88,6 +88,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public statistics: Statistic[] = [];
 
+  public isNavbarHamburgerActive: boolean = false;
+
   @ViewChildren('chart')
   public chartRefs: QueryList<ElementRef<HTMLCanvasElement>>;
 
@@ -512,7 +514,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filteredMembers.forEach((member) => participationsAsDebater[member.id] = this.filteredDebates.reduce((prev, curr) =>
       prev + (curr.debaters.some((debater) => debater.id === member.id) ? 1 : 0), 0
     ));
-    
+
     const activeMembers = this.filteredMembers.filter((member) => participationsAsDebater[member.id] >= 5);
 
     const firstsAverage: { [id: string]: number } = {}
@@ -879,5 +881,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (index === 2) return 'third.png';
 
     return;
+  }
+
+  public onNavbarHamburgerChange(checkbox: boolean) {
+    this.isNavbarHamburgerActive = checkbox;
   }
 }

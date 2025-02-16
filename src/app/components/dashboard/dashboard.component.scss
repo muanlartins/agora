@@ -4,6 +4,8 @@
   width: 100%;
   height: 100vh;
 
+  position: relative;
+
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -14,12 +16,16 @@
   }
 
   &__content {
+    &--hide {
+      display: none;
+    }
+
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    width: calc(100% - 256px);
-    margin: 0 128px;
+    width: calc(100% - 2rem);
+    margin: 0 1rem;
 
     &__header {
       width: 100%;
@@ -27,66 +33,62 @@
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
-      gap: 32px;
-      margin-bottom: 32px;
+      gap: 2rem;
+      margin-bottom: 2rem;
     }
 
     &__ranks {
       width: 100%;
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 32px;
+      gap: 2rem;
 
       &__rank {
         &__title {
-          font-size: 32px;
+          font-size: 2rem;
           color: $primary;
         }
 
         &__disclaimer {
-          margin-top: 8px;
+          margin-top: 0.5rem;
           color: $secondary;
           line-height: 125%;
         }
 
         &__placements {
-          margin-top: 16px;
+          margin-top: 1rem;
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
           align-items: flex-start;
-          gap: 24px;
+          gap: 1.5rem;
 
           &__placement {
             &__title {
-              font-size: 24px;
+              font-size: 1.5rem;
               color: $white;
-              margin-bottom: 24px;
+              margin-bottom: 1.5rem;
 
               &--1 {
-                font-size: 22px;
+                font-size: 1.375rem;
               }
 
               &--2 {
-                font-size: 20px;
+                font-size: 1.25rem;
               }
             }
 
             &__members {
               display: grid;
               grid-template-columns: repeat(2, 1fr);
-              flex-direction: row;
-              justify-content: flex-start;
-              align-items: center;
-              gap: 32px;
-              flex-wrap: wrap;
+              gap: 2rem;
 
               &__member {
                 display: flex;
                 flex-direction: row;
                 justify-content: flex-start;
                 align-items: center;
-                gap: 16px;
+                gap: 1rem;
 
                 &__pfp {
                   position: relative;
@@ -95,14 +97,14 @@
                     position: absolute;
                     top: 0;
                     left: 0;
-                    width: 40px;
+                    width: 2.5rem;
 
                     &--1 {
-                      width: 35px;
+                      width: 2.25rem;
                     }
 
                     &--2 {
-                      width: 30px;
+                      width: 2rem;
                     }
                   }
                 }
@@ -112,31 +114,31 @@
                   flex-direction: column;
                   justify-content: flex-start;
                   align-items: flex-start;
-                  gap: 8px;
+                  gap: 0.5rem;
 
                   &__name {
                     color: $primary;
-                    font-size: 24px;
+                    font-size: 1.5rem;
 
                     &--1 {
-                      font-size: 22px;
+                      font-size: 1.375rem;
                     }
 
                     &--2 {
-                      font-size: 20px;
+                      font-size: 1.25rem;
                     }
                   }
 
                   &__society {
                     color: $white;
-                    font-size: 20px;
+                    font-size: 1.25rem;
 
                     &--1 {
-                      font-size: 18px;
+                      font-size: 1.125rem;
                     }
 
                     &--2 {
-                      font-size: 16px;
+                      font-size: 1rem;
                     }
                   }
                 }
@@ -148,7 +150,7 @@
     }
 
     &__divider {
-      margin: 64px 0;
+      margin: 4rem 0;
       display: block;
       width: 100%;
       border-bottom: 1px solid $secondary;
@@ -160,29 +162,29 @@
       justify-content: flex-start;
       align-items: flex-start;
       flex-wrap: wrap;
-      gap: 64px;
-      margin-bottom: 32px;
+      gap: 4rem;
+      margin-bottom: 2rem;
       width: 100%;
 
       &__statistic {
         width: 100%;
 
         &__title {
-          font-size: 32px;
+          font-size: 2rem;
           color: $primary;
-          margin-bottom: 32px;
+          margin-bottom: 2rem;
         }
 
         &__fields {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 32px;
+          gap: 2rem;
 
           &__field {
             &__title {
-              font-size: 20px;
+              font-size: 1.25rem;
               color: $white;
-              margin-bottom: 8px;
+              margin-bottom: 0.5rem;
               text-align: center;
             }
 
@@ -190,18 +192,53 @@
               color: $white;
             }
 
-            &__chart {
-              &__canvas {
-                height: 300px;
+            &--full {
+              grid-column: 1 / span 1;
+            }
+          }
+        }
+      }
+    }
+  }
+}
 
-                &--full {
-                  height: 600px;
-                }
+@media (width <= $small) {
+  .page {
+    &__content {
+      &__header {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 1rem;
+        margin: 1rem 0 2rem 0;
+      }
+
+      &__ranks {
+        grid-template-columns: repeat(1, 1fr);
+
+        &__rank {
+          &__placements {
+            &__placement {
+              &__members {
+                grid-template-columns: repeat(1, 1fr);
               }
             }
+          }
+        }
+      }
 
-            &--full {
-              grid-column: 1 / span 2;
+      &__statistics {
+        &__statistic {
+          &__fields {
+            grid-template-columns: repeat(1, 1fr);
+
+            &__field {
+              grid-column: 1 / span 1;
+
+              &__chart {
+                width: 100%;
+                min-height: 30rem;
+              }
             }
           }
         }

@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { isAdmin } from '../../auth';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-navbar',
@@ -7,7 +8,20 @@ import { isAdmin } from '../../auth';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
-  constructor() { }
+  public form: FormGroup;
+
+  @Output()
+  public checkbox: EventEmitter<boolean> = new EventEmitter<boolean>();
+
+  constructor(private formBuilder: FormBuilder) {
+    this.form = this.formBuilder.group({
+      checkbox: [false]
+    });
+
+    this.form.controls['checkbox'].valueChanges.subscribe((checkbox) => {
+      this.checkbox.emit(checkbox);
+    });
+  }
 
   ngOnInit(): void {}
 
