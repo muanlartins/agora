@@ -115,7 +115,7 @@ export class CreateArticleFormComponent implements OnInit {
 
     const members = await firstValueFrom(this.memberService.getAllMembers());
 
-    this.authorOptions = members.map((member) => ({
+    this.authorOptions = members.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase())).map((member) => ({
       value: member.id,
       viewValue: member.name
     }));
@@ -128,37 +128,43 @@ export class CreateArticleFormComponent implements OnInit {
   }
 
   public close() {
-    this.dialog.open(ConfirmModalComponent, { data: {
-      text: `Você <b>poderá perder</b> qualquer mudança <b>não salva</b>! Tem certeza que quer continuar?`,
-      positiveCallback: () => {
-        const state = getState();
+    this.dialog.open(ConfirmModalComponent, {
+      minWidth: 'calc(100vw - 2rem)',
+      minHeight: 'calc(100vh - 2rem)',
+      maxWidth: 'calc(100vw - 2rem)',
+      data: {
+        text: `Você <b>poderá perder</b> qualquer mudança <b>não salva</b>! Tem certeza que quer continuar?`,
+        positiveCallback: () => {
+          const state = getState();
 
-        if (this.isEditing) {
-          state[this.article.id] = {
-            title: this.form.controls['title'].value !== this.article.title ? this.form.controls['title'].value : '',
-            content:  this.form.controls['content'].value !== this.article.content ? this.form.controls['content'].value : '',
-            tag: this.form.controls['tag'].value !== this.article.tag ?
-              this.showNewTagFormField() ?
+          if (this.isEditing) {
+            state[this.article.id] = {
+              title: this.form.controls['title'].value !== this.article.title ? this.form.controls['title'].value : '',
+              content:  this.form.controls['content'].value !== this.article.content ? this.form.controls['content'].value : '',
+              tag: this.form.controls['tag'].value !== this.article.tag ?
+                this.showNewTagFormField() ?
+                this.form.controls['newTag'].value :
+                this.form.controls['tag'].value :
+                '',
+              authorId: this.form.controls['authorId'].value !== this.article.authorId ? this.form.controls['authorId'].value : '',
+            }
+          } else {
+            state['article'] = {
+              title: this.form.controls['title'].value,
+              content: this.form.controls['content'].value,
+              tag: this.showNewTagFormField() ?
               this.form.controls['newTag'].value :
-              this.form.controls['tag'].value :
-              '',
-            authorId: this.form.controls['authorId'].value !== this.article.authorId ? this.form.controls['authorId'].value : '',
+              this.form.controls['tag'].value,
+              authorId: this.form.controls['authorId'].value,
+            }
           }
-        } else {
-          state['article'] = {
-            title: this.form.controls['title'].value,
-            content: this.form.controls['content'].value,
-            tag: this.showNewTagFormField() ?
-            this.form.controls['newTag'].value :
-            this.form.controls['tag'].value,
-            authorId: this.form.controls['authorId'].value,
-          }
-        }
 
-        setState(state);
-        this.dialog.closeAll();
-      },
-    }});
+          setState(state);
+          this.dialog.closeAll();
+        },
+        negativeCallback: () => {}
+      }
+    });
   }
 
   public async submit() {

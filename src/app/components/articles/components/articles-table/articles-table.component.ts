@@ -37,8 +37,6 @@ export class ArticlesTableComponent implements OnInit {
 
   public filteredArticles: Article[] = [];
 
-  public loading: boolean = false;
-
   public constructor(
     private router: Router,
     private formBuilder: FormBuilder,
@@ -66,7 +64,6 @@ export class ArticlesTableComponent implements OnInit {
       this.memberService.getAllMembers()
     ]).subscribe(([articles, members]) => {
       if (articles && articles.length && members && members.length) {
-        this.loading = false;
         this.articles = articles;
         this.members = members;
         this.filteredArticles = articles;
@@ -93,7 +90,10 @@ export class ArticlesTableComponent implements OnInit {
   }
 
   public openCreateArticleModal() {
-    this.dialog.open(CreateArticleModalComponent, { width: '70vw', maxHeight: '80vh', autoFocus: false, disableClose: true });
+    this.dialog.open(CreateArticleModalComponent, {
+      minWidth: 'calc(100vw - 2rem)',
+      minHeight: 'calc(100vh - 2rem)',
+      maxWidth: 'calc(100vw - 2rem)', autoFocus: false, disableClose: true });
   }
 
   public getAuthor(id: string) {
@@ -123,10 +123,17 @@ export class ArticlesTableComponent implements OnInit {
   public editArticle(id: string, event: Event) {
     event.stopPropagation();
 
-    this.dialog.open(CreateArticleModalComponent, { width: '70vw', maxHeight: '80vh', autoFocus: false, disableClose: true, data: {
-      isEditing: true,
-      article: this.articles.find((article) => article.id === id)
-    }});
+    this.dialog.open(CreateArticleModalComponent, {
+      minWidth: 'calc(100vw - 2rem)',
+      minHeight: 'calc(100vh - 2rem)',
+      maxWidth: 'calc(100vw - 2rem)',
+      autoFocus: false,
+      disableClose: true,
+      data: {
+        isEditing: true,
+        article: this.articles.find((article) => article.id === id)
+      }
+    });
   }
 
   public deleteArticle(id: string, event: Event) {
@@ -134,14 +141,18 @@ export class ArticlesTableComponent implements OnInit {
 
     const article = this.articles.find((article) => article.id === id)!;
 
-    this.dialog.open(ConfirmModalComponent, { data: {
-      text: `Você tem certeza que quer deletar o artigo <b>${article.title}</b>?`,
-      positiveCallback: async () => {
-        this.loading = true;
-        await this.articleService.deleteArticle(id);
-        this.loading = false;
+    this.dialog.open(ConfirmModalComponent, {
+      minWidth: 'calc(100vw - 2rem)',
+      minHeight: 'calc(100vh - 2rem)',
+      maxWidth: 'calc(100vw - 2rem)',
+      data: {
+        text: `Você tem certeza que quer deletar o artigo <b>${article.title}</b>?`,
+        positiveCallback: async () => {
+          await this.articleService.deleteArticle(id);
+        },
+        negativeCallback: async () => {}
       }
-    } });
+    });
   }
 
   public getArticle(element: Article): Article {
