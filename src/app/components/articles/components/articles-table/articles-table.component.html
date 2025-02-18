@@ -13,48 +13,25 @@
   <button *ngIf="isAdmin()" class="form__button" mat-flat-button color="primary" (click)="openCreateArticleModal()">Criar</button>
 </form>
 
-<div style="position: relative; min-height: 500px;">
-  <table
-    class="table"
-    mat-table
-    [dataSource]="dataSource"
-    matSort
-    multiTemplateDataRows
-    matSortActive="name"
-    matSortDirection="asc"
-    matSortDisableClear
-  >
-    <ng-container [matColumnDef]="column" *ngFor="let column of columns; index as index">
-      <th
-        class="table__head__tr__th"
-        [ngClass]="'table__header__tr__th--' + index"
-        mat-header-cell
-        *matHeaderCellDef
-        [mat-sort-header]="column"
-      >{{ label[column] }}</th>
-      <td
-        class="table__body__tr__td"
-        [ngClass]="'table__body__tr__td--' + index"
-        mat-cell
-        *matCellDef="let element"
-      >
-        {{ getColumnData(element, column) }}
-        <ng-container *ngIf="showEdit(column)">
-          <img (click)="editArticle(element.id, $event)" src="assets/edit-text.png" class="table__body__tr__td__img" />
-        </ng-container>
-        <ng-container *ngIf="showDelete(column)">
-          <img (click)="deleteArticle(element.id, $event)" src="assets/delete.png" class="table__body__tr__td__img" />
-        </ng-container>
-      </td>
-    </ng-container>
-
-    <tr class="table__head__tr" mat-header-row *matHeaderRowDef="columns"></tr>
-    <tr
-      class="table__body__tr"
-      mat-row
-      *matRowDef="let element; columns: columns"
-      (click)="goToArticlePage(element.id)"
-    ></tr>
-  </table>
+<div class="articles">
+  <div class="articles__header">
+    <div class="articles__header__title">Criado em</div>
+    <div class="articles__header__title">Título</div>
+    <div class="articles__header__title">Autor</div>
+    <div class="articles__header__title"></div>
+    <div class="articles__header__title"></div>
+  </div>
+  <div class="articles__body">
+    <div class="articles__body__row" *ngFor="let article of filteredArticles" (click)="goToArticlePage(article.id)">
+      <div class="articles__body__row__value">{{ getDate(article.createdAt) }}</div>
+      <div class="articles__body__row__value">{{ article.title }}</div>
+      <div class="articles__body__row__value">{{ getAuthorName(article.authorId) }}</div>
+      <div class="articles__body__row__value">
+        <img *ngIf="showEdit()" (click)="editArticle(article.id, $event)" src="assets/edit-text.png" class="articles__body__row__value__icon" />
+      </div>
+      <div class="articles__body__row__value">
+        <img *ngIf="showDelete()" (click)="deleteArticle(article.id, $event)" src="assets/delete.png" class="articles__body__row__value__icon" />
+      </div>
+    </div>
+  </div>
 </div>
-<mat-paginator pageSize="10"></mat-paginator>

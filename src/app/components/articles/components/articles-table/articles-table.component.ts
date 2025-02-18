@@ -1,9 +1,6 @@
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { Article } from 'src/app/models/types/article';
 import { SelectOption } from 'src/app/models/types/select-option';
 import { isAdmin } from 'src/app/utils/auth';
@@ -15,11 +12,9 @@ import { Member } from 'src/app/models/types/member';
 import * as moment from 'moment';
 import { ConfirmModalComponent } from 'src/app/components/members/components/confirm-modal/confirm-modal.component';
 import { CreateArticleModalComponent } from '../create-article-modal/create-article-modal.component';
-import { ArticleModalComponent } from '../article-modal/article-modal.component';
 import { Router } from '@angular/router';
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-articles-table',
   templateUrl: './articles-table.component.html',
   styleUrls: ['./articles-table.component.scss'],
@@ -31,13 +26,7 @@ import { Router } from '@angular/router';
     ]),
   ],
 })
-export class ArticlesTableComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatPaginator, { static: true })
-  public paginator: MatPaginator;
-
-  @ViewChild(MatSort, { static: true })
-  public sort: MatSort;
-
+export class ArticlesTableComponent implements OnInit {
   public form: FormGroup;
 
   public tagOptions: SelectOption[];
@@ -48,18 +37,6 @@ export class ArticlesTableComponent implements OnInit, AfterViewInit {
 
   public filteredArticles: Article[] = [];
 
-  public dataSource: MatTableDataSource<Article> = new MatTableDataSource<Article>();
-
-  public columns: string[] = [];
-
-  public expandedElement?: Article;
-
-  public label: { [column: string]: string } = {
-    createdAt: 'Criado em',
-    title: 'Título',
-    author: 'Autor'
-  }
-
   public loading: boolean = false;
 
   public constructor(
@@ -68,18 +45,10 @@ export class ArticlesTableComponent implements OnInit, AfterViewInit {
     private articleService: ArticleService,
     private memberService: MemberService,
     private dialog: MatDialog,
-    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   public ngOnInit(): void {
     this.initForm();
-    this.initColumns();
-  }
-
-  public ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-
     this.getData();
   }
 
@@ -91,27 +60,7 @@ export class ArticlesTableComponent implements OnInit, AfterViewInit {
     this.subscribeToValueChanges();
   }
 
-  public initColumns() {
-    this.columns = [
-      'createdAt',
-      'title',
-      'author',
-      'edit',
-      'delete'
-    ];
-  }
-
-  public setDataSource() {
-    if (!this.filteredArticles) return;
-
-    this.dataSource.data = this.filteredArticles;
-
-    this.changeDetectorRef.detectChanges();
-  }
-
   public getData() {
-    this.loading = true;
-
     combineLatest([
       this.articleService.getAllArticles(),
       this.memberService.getAllMembers()
@@ -123,9 +72,12 @@ export class ArticlesTableComponent implements OnInit, AfterViewInit {
         this.filteredArticles = articles;
 
         this.initOptions();
-        this.setDataSource();
       }
     });
+  }
+
+  public getDate(date: string) {
+    return moment(date).locale('pt-br').format(`DD MMM, YYYY`);
   }
 
   public initOptions() {
@@ -137,7 +89,6 @@ export class ArticlesTableComponent implements OnInit, AfterViewInit {
 
   public subscribeToValueChanges() {
     this.form.controls['tag'].valueChanges.subscribe((tag) => {
-      this.dataSource.filter = tag;
     });
   }
 
@@ -145,22 +96,28 @@ export class ArticlesTableComponent implements OnInit, AfterViewInit {
     this.dialog.open(CreateArticleModalComponent, { width: '70vw', maxHeight: '80vh', autoFocus: false, disableClose: true });
   }
 
-  public getColumnData(element: Article, column: string) {
-    if (column === 'createdAt') return moment(element.createdAt).locale('pt-br').format(`LLL`);
-    if (column === 'title') return element.title;
-    if (column === 'author') {
-      const member = this.getAuthor(element.authorId);
-
-      if (!member) return;
-
-      return member.name;
-    }
-
-    return '';
-  }
-
   public getAuthor(id: string) {
     return this.members.find((member) => member.id === id);
+  }
+
+  public getAuthorName(id: string) {
+    const author = this.getAuthor(id);
+
+    if (!author) return '';
+
+    const authorFullName = author.name;
+
+    const authorNames = authorFullName.split(' ');
+
+    if (authorNames.length === 1) return authorNames[0];
+
+    let finalName = `${authorNames[0]}`;
+
+    for (let i=1;i<authorNames.length;i++) {
+      finalName += ` ${authorNames[i][0]}.`;
+    }
+
+    return finalName;
   }
 
   public editArticle(id: string, event: Event) {
@@ -199,11 +156,11 @@ export class ArticlesTableComponent implements OnInit, AfterViewInit {
     this.router.navigate([`/article/${id}`]);
   }
 
-  public showEdit(column: string) {
-    return column === 'edit' && isAdmin();
+  public showEdit() {
+    return isAdmin();
   }
 
-  public showDelete(column: string) {
-    return column === 'delete' && isAdmin();
+  public showDelete() {
+    return isAdmin();
   }
 }
