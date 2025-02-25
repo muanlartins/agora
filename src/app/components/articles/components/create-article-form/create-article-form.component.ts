@@ -131,6 +131,7 @@ export class CreateArticleFormComponent implements OnInit {
     this.dialog.open(ConfirmModalComponent, {
       minWidth: 'calc(100vw - 2rem)',
       minHeight: 'calc(100vh - 2rem)',
+      maxHeight: 'calc(100vh - 2rem)',
       maxWidth: 'calc(100vw - 2rem)',
       data: {
         text: `Você <b>poderá perder</b> qualquer mudança <b>não salva</b>! Tem certeza que quer continuar?`,

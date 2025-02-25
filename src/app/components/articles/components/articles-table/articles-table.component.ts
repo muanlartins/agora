@@ -93,6 +93,7 @@ export class ArticlesTableComponent implements OnInit {
     this.dialog.open(CreateArticleModalComponent, {
       minWidth: 'calc(100vw - 2rem)',
       minHeight: 'calc(100vh - 2rem)',
+      maxHeight: 'calc(100vh - 2rem)',
       maxWidth: 'calc(100vw - 2rem)', autoFocus: false, disableClose: true });
   }
 
@@ -126,6 +127,7 @@ export class ArticlesTableComponent implements OnInit {
     this.dialog.open(CreateArticleModalComponent, {
       minWidth: 'calc(100vw - 2rem)',
       minHeight: 'calc(100vh - 2rem)',
+      maxHeight: 'calc(100vh - 2rem)',
       maxWidth: 'calc(100vw - 2rem)',
       autoFocus: false,
       disableClose: true,
@@ -144,6 +146,7 @@ export class ArticlesTableComponent implements OnInit {
     this.dialog.open(ConfirmModalComponent, {
       minWidth: 'calc(100vw - 2rem)',
       minHeight: 'calc(100vh - 2rem)',
+      maxHeight: 'calc(100vh - 2rem)',
       maxWidth: 'calc(100vw - 2rem)',
       data: {
         text: `Você tem certeza que quer deletar o artigo <b>${article.title}</b>?`,
