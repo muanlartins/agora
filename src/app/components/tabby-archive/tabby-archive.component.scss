@@ -2,7 +2,7 @@
 
 .page {
   &__banner {
-    height: 64px;
+    height: 4rem;
     background: $primary;
     width: 100%;
     display: flex;
@@ -11,7 +11,7 @@
 
     &__text {
       color: black;
-      font-size: 24px;
+      font-size: 1.5rem;
 
       &__link {
         color: $link;
@@ -25,30 +25,23 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 64px 128px;
+    padding: 1rem 1rem;
 
     &__logo {
       display: flex;
       justify-content: flex-start;
       align-items: flex-end;
-      gap: 24px;
+      gap: 1.5rem;
 
       &__agora {
-        padding-bottom: 16px;
-        height: 60px;
+        padding-bottom: 1rem;
+        height: 2.75rem;
         cursor: pointer;
       }
 
-      &__sd {
-        width: 48px;
-        height: 48px;
-        padding: 16px 0 16px 24px;
-        border-left: 1px solid $condebwhite;
-      }
-
       &__condeb {
-        height: 48px;
-        padding: 16px 0 16px 24px;
+        height: 2rem;
+        padding: 1rem 0 1rem 1.5rem;
         border-left: 1px solid $condebwhite;
       }
     }
@@ -62,16 +55,16 @@
 
       &__option {
         color: $condebwhite;
-        font-size: 18px;
+        font-size: 1.125rem;
         line-height: 100%;
-        padding: 16px 24px;
+        padding: 1rem 1.5rem;
         border-right: 1px solid $condebwhite;
         cursor: pointer;
 
         transition: $transition;
 
         &:hover {
-          text-shadow: 0 0 12px $condebwhite, 0 0 24px $condebwhite;
+          text-shadow: 0 0 0.75rem $condebwhite, 0 0 1.5rem $condebwhite;
         }
 
         &:last-child {
@@ -82,7 +75,7 @@
           color: $primary;
 
           &:hover {
-            text-shadow: 0 0 12px $primary, 0 0 24px $primary;
+            text-shadow: 0 0 0.75rem $primary, 0 0 1.5rem $primary;
           }
         }
       }
@@ -90,44 +83,44 @@
   }
 
   &__introduction {
-    padding: 64px 128px 16px 128px;
-    width: calc(100% - 256px);
+    padding: 1rem 1rem;
+    width: calc(100% - 2rem);
 
     &__title {
-      font-size: 32px;
+      font-size: 2rem;
       color: $primary;
     }
 
     &__description {
-      font-size: 20px;
+      font-size: 1.25rem;
       color: $white;
-      margin-top: 16px;
+      margin-top: 1rem;
     }
 
     &__form {
-      margin-top: 32px;
+      margin-top: 2rem;
     }
   }
 
   &__body {
     display: grid;
-    gap: 64px;
-    grid-template-columns: max-content 1fr;
-    padding: 32px 128px;
+    gap: 2rem;
+    grid-template-columns: 1fr;
+    padding: 2rem 1rem;
 
     &__sidebar {
       &__content {
-        position: sticky;
-        top: 16px;
+        position: block;
+        top: 1rem;
 
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
-        gap: 16px;
+        gap: 1rem;
 
         &__subtitle {
-          font-size: 20px;
+          font-size: 1.25rem;
           color: $white;
           cursor: pointer;
           transition: $transition;
@@ -138,16 +131,16 @@
         }
 
         &__items {
-          padding-left: 16px;
+          padding-left: 1rem;
 
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
           align-items: flex-start;
-          gap: 8px;
+          gap: 0.5rem;
 
           &__item {
-            font-size: 20px;
+            font-size: 1.25rem;
             color: $white;
             cursor: pointer;
             transition: $transition;
@@ -165,27 +158,27 @@
 
       &__tournament {
         &__title {
-          font-size: 48px;
+          font-size: 3rem;
           color: $primary;
         }
 
         &__subtitle {
-          font-size: 40px;
-          margin-top: 32px;
+          font-size: 2.5rem;
+          margin-top: 2rem;
           color: $white;
         }
 
         &__list {
-          margin-top: 32px;
+          margin-top: 2rem;
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
           align-items: flex-start;
-          gap: 8px;
+          gap: 0.5rem;
 
           &__item {
             &__value {
-              font-size: 20px;
+              font-size: 1.25rem;
               color: $white;
 
               &--condebsecondary {
@@ -199,7 +192,7 @@
             }
 
             &__subvalues {
-              margin: 16px 0;
+              margin: 1rem 0;
               &__subvalue {
                 color: $white;
               }
@@ -209,22 +202,22 @@
 
         &__rounds {
           &__round {
-            margin-top: 32px;
+            margin-top: 2rem;
 
             &__name {
-              font-size: 24px;
+              font-size: 1.5rem;
               color: $condebwhite;
             }
 
             &__debates {
               display: grid;
-              grid-template-columns: repeat(2, 1fr);
-              margin-top: 16px;
-              gap: 64px;
+              grid-template-columns: 1fr;
+              margin-top: 1rem;
+              gap: 4rem;
               flex-wrap: wrap;
 
               &__debate {
-                padding: 32px;
+                padding: 2rem;
                 border: 1px solid $condebwhite;
                 border-radius: 5px;
 
@@ -233,19 +226,19 @@
                 }
 
                 &__motion {
-                  margin-top: 8px;
+                  margin-top: 0.5rem;
                   color: $condebwhite;
                 }
 
                 &__side {
-                  margin-top: 16px;
+                  margin-top: 1rem;
 
                   &__title {
-                    font-size: 20px;
+                    font-size: 1.25rem;
                     color: $primary;
 
                     span {
-                      font-size: 20px;
+                      font-size: 1.25rem;
                     }
 
                     .primary {
@@ -258,13 +251,13 @@
                   }
 
                   &__team {
-                    margin-top: 8px;
+                    margin-top: 0.5rem;
                     color: $condebwhite;
                   }
 
                   &__speakers {
                     &__speaker {
-                      margin-top: 16px;
+                      margin-top: 1rem;
                       color: $condebwhite;
 
                       span {
@@ -279,16 +272,16 @@
                 }
 
                 &__adjudicators {
-                  margin-top: 32px;
+                  margin-top: 2rem;
 
                   &__title {
                     color: $primary;
-                    font-size: 24px;
+                    font-size: 1.5rem;
                   }
 
                   &__chair {
-                    margin-top: 8px;
-                    font-size: 18px;
+                    margin-top: 0.5rem;
+                    font-size: 1.125rem;
                     color: $condebwhite;
 
                     .primary {
@@ -302,7 +295,7 @@
 
                   &__wings {
                     &__wing {
-                      margin-top: 8px;
+                      margin-top: 0.5rem;
                       color: $condebwhite;
 
                       .condebsecondary {
