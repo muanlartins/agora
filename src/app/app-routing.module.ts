@@ -13,6 +13,7 @@ import { ReportComponent } from './components/report/report.component';
 import { TournamentComponent } from './components/tournament/tournament.component';
 import { TabbyArchiveComponent } from './components/tabby-archive/tabby-archive.component';
 import { ArticleComponent } from './components/articles/components/article/article.component';
+import { DebateComponent } from './components/debates/components/debate/debate.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: "full" },
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'tabby-archive', component: TabbyArchiveComponent, data: {} },
   { path: 'dashboard', component: DashboardComponent, canActivate: [LoginGuard] },
   { path: 'debates', component: DebatesComponent, canActivate: [LoginGuard] },
+  { path: 'debate/:id', component: DebateComponent },
   { path: 'members', component: MembersComponent, canActivate: [LoginGuard] },
   { path: 'goals', component: GoalsComponent, canActivate: [LoginGuard] },
   { path: 'articles', component: ArticlesComponent, canActivate: [LoginGuard] },

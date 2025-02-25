@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as moment from 'moment';
-import { combineLatest } from 'rxjs';
 import { Article } from 'src/app/models/types/article';
 import { Member } from 'src/app/models/types/member';
 import { ArticleService } from 'src/app/services/article.service';

@@ -14,7 +14,10 @@ export class AppComponent implements OnInit {
 
   public loading: boolean = false;
 
-  constructor(private loadingService: LoadingService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private loadingService: LoadingService, 
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   public ngOnInit(): void {
     this.loadingService.loadingChanges().subscribe((loading: boolean) => {

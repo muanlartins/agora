@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, combineLatest, firstValueFrom } from "rxjs";
+import { BehaviorSubject, Observable, combineLatest, first, firstValueFrom, lastValueFrom } from "rxjs";
 import { BASE_URL } from "../utils/constants";
 import { Debate } from "../models/types/debate";
 import { DebateStyle } from "../models/enums/debate-style";
@@ -10,6 +10,7 @@ import { MemberService } from "./member.service";
 
 const ENDPOINTS = {
   getAllDebates: '/debates',
+  getDebate: (id: string) => `/public/debate/${id}`,
   createDebate: '/debate',
   updateDebate: '/debate',
   deleteDebate: (id: string) => `/debate/${id}`,
@@ -131,5 +132,23 @@ export class DebateService {
     debates.splice(debates.findIndex((debate) => debate.id === id), 1);
 
     this.debates$.next(debates);
+  }
+
+  public async getDebate(id: string) {
+    const debate = await firstValueFrom(this.httpClient.get<Debate>(BASE_URL + ENDPOINTS.getDebate(id)));
+
+    const debatersIds = debate.debaters.map((debater) => debater.id);
+    const chairId = debate.chair.id;
+    const wingsIds = debate.wings ? debate.wings.map((wing) => wing.id) : [];
+
+    const debateMembersIds = [...debatersIds, chairId, ...wingsIds];
+
+    const members = await Promise.all(debateMembersIds.map(async (memberId) => await this.memberService.getMember(memberId)));
+
+    debate.debaters = debate.debaters.map((debater) => members.find((member) => member.id === debater.id)!);    
+    debate.chair = members.find((member) => member.id === debate.chair.id)!;
+    debate.wings = debate.wings?.map((wing) => members.find((member) => member.id === wing.id)!);
+
+    return debate;
   }
 }

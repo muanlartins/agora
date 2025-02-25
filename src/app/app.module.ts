@@ -68,6 +68,7 @@ import { TabbyArchiveComponent } from './components/tabby-archive/tabby-archive.
 import { CreateGoalModalComponent } from './components/goals/components/create-goal-modal/create-goal-modal.component';
 import { CreateGoalFormComponent } from './components/goals/components/create-goal-form/create-goal-form.component';
 import { BannerComponent } from './components/banner/banner.component';
+import { DebateComponent } from './components/debates/components/debate/debate.component';
 
 registerLocaleData(pt);
 
@@ -106,6 +107,7 @@ registerLocaleData(pt);
     CreateGoalModalComponent,
     CreateGoalFormComponent,
     BannerComponent,
+    DebateComponent,
   ],
   imports: [
     BrowserModule,
