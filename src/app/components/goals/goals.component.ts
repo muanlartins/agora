@@ -18,6 +18,8 @@ export class GoalsComponent implements OnInit {
 
   public goals: Goal[];
 
+  public isNavbarHamburgerActive: boolean = false;
+
   public constructor(private goalService: GoalService, private dialog: MatDialog) {}
 
   public ngOnInit(): void {
@@ -86,5 +88,9 @@ export class GoalsComponent implements OnInit {
 
   public isGoalAchieved(goal: Goal) {
     return goal.currentCount >= goal.totalCount;
+  }
+
+  public onNavbarHamburgerChange(checkbox: boolean) {
+    this.isNavbarHamburgerActive = checkbox;
   }
 }

@@ -18,7 +18,7 @@ export class DebatesComponent implements OnInit {
 
   public form: FormGroup;
 
-  public dataSource: MatTableDataSource<Debate> = new MatTableDataSource();
+  public isNavbarHamburgerActive: boolean = false;
 
   constructor(
     private debateService: DebateService,
@@ -28,7 +28,6 @@ export class DebatesComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllDebates();
-    this.initForm();
   }
 
   public getAllDebates() {
@@ -39,20 +38,6 @@ export class DebatesComponent implements OnInit {
         );
       },
     });
-  }
-
-  public initForm() {
-    this.form = this.formBuilder.group({
-      year: ['']
-    });
-
-    this.subscribeToValueChanges();
-  }
-
-  public subscribeToValueChanges() {
-    this.form.controls['year'].valueChanges.subscribe((year) => {
-      this.dataSource.filter = year;
-    })
   }
 
   public getDatetimeMoment(date: string, time: string) {
@@ -69,6 +54,16 @@ export class DebatesComponent implements OnInit {
   }
 
   public openCreateDebateModal() {
-    this.dialog.open(CreateDebateModalComponent, { height : '90%', disableClose: true });
+    this.dialog.open(CreateDebateModalComponent, {       
+      minWidth: 'calc(100vw - 2rem)',
+      minHeight: 'calc(100vh - 2rem)',
+      maxHeight: 'calc(100vh - 2rem)',
+      maxWidth: 'calc(100vw - 2rem)', 
+      disableClose: true 
+    });
+  }
+
+  public onNavbarHamburgerChange(checkbox: boolean) {
+    this.isNavbarHamburgerActive = checkbox;
   }
 }

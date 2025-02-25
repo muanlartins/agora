@@ -8,5 +8,11 @@ import { NotificationService } from 'src/app/services/notification.service';
   styleUrls: ['./articles.component.scss']
 })
 export class ArticlesComponent {
+  public isNavbarHamburgerActive: boolean = false;
+
   public constructor() {}
+
+  public onNavbarHamburgerChange(checkbox: boolean) {
+    this.isNavbarHamburgerActive = checkbox;
+  }
 }

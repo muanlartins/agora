@@ -1,10 +1,10 @@
 <div class="page">
-  <app-navbar class="page__navbar"></app-navbar>
-  <div class="page__content">
-    <form *ngIf="form" [formGroup]="form" class="page__content__form">
+  <app-navbar class="page__navbar" (checkbox)="onNavbarHamburgerChange($event)"></app-navbar>
+  <div class="page__content" [ngClass]="{ 'page__content--hide': isNavbarHamburgerActive }">
+    <div class="page__content__form">
       <div></div>
       <button *ngIf="isAdmin()" class="form__button" mat-flat-button color="primary" (click)="openCreateDebateModal()">Criar</button>
-    </form>
+    </div>
     <app-debates-table class="page__content__table" [debates]="debates"></app-debates-table>
   </div>
 </div>

@@ -1,7 +1,7 @@
 <div class="goals">
-  <app-navbar class="goals__navbar"></app-navbar>
+  <app-navbar class="goals__navbar" (checkbox)="onNavbarHamburgerChange($event)"></app-navbar>
   <button *ngIf="isAdmin()" class="goals__button" mat-flat-button color="primary" (click)="createGoal()">Criar</button>
-  <div class="goals__container">
+  <div class="goals__container" [ngClass]="{ 'goals__container--hide': isNavbarHamburgerActive }">
     <mat-tab-group class="goals__container__tabs">
       <mat-tab class="goals__container__tabs__tab" label="COMPETIÇÃO">
         <div class="goals__container__tabs__tab__goals">
