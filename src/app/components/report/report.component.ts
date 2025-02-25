@@ -49,6 +49,8 @@ const doughnutBackgroundColor = ['#FFC040', '#906E2E']
   styleUrls: ['./report.component.scss']
 })
 export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
+  public isNavbarHamburgerActive: boolean = false;
+  
   public form: FormGroup;
 
   public memberOptions: SelectOption[];
@@ -1278,5 +1280,9 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
     );
 
     this.notificationService.createSuccessNotification("Descrição atualizada com sucesso.");
+  }
+
+  public onNavbarHamburgerChange(checkbox: boolean) {
+    this.isNavbarHamburgerActive = checkbox;
   }
 }

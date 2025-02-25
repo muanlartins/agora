@@ -18,9 +18,13 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    width: calc(100% - 256px);
-    margin: 0 128px;
-    padding-bottom: 32px;
+    width: calc(100% - 2rem);
+    margin: 0 1rem;
+    padding-bottom: 2rem;
+
+    &--hide {
+      display: none;
+    }
 
     &__header {
       width: 100%;
@@ -28,11 +32,11 @@
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
-      gap: 32px;
-      margin-bottom: 32px;
+      gap: 2rem;
+      margin-bottom: 2rem;
 
       &__input {
-        width: 384px;
+        width: 20rem;
       }
     }
 
@@ -41,15 +45,20 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      gap: 64px;
+      gap: 2rem;
 
       &__profile {
         width: 100%;
       }
 
       &__debates {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 1rem;
+
         &__title {
-          font-size: 32px;
+          font-size: 2rem;
           color: $primary;
           line-height: 100%;
         }
@@ -67,20 +76,20 @@
           flex-direction: row;
           justify-content: flex-start;
           align-items: center;
-          gap: 32px;
+          gap: 2rem;
 
           &__name {
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
             align-items: flex-start;
-            gap: 16px;
-            font-size: 40px;
+            gap: 1rem;
+            font-size: 2.5rem;
             color: $primary;
             line-height: 100%;
 
             &__society {
-              font-size: 24px;
+              font-size: 1.5rem;
               color: $white;
               line-height: 100%;
             }
@@ -102,22 +111,22 @@
         //     justify-content: flex-start;
         //     align-items: flex-start;
         //     gap: 8px;
-        //     padding: 16px;
+        //     padding: 1rem;
         //     color: $white;
-        //     font-size: 20px;
+        //     font-size: 1.25rem;
 
         //     &--100 {
         //       width: 100%;
         //     }
 
         //     &__title {
-        //       font-size: 16px;
+        //       font-size: 1rem;
         //       color: $primary;
         //       line-height: 100%;
         //     }
 
         //     &__value {
-        //       font-size: 20px;
+        //       font-size: 1.25rem;
         //       color: $white;
         //       line-height: 100%;
         //     }
@@ -127,12 +136,12 @@
 
       &__description {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 32px;
+        grid-template-columns: 1fr;
+        gap: 2rem;
 
         &__markdown {
           &--full {
-            grid-column: 1 / span 2;
+            grid-column: 1;
           }
         }
       }
@@ -147,27 +156,27 @@
         flex-direction: row;
         justify-content: space-between;
         flex-wrap: wrap;
-        gap: 32px;
+        gap: 2rem;
 
         &__chart {
           display: flex;
           flex-direction: column;
-          width: calc(50% - 32px);
-          margin-bottom: 48px;
-          height: 640px;
+          width: 100%;
+          margin-bottom: 3rem;
+          height: 40rem;
 
           &__title {
-            font-size: 32px;
+            font-size: 2rem;
             color: $primary;
             line-height: 100%;
-            margin-bottom: 16px;
+            margin-bottom: 1rem;
           }
 
           &__description {
-            font-size: 20px;
+            font-size: 1.25rem;
             color: $white;
             line-height: 125%;
-            margin-bottom: 32px;
+            margin-bottom: 2rem;
           }
 
           &__chart {
@@ -177,7 +186,7 @@
 
         &__section {
           width: 100%;
-          font-size: 48px;
+          font-size: 3rem;
           color: $white;
           line-height: 100%;
         }
