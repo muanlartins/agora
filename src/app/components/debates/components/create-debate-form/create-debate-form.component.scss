@@ -1,12 +1,12 @@
 @import 'src/variables.scss';
 
 :host {
-  --mat-form-field-width: calc(calc(100% - 2rem) / 2);
+  --mat-form-field-width: 100%;
 }
 
 .cancel {
-  width: calc(100% - 64px);
-  margin: 32px 0 32px 32px;
+  width: calc(100% - 2rem);
+  margin: 1rem 0 1rem 1rem;
 }
 
 .form {
@@ -15,7 +15,8 @@
   justify-content: flex-start;
   width: 100%;
   position: relative;
-  max-height: 90%;
+  max-height: calc(100% - 2rem);
+  padding: 0;
 
   &__stepper {
     &__step {
@@ -32,16 +33,16 @@
           width: var(--mat-form-field-width);
 
           &--motion {
-            width: calc(calc(100% - 2rem) / 2);
+            width: 100%;
           }
 
           img {
             position: absolute;
-            right: 16px;
+            right: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            width: 32px;
-            height: 32px;
+            width: 2rem;
+            height: 2rem;
             cursor: pointer;
             filter: $filter;
           }
@@ -65,7 +66,7 @@
 
         &__filters {
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
           gap: 2rem;
           width: 100%;
 
@@ -81,18 +82,18 @@
 
         &__all {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 8px;
+          grid-template-columns: 1fr;
+          gap: 0.5rem;
           width: 100%;
 
           &__label {
             font-weight: 500;
-            grid-column: 1 / span 3;
+            grid-column: 1;
           }
 
           &__checkbox {
             &__pfp {
-              padding-right: 8px;
+              padding-right: 0.5rem;
             }
           }
         }
@@ -100,8 +101,9 @@
         &__houses {
           margin-top: 1rem;
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
           justify-content: flex-start;
+          width: 100%;
           gap: 0.25rem;
 
           &__caption {
@@ -109,10 +111,11 @@
           }
 
           &__legend {
-            font-size: 14px;
+            font-size: 1rem;
             padding: 0.25rem 0.5rem;
             cursor: pointer;
             color: $black;
+            text-align: center;
 
             &--focus {
               font-weight: 500;
@@ -143,11 +146,10 @@
         &__positions {
           width: 100%;
           border: solid 1px #ccc;
-          height: 4rem;
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
           background: $black;
-          border-radius: 4px;
+          border-radius: 0.25rem;
           overflow: hidden;
 
           &.cdk-drop-list-dragging &__debater:not(.cdk-drag-placeholder) {
@@ -156,6 +158,7 @@
 
           &__debater {
             width: 100%;
+            height: 6rem;
             padding: 0rem 1rem;
             border-right: solid 1px #ccc;
             color: rgba(0, 0, 0, 0.87);
@@ -166,7 +169,7 @@
             box-sizing: border-box;
             cursor: move;
             background: white;
-            font-size: 16px;
+            font-size: 1rem;
 
             &--blur {
               opacity: 0.3;
@@ -204,15 +207,15 @@
               flex-direction: column;
               justify-content: flex-start;
               align-items: flex-start;
-              gap: 8px;
+              gap: 0.5rem;
 
               &__name {
-                font-size: 14px;
+                font-size: 1.25rem;
                 line-height: 100%;
               }
 
               &__position {
-                font-size: 10px;
+                font-size: 1rem;
                 font-weight: 500;
                 line-height: 100%;
               }
@@ -221,19 +224,19 @@
         }
 
         &__iron {
-          margin-top: 16px;
+          margin-top: 1rem;
           display: grid;
-          grid-template-columns: repeat(6, 1fr);
+          grid-template-columns: 1fr;
 
           &__label {
-            grid-column: 1 / span 6;
+            grid-column: 1;
             font-weight: 500;
           }
         }
 
         &__sps {
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
           gap: 2rem;
           width: 100%;
         }
@@ -241,11 +244,11 @@
         &__call {
           width: 100%;
           border: solid 1px #ccc;
-          height: 4rem;
+          height: 100%;
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
           background: $black;
-          border-radius: 4px;
+          border-radius: 0.25rem;
           overflow: hidden;
 
           &.cdk-drop-list-dragging &__house:not(.cdk-drag-placeholder) {
@@ -254,6 +257,7 @@
 
           &__house {
             width: 100%;
+            height: 6rem;
             padding: 0rem 1rem;
             border-right: solid 1px #ccc;
             color: rgba(0, 0, 0, 0.87);
@@ -264,7 +268,7 @@
             box-sizing: border-box;
             cursor: move;
             background: white;
-            font-size: 16px;
+            font-size: 1rem;
 
             &--blur {
               opacity: 0.3;
@@ -304,7 +308,7 @@
               align-items: flex-start;
 
               &__name {
-                font-size: 14px;
+                font-size: 1.25rem;
               }
             }
           }
@@ -326,11 +330,11 @@
 
           img {
             position: absolute;
-            right: 32px;
+            right: 2rem;
             top: 50%;
             transform: translateY(-50%);
-            width: 24px;
-            height: 24px;
+            width: 1.5rem;
+            height: 1.5rem;
             cursor: pointer;
             filter: $filter;
           }
@@ -346,5 +350,5 @@
 }
 
 input, textarea {
-  padding-right: 64px;
+  padding-right: 4rem;
 }

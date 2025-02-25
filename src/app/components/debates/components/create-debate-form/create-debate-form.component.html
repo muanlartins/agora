@@ -213,7 +213,6 @@
         <div
           class="form__stepper__step__debaters__positions"
           cdkDropList
-          cdkDropListOrientation="horizontal"
           (cdkDropListDropped)="dropDebater($event)"
         >
           <div
@@ -247,9 +246,9 @@
         >
           <mat-form-field
             *ngFor="let sp of spsFormArray.controls; index as index"
-            [style.width] = "'calc(calc(100% - ' + spsFormArray.length*2 + 'rem) / ' + spsFormArray.length + ')'"
+            [style.width] = "'100%'"
           >
-            <mat-label>Speaker Points</mat-label>
+            <mat-label>Speaker Points ({{ selectedDebaters[index].name }})</mat-label>
             <input matInput [formControlName]="index" type="number" />
             <mat-error *ngIf="sp.errors && sp.errors['min']">O valor mínimo é 50</mat-error>
             <mat-error *ngIf="sp.errors && sp.errors['max']">O valor máximo é 100</mat-error>
@@ -259,7 +258,6 @@
         <div
           class="form__stepper__step__debaters__call"
           cdkDropList
-          cdkDropListOrientation="horizontal"
           (cdkDropListDropped)="dropHouse($event)"
         >
           <div

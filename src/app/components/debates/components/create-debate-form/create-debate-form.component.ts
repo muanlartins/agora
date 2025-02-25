@@ -892,8 +892,9 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
           setState(state);
 
           this.dialogRef.close();
-        }
-      }
+        },
+        negativeCallback: () => {}
+      },
     });
   }
 }
