@@ -4,17 +4,18 @@ import { Member } from '../models/types/member';
 import * as moment from 'moment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UtilService {
-
-  constructor() { }
+  constructor() {}
 
   public getDebatesWithSociety(debates: Debate[], society: string) {
-    return debates.filter((debate) =>
-      debate.chair.society === society ||
-      (debate.wings && debate.wings.some((wing) => wing.society === society)) ||
-      debate.debaters.some((debater) => debater.society === society)
+    return debates.filter(
+      (debate) =>
+        debate.chair.society === society ||
+        (debate.wings &&
+          debate.wings.some((wing) => wing.society === society)) ||
+        debate.debaters.some((debater) => debater.society === society)
     );
   }
 
@@ -22,30 +23,48 @@ export class UtilService {
     return members.filter((member) => member.society === society);
   }
 
-  public getDebatesWithPs(debates: Debate[], ps: string) {
-    return debates.filter((debate) =>
-      debate.chair.isTrainee ||
-      (debate.wings && debate.wings.some((wing) => wing.isTrainee)) ||
-      debate.debaters.some((debater) => debater.isTrainee)
+  public getDebatesWithSelectiveProcess(
+    debates: Debate[],
+    selectiveProcess: string
+  ) {
+    return debates.filter(
+      (debate) =>
+        debate.chair.selectiveProcess === selectiveProcess ||
+        (debate.wings &&
+          debate.wings.some(
+            (wing) => wing.selectiveProcess === selectiveProcess
+          )) ||
+        debate.debaters.some(
+          (debater) => debater.selectiveProcess === selectiveProcess
+        )
     );
   }
 
-  public getMembersFromPs(members: Member[], ps: string) {
-    return members.filter((member) => member.isTrainee);
+  public getMembersFromSelectiveProcess(
+    members: Member[],
+    selectiveProcess: string
+  ) {
+    return members.filter(
+      (member) => member.selectiveProcess === selectiveProcess
+    );
   }
 
   public getFirstDebaterIndexByHouseIndex(houseIndex: number) {
-    return houseIndex%2 + Math.floor(houseIndex/2) * 4;
+    return (houseIndex % 2) + Math.floor(houseIndex / 2) * 4;
   }
 
   public isDebaterIronOnDebate(debate: Debate, member: Member) {
-    return debate.debaters.filter((debater) => debater.id === member.id).length > 1;
+    return (
+      debate.debaters.filter((debater) => debater.id === member.id).length > 1
+    );
   }
 
-  public sortDebates(debates: Debate[])  {
-    return debates.sort((a, b) =>
-        this.getDatetimeMoment(b.date, b.time).toDate().getTime() - this.getDatetimeMoment(a.date, a.time).toDate().getTime()
-      );
+  public sortDebates(debates: Debate[]) {
+    return debates.sort(
+      (a, b) =>
+        this.getDatetimeMoment(b.date, b.time).toDate().getTime() -
+        this.getDatetimeMoment(a.date, a.time).toDate().getTime()
+    );
   }
 
   private getDatetimeMoment(date: string, time: string) {
@@ -55,5 +74,5 @@ export class UtilService {
     datetime = datetime.minute(Number(time.split(':')[1]));
 
     return datetime;
-    }
+  }
 }

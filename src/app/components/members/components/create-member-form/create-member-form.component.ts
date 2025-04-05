@@ -11,7 +11,7 @@ import { CreateMemberModalComponent } from '../create-member-modal/create-member
 @Component({
   selector: 'app-create-member-form',
   templateUrl: './create-member-form.component.html',
-  styleUrls: ['./create-member-form.component.scss']
+  styleUrls: ['./create-member-form.component.scss'],
 })
 export class CreateMemberFormComponent implements OnInit {
   @Input()
@@ -24,6 +24,8 @@ export class CreateMemberFormComponent implements OnInit {
 
   public societyOptions: SelectOption[] = [];
 
+  public selectiveProcessOptions: SelectOption[] = [];
+
   public loading: boolean = false;
 
   public avatarIconUrl: string = '/assets/user.png';
@@ -33,7 +35,8 @@ export class CreateMemberFormComponent implements OnInit {
   public pfpUrl?: string;
 
   public get description() {
-    if (this.form.controls['description']) return this.form.controls['description'].value;
+    if (this.form.controls['description'])
+      return this.form.controls['description'].value;
 
     return '';
   }
@@ -57,7 +60,9 @@ export class CreateMemberFormComponent implements OnInit {
       newSociety: [''],
       isTrainee: [false],
       blocked: [false],
-      description: ['']
+      description: [''],
+      selectiveProcess: [''],
+      newSelectiveProcess: [''],
     });
 
     const state = getState();
@@ -68,19 +73,32 @@ export class CreateMemberFormComponent implements OnInit {
       this.form.controls['isTrainee'].patchValue(this.member.isTrainee);
       this.form.controls['blocked'].patchValue(this.member.blocked);
       this.form.controls['description'].patchValue(this.member.description);
+      this.form.controls['selectiveProcess'].patchValue(
+        this.member.selectiveProcess
+      );
 
-      this.pfpUrl = this.member.hasPfp ? `/assets/pfps/${this.member.id}` : this.avatarIconUrl;
+      this.pfpUrl = this.member.hasPfp
+        ? `/assets/pfps/${this.member.id}`
+        : this.avatarIconUrl;
 
       if (state[this.member.id] && state[this.member.id].name)
         this.form.controls['name'].patchValue(state[this.member.id].name);
       if (state[this.member.id] && state[this.member.id].society)
         this.form.controls['society'].patchValue(state[this.member.id].society);
       if (state[this.member.id] && state[this.member.id].isTrainee)
-        this.form.controls['isTrainee'].patchValue(state[this.member.id].isTrainee);
+        this.form.controls['isTrainee'].patchValue(
+          state[this.member.id].isTrainee
+        );
       if (state[this.member.id] && state[this.member.id].blocked)
         this.form.controls['blocked'].patchValue(state[this.member.id].blocked);
       if (state[this.member.id] && state[this.member.id].description)
-        this.form.controls['description'].patchValue(state[this.member.id].description);
+        this.form.controls['description'].patchValue(
+          state[this.member.id].description
+        );
+      if (state[this.member.id] && state[this.member.id].selectiveProcess)
+        this.form.controls['selectiveProcess'].patchValue(
+          state[this.member.id].selectiveProcess
+        );
     } else if (state['member']) {
       const member = state['member'];
 
@@ -89,6 +107,9 @@ export class CreateMemberFormComponent implements OnInit {
       this.form.controls['isTrainee'].patchValue(member.isTrainee);
       this.form.controls['blocked'].patchValue(member.blocked);
       this.form.controls['description'].patchValue(member.description);
+      this.form.controls['selectiveProcess'].patchValue(
+        member.selectiveProcess
+      );
     }
   }
 
@@ -98,19 +119,42 @@ export class CreateMemberFormComponent implements OnInit {
     this.memberService.getAllMembers().subscribe((members: Member[]) => {
       this.loading = false;
 
-      this.societyOptions = [...new Set(members.map((member) => member.society))].map((society: string) => ({
-        value: society,
-        viewValue: society
-      })).sort((a, b) => a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase()));
+      this.societyOptions = [
+        ...new Set(members.map((member) => member.society)),
+      ]
+        .map((society: string) => ({
+          value: society,
+          viewValue: society,
+        }))
+        .sort((a, b) =>
+          a.viewValue.toLowerCase().localeCompare(b.viewValue.toLowerCase())
+        );
+
+      this.selectiveProcessOptions = [
+        ...new Set(
+          members
+            .filter((member) => member.selectiveProcess)
+            .map((member) => member.selectiveProcess!)
+        ),
+      ]
+        .map((selectiveProcess: string) => ({
+          value: selectiveProcess,
+          viewValue: selectiveProcess,
+        }))
+        .sort((a, b) =>
+          a.viewValue?.toLowerCase().localeCompare(b.viewValue?.toLowerCase())
+        );
     });
   }
 
   public async onSubmit() {
     const name = this.form.controls['name'].value;
-    const society =
-      this.showNewSocietyFormField() ?
-      this.form.controls['newSociety'].value :
-      this.form.controls['society'].value;
+    const society = this.showNewSocietyFormField()
+      ? this.form.controls['newSociety'].value
+      : this.form.controls['society'].value;
+    const selectiveProcess = this.showNewSelectiveProcessFormField()
+      ? this.form.controls['newSelectiveProcess'].value
+      : this.form.controls['selectiveProcess'].value;
     const isTrainee = this.form.controls['isTrainee'].value;
     const blocked = this.form.controls['blocked'].value;
     const description = this.form.controls['description'].value;
@@ -119,10 +163,27 @@ export class CreateMemberFormComponent implements OnInit {
     if (this.isEditing) {
       const hasPfp = this.member.hasPfp;
       id = this.member.id;
-      await this.memberService.updateMember(id, name, society, isTrainee, hasPfp, blocked, description);
+      await this.memberService.updateMember(
+        id,
+        name,
+        society,
+        isTrainee,
+        hasPfp,
+        blocked,
+        description,
+        selectiveProcess
+      );
     } else {
       const hasPfp: boolean = !!this.avatarFile;
-      const member: Member = await this.memberService.createMember(name, society, isTrainee, hasPfp, blocked, description);
+      const member: Member = await this.memberService.createMember(
+        name,
+        society,
+        isTrainee,
+        hasPfp,
+        blocked,
+        description,
+        selectiveProcess
+      );
       id = member.id;
     }
 
@@ -135,10 +196,8 @@ export class CreateMemberFormComponent implements OnInit {
 
     const state = getState();
 
-    if (this.isEditing)
-      delete state[this.member.id];
-    else
-      delete state['member'];
+    if (this.isEditing) delete state[this.member.id];
+    else delete state['member'];
 
     setState(state);
 
@@ -161,7 +220,7 @@ export class CreateMemberFormComponent implements OnInit {
   }
 
   public onFileSelected(event: any) {
-    if(event.target.files.length > 0) {
+    if (event.target.files.length > 0) {
       this.avatarFile = event.target.files[0];
 
       this.pfpUrl = URL.createObjectURL(this.avatarFile);
@@ -176,6 +235,12 @@ export class CreateMemberFormComponent implements OnInit {
     return this.form.controls['society'].value === 'Nova Sociedade';
   }
 
+  public showNewSelectiveProcessFormField() {
+    return (
+      this.form.controls['selectiveProcess'].value === 'Novo Processo Seletivo'
+    );
+  }
+
   public close() {
     this.dialog.open(ConfirmModalComponent, {
       data: {
@@ -186,38 +251,39 @@ export class CreateMemberFormComponent implements OnInit {
           const hasChanged = (property: keyof Member) =>
             this.form.controls[property].value !== this.member[property];
           const change = (property: keyof Member) =>
-            hasChanged(property) ?
-            this.form.controls[property].value :
-            '';
+            hasChanged(property) ? this.form.controls[property].value : '';
 
           if (this.isEditing) {
             state[this.member.id] = {
               name: change('name'),
-              society: hasChanged('society') ?
-                this.showNewSocietyFormField() ?
-                this.form.controls['newSociety'].value :
-                this.form.controls['society'].value :
-                '',
+              society: hasChanged('society')
+                ? this.showNewSocietyFormField()
+                  ? this.form.controls['newSociety'].value
+                  : this.form.controls['society'].value
+                : '',
               isTrainee: change('isTrainee'),
-              blocked: change('blocked')
-            }
+              blocked: change('blocked'),
+            };
           } else {
             state['member'] = {
               name: this.form.controls['name'].value,
-              society:
-                this.showNewSocietyFormField() ?
-                this.form.controls['newSociety'].value :
-                this.form.controls['society'].value,
+              society: this.showNewSocietyFormField()
+                ? this.form.controls['newSociety'].value
+                : this.form.controls['society'].value,
               isTrainee: this.form.controls['isTrainee'].value,
-              blocked: this.form.controls['blocked'].value
-            }
+              blocked: this.form.controls['blocked'].value,
+            };
           }
 
           setState(state);
 
           this.dialogRef.close();
-        }
+        },
       },
     });
+  }
+
+  public societyIsSdufrj() {
+    return this.form.controls['society'].value === 'SDUFRJ';
   }
 }

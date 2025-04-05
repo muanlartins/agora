@@ -8,19 +8,42 @@
       class="form__filter__checkbox"
       color="primary"
       formControlName="active"
-    >Ativos</mat-checkbox>
+      >Ativos</mat-checkbox
+    >
     <mat-checkbox
       class="form__filter__checkbox"
       color="primary"
       formControlName="inactive"
-    >Inativos</mat-checkbox>
+      >Inativos</mat-checkbox
+    >
     <mat-checkbox
       class="form__filter__checkbox"
       color="primary"
       formControlName="trainee"
-    >Trainees</mat-checkbox>
+      >Trainees</mat-checkbox
+    >
+    <mat-form-field class="form__filter__input">
+      <mat-label>Processo Seletivo</mat-label>
+      <mat-select formControlName="selectiveProcess">
+        <mat-option>Nenhuma</mat-option>
+        <mat-option
+          *ngFor="let option of selectiveProcessOptions"
+          [value]="option.value"
+        >
+          {{ option.viewValue }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
-  <button *ngIf="isAdmin()" class="form__button" mat-flat-button color="primary" (click)="openCreateMemberModal()">Criar</button>
+  <button
+    *ngIf="isAdmin()"
+    class="form__button"
+    mat-flat-button
+    color="primary"
+    (click)="openCreateMemberModal()"
+  >
+    Criar
+  </button>
 </form>
 
 <div class="members">
@@ -33,23 +56,41 @@
     <div class="members__header__title"></div>
   </div>
   <div class="members__body">
-    <div class="members__body__row" *ngFor="let member of filteredMembers" (click)="goToMemberPage(member.id)">
+    <div
+      class="members__body__row"
+      *ngFor="let member of filteredMembers"
+      (click)="goToMemberPage(member.id)"
+    >
       <div class="members__body__row__value">{{ member.name }}</div>
       <div class="members__body__row__value">{{ member.society }}</div>
-      <div class="members__body__row__value">{{ debatesParticipations[member.id] }}</div>
+      <div class="members__body__row__value">
+        {{ debatesParticipations[member.id] }}
+      </div>
       <div class="members__body__row__value">
         <button
           mat-flat-button
           color="primary"
           (click)="copyPrivateUrl(member.id, $event)"
           class="members__body__row__value__button"
-        >URL Privada</button>
+        >
+          URL Privada
+        </button>
       </div>
       <div class="members__body__row__value">
-        <img *ngIf="showEdit()" (click)="editMember(member.id, $event)" src="assets/edit-text.png" class="members__body__row__value__icon" />
+        <img
+          *ngIf="showEdit()"
+          (click)="editMember(member.id, $event)"
+          src="assets/edit-text.png"
+          class="members__body__row__value__icon"
+        />
       </div>
       <div class="members__body__row__value">
-        <img *ngIf="showDelete(member.id)" (click)="deleteMember(member.id, $event)" src="assets/delete.png" class="members__body__row__value__icon" />
+        <img
+          *ngIf="showDelete(member.id)"
+          (click)="deleteMember(member.id, $event)"
+          src="assets/delete.png"
+          class="members__body__row__value__icon"
+        />
       </div>
     </div>
   </div>

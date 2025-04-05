@@ -1,21 +1,33 @@
 <div class="page">
-  <app-navbar class="page__navbar" (checkbox)="onNavbarHamburgerChange($event)"></app-navbar>
-  <div class="page__content" [ngClass]="{ 'page__content--hide': isNavbarHamburgerActive }">
+  <app-navbar
+    class="page__navbar"
+    (checkbox)="onNavbarHamburgerChange($event)"
+  ></app-navbar>
+  <div
+    class="page__content"
+    [ngClass]="{ 'page__content--hide': isNavbarHamburgerActive }"
+  >
     <div class="page__content__header" [formGroup]="form">
       <mat-form-field class="page__content__header__input">
         <mat-label>Sociedade</mat-label>
         <mat-select formControlName="society">
           <mat-option>Nenhum</mat-option>
-          <mat-option *ngFor="let option of societyOptions" [value]="option.value">
+          <mat-option
+            *ngFor="let option of societyOptions"
+            [value]="option.value"
+          >
             {{ option.viewValue }}
           </mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field class="page__content__header__input">
         <mat-label>Processo Seletivo</mat-label>
-        <mat-select formControlName="ps">
+        <mat-select formControlName="selectiveProcess">
           <mat-option>Nenhum</mat-option>
-          <mat-option *ngFor="let option of psOptions" [value]="option.value">
+          <mat-option
+            *ngFor="let option of selectiveProcessOptions"
+            [value]="option.value"
+          >
             {{ option.viewValue }}
           </mat-option>
         </mat-select>
@@ -23,20 +35,37 @@
     </div>
     <div class="page__content__ranks">
       <div class="page__content__ranks__rank" *ngFor="let rank of ranks">
-        <div class="page__content__ranks__rank__title" [innerHTML]="rank.title"></div>
-        <div class="page__content__ranks__rank__disclaimer" [innerHTML]="rank.disclaimer"></div>
+        <div
+          class="page__content__ranks__rank__title"
+          [innerHTML]="rank.title"
+        ></div>
+        <div
+          class="page__content__ranks__rank__disclaimer"
+          [innerHTML]="rank.disclaimer"
+        ></div>
         <div class="page__content__ranks__rank__placements">
-          <div class="page__content__ranks__rank__placements__placement" *ngFor="let placement of rank.placements; index as index">
+          <div
+            class="page__content__ranks__rank__placements__placement"
+            *ngFor="let placement of rank.placements; index as index"
+          >
             <div
               [class]="
                 'page__content__ranks__rank__placements__placement__title ' +
-                'page__content__ranks__rank__placements__placement__title--' + index
+                'page__content__ranks__rank__placements__placement__title--' +
+                index
               "
               [innerHTML]="placement.title"
             ></div>
-            <div class="page__content__ranks__rank__placements__placement__members">
-              <div class="page__content__ranks__rank__placements__placement__members__member" *ngFor="let member of placement.members">
-                <div class="page__content__ranks__rank__placements__placement__members__member__pfp">
+            <div
+              class="page__content__ranks__rank__placements__placement__members"
+            >
+              <div
+                class="page__content__ranks__rank__placements__placement__members__member"
+                *ngFor="let member of placement.members"
+              >
+                <div
+                  class="page__content__ranks__rank__placements__placement__members__member__pfp"
+                >
                   <app-pfp
                     class="page__content__ranks__rank__placements__placement__members__member__pfp"
                     [id]="member.id"
@@ -46,24 +75,33 @@
                   <img
                     [class]="
                       'page__content__ranks__rank__placements__placement__members__member__pfp__icon ' +
-                      'page__content__ranks__rank__placements__placement__members__member__pfp__icon--' + index
+                      'page__content__ranks__rank__placements__placement__members__member__pfp__icon--' +
+                      index
                     "
                     [src]="'/assets/' + getIconNameByIndex(index)"
                   />
                 </div>
-                <div class="page__content__ranks__rank__placements__placement__members__member__description">
+                <div
+                  class="page__content__ranks__rank__placements__placement__members__member__description"
+                >
                   <div
                     [class]="
                       'page__content__ranks__rank__placements__placement__members__member__description__name ' +
-                      'page__content__ranks__rank__placements__placement__members__member__description__name--' + index
+                      'page__content__ranks__rank__placements__placement__members__member__description__name--' +
+                      index
                     "
-                  >{{ member.name }}</div>
+                  >
+                    {{ member.name }}
+                  </div>
                   <div
                     [class]="
                       'page__content__ranks__rank__placements__placement__members__member__description__society ' +
-                      'page__content__ranks__rank__placements__placement__members__member__description__society--' + index
+                      'page__content__ranks__rank__placements__placement__members__member__description__society--' +
+                      index
                     "
-                  >{{ member.society }}</div>
+                  >
+                    {{ member.society }}
+                  </div>
                 </div>
               </div>
             </div>
@@ -73,22 +111,41 @@
     </div>
     <div *ngIf="!loading" class="page__content__divider"></div>
     <div class="page__content__statistics">
-      <div class="page__content__statistics__statistic" *ngFor="let statistic of statistics">
-        <div class="page__content__statistics__statistic__title" [innerHTML]="statistic.title"></div>
+      <div
+        class="page__content__statistics__statistic"
+        *ngFor="let statistic of statistics"
+      >
+        <div
+          class="page__content__statistics__statistic__title"
+          [innerHTML]="statistic.title"
+        ></div>
         <div class="page__content__statistics__statistic__fields">
           <div
             class="page__content__statistics__statistic__fields__field"
-            [class.page__content__statistics__statistic__fields__field--full]="field.full"
+            [class.page__content__statistics__statistic__fields__field--full]="
+              field.full
+            "
             *ngFor="let field of statistic.fields"
           >
-            <div class="page__content__statistics__statistic__fields__field__title" [innerHTML]="field.title"></div>
-            <div *ngIf="field.description" class="page__content__statistics__statistic__fields__field__description">
+            <div
+              class="page__content__statistics__statistic__fields__field__title"
+              [innerHTML]="field.title"
+            ></div>
+            <div
+              *ngIf="field.description"
+              class="page__content__statistics__statistic__fields__field__description"
+            >
               {{ field.description }}
             </div>
-            <div *ngIf="field.chart" class="page__content__statistics__statistic__fields__field__chart">
+            <div
+              *ngIf="field.chart"
+              class="page__content__statistics__statistic__fields__field__chart"
+            >
               <canvas
                 class="page__content__statistics__statistic__fields__field__chart__canvas"
-                [class.page__content__statistics__statistic__fields__field__chart__canvas--full]="field.full"
+                [class.page__content__statistics__statistic__fields__field__chart__canvas--full]="
+                  field.full
+                "
                 #chart
               ></canvas>
             </div>

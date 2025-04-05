@@ -12,6 +12,8 @@ import { isAdmin } from 'src/app/utils/auth';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { NotificationService } from 'src/app/services/notification.service';
 import { Router } from '@angular/router';
+import { SelectOption } from 'src/app/models/types/select-option';
+import * as removeAccents from 'remove-accents';
 
 @Component({
   selector: 'app-members-table',
@@ -29,6 +31,8 @@ export class MembersTableComponent implements OnInit {
 
   public debatesParticipations: { [id: string]: number } = {};
 
+  public selectiveProcessOptions: SelectOption[] = [];
+
   public constructor(
     private formBuilder: FormBuilder,
     private memberService: MemberService,
@@ -36,10 +40,8 @@ export class MembersTableComponent implements OnInit {
     private dialog: MatDialog,
     private clipboard: Clipboard,
     private notificationService: NotificationService,
-    private router: Router,
-  ) {
-
-  }
+    private router: Router
+  ) {}
 
   public ngOnInit(): void {
     this.initForm();
@@ -51,10 +53,24 @@ export class MembersTableComponent implements OnInit {
       name: [''],
       active: [false],
       trainee: [false],
-      inactive: [false]
+      inactive: [false],
+      selectiveProcess: [''],
     });
 
     this.subscribeToValueChanges();
+  }
+
+  public initOptions() {
+    this.selectiveProcessOptions = [
+      ...new Set(
+        this.members
+          .filter((member) => member.selectiveProcess)
+          .map((member) => member.selectiveProcess!)
+      ),
+    ].map((selectiveProcess: string) => ({
+      value: selectiveProcess,
+      viewValue: selectiveProcess,
+    }));
   }
 
   public subscribeToValueChanges() {
@@ -73,37 +89,44 @@ export class MembersTableComponent implements OnInit {
     this.form.controls['inactive'].valueChanges.subscribe(() => {
       this.setFilters();
     });
+
+    this.form.controls['selectiveProcess'].valueChanges.subscribe(() => {
+      this.setFilters();
+    });
   }
 
   public getData() {
     combineLatest([
       this.debateService.getAllDebates(),
-      this.memberService.getAllMembers()
+      this.memberService.getAllMembers(),
     ]).subscribe(([debates, members]) => {
       if (debates && debates.length && members && members.length) {
         this.debates = debates;
         this.members = members;
         this.members.forEach((member) => {
-          const debatesParticipations = this.debates.filter((debate) =>
-            debate.chair.id === member.id ||
-            debate.wings?.some((wing) => wing.id === member.id) ||
-            debate.debaters.some((debater) => debater.id === member.id)
+          const debatesParticipations = this.debates.filter(
+            (debate) =>
+              debate.chair.id === member.id ||
+              debate.wings?.some((wing) => wing.id === member.id) ||
+              debate.debaters.some((debater) => debater.id === member.id)
           ).length;
 
           this.debatesParticipations[member.id] = debatesParticipations;
         });
         this.filteredMembers = members;
+
+        this.initOptions();
       }
     });
   }
 
   public openCreateMemberModal() {
-    this.dialog.open(CreateMemberModalComponent, { 
+    this.dialog.open(CreateMemberModalComponent, {
       minWidth: 'calc(100vw - 2rem)',
       minHeight: 'calc(100vh - 2rem)',
       maxHeight: 'calc(100vh - 2rem)',
       maxWidth: 'calc(100vw - 2rem)',
-      disableClose: true  
+      disableClose: true,
     });
   }
 
@@ -111,31 +134,37 @@ export class MembersTableComponent implements OnInit {
     event.stopPropagation();
 
     this.clipboard.copy(`https://agoradebates.com/member/${id}`);
-    this.notificationService.createSuccessNotification('A <b>URL Pública</b> foi copiada com sucesso.');
+    this.notificationService.createSuccessNotification(
+      'A <b>URL Pública</b> foi copiada com sucesso.'
+    );
   }
 
   public async copyPrivateUrl(id: string, event: Event) {
     event.stopPropagation();
 
-    const hashedId = (await this.memberService.getHashedId(id));
+    const hashedId = await this.memberService.getHashedId(id);
 
-    this.clipboard.copy(`https://agoradebates.com/member/${id}/private/${hashedId}`);
-    this.notificationService.createSuccessNotification('A <b>URL Privada</b> foi copiada com sucesso.');
+    this.clipboard.copy(
+      `https://agoradebates.com/member/${id}/private/${hashedId}`
+    );
+    this.notificationService.createSuccessNotification(
+      'A <b>URL Privada</b> foi copiada com sucesso.'
+    );
   }
 
   public editMember(id: string, event: Event) {
     event.stopPropagation();
 
-    this.dialog.open(CreateMemberModalComponent, { 
+    this.dialog.open(CreateMemberModalComponent, {
       minWidth: 'calc(100vw - 2rem)',
       minHeight: 'calc(100vh - 2rem)',
       maxHeight: 'calc(100vh - 2rem)',
       maxWidth: 'calc(100vw - 2rem)',
       data: {
         isEditing: true,
-        member: this.members.find((member) => member.id === id)
-      }, 
-      disableClose: true 
+        member: this.members.find((member) => member.id === id),
+      },
+      disableClose: true,
     });
   }
 
@@ -144,7 +173,7 @@ export class MembersTableComponent implements OnInit {
 
     const member = this.members.find((member) => member.id === id)!;
 
-    this.dialog.open(ConfirmModalComponent, { 
+    this.dialog.open(ConfirmModalComponent, {
       minWidth: 'calc(100vw - 2rem)',
       minHeight: 'calc(100vh - 2rem)',
       maxHeight: 'calc(100vh - 2rem)',
@@ -154,9 +183,9 @@ export class MembersTableComponent implements OnInit {
         positiveCallback: async () => {
           await this.memberService.deleteMember(id);
         },
-        negativeCallback: () => {}
-      }, 
-    })
+        negativeCallback: () => {},
+      },
+    });
   }
 
   public setFilters() {
@@ -164,31 +193,47 @@ export class MembersTableComponent implements OnInit {
     const active = this.form.controls['active'].value;
     const trainee = this.form.controls['trainee'].value;
     const inactive = this.form.controls['inactive'].value;
+    const selectiveProcess = this.form.controls['selectiveProcess'].value;
 
     this.filteredMembers = this.members;
 
     if (name)
+      this.filteredMembers = this.filteredMembers.filter((member) =>
+        removeAccents(member.name.toLowerCase()).includes(
+          removeAccents(name.toLowerCase())
+        )
+      );
 
     if (active)
       this.filteredMembers = this.filteredMembers.filter((member) =>
-        this.debates.some((debate) =>
-          debate.chair.id === member.id ||
-          debate.wings?.some((wing) => wing.id === member.id) ||
-          debate.debaters.some((debater) => debater.id === member.id)
+        this.debates.some(
+          (debate) =>
+            debate.chair.id === member.id ||
+            debate.wings?.some((wing) => wing.id === member.id) ||
+            debate.debaters.some((debater) => debater.id === member.id)
         )
       );
 
     if (trainee)
-      this.filteredMembers = this.filteredMembers.filter((member) => member.isTrainee);
+      this.filteredMembers = this.filteredMembers.filter(
+        (member) => member.isTrainee
+      );
 
     if (inactive)
-      this.filteredMembers = this.filteredMembers.filter((member) =>
-        !this.debates.some((debate) =>
-          debate.chair.id === member.id ||
-          debate.wings?.some((wing) => wing.id === member.id) ||
-          debate.debaters.some((debater) => debater.id === member.id)
-        )
-      )
+      this.filteredMembers = this.filteredMembers.filter(
+        (member) =>
+          !this.debates.some(
+            (debate) =>
+              debate.chair.id === member.id ||
+              debate.wings?.some((wing) => wing.id === member.id) ||
+              debate.debaters.some((debater) => debater.id === member.id)
+          )
+      );
+
+    if (selectiveProcess)
+      this.filteredMembers = this.filteredMembers.filter(
+        (member) => member.selectiveProcess === selectiveProcess
+      );
   }
 
   public isAdmin() {

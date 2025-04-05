@@ -69,7 +69,7 @@
         <app-markdown
           class="page__content__body__description__markdown"
           [class.page__content__body__description__markdown--full]="!checked"
-          [data]="member.description"
+          [data]="member.description!"
         ></app-markdown>
       </div>
       <button *ngIf="checked" class="page__content__body__button" mat-flat-button color="primary" (click)="saveDescription()">Salvar</button>

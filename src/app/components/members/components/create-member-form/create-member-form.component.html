@@ -1,24 +1,15 @@
 <form class="form" [formGroup]="form" (submit)="onSubmit()">
   <div class="form__avatars">
-    <label
-      for="upload"
-      class="form__avatars__avatar"
-    >
-      <input type='file' hidden id="upload" (change)="onFileSelected($event)" />
+    <label for="upload" class="form__avatars__avatar">
+      <input type="file" hidden id="upload" (change)="onFileSelected($event)" />
       <nz-avatar [nzSize]="128" [nzSrc]="getSrc()"></nz-avatar>
     </label>
-    <label
-      for="upload"
-      class="form__avatars__avatar"
-    >
-      <input type='file' hidden id="upload" (change)="onFileSelected($event)" />
+    <label for="upload" class="form__avatars__avatar">
+      <input type="file" hidden id="upload" (change)="onFileSelected($event)" />
       <nz-avatar [nzSize]="64" [nzSrc]="getSrc()"></nz-avatar>
     </label>
-    <label
-      for="upload"
-      class="form__avatars__avatar"
-    >
-      <input type='file' hidden id="upload" (change)="onFileSelected($event)" />
+    <label for="upload" class="form__avatars__avatar">
+      <input type="file" hidden id="upload" (change)="onFileSelected($event)" />
       <nz-avatar [nzSize]="32" [nzSrc]="getSrc()"></nz-avatar>
     </label>
   </div>
@@ -29,18 +20,16 @@
   <mat-form-field class="form__field form__field--select">
     <mat-label>Sociedade</mat-label>
     <mat-select formControlName="society">
-      <mat-option value="Nova Sociedade">
-        Nova Sociedade
-      </mat-option>
-      <mat-option *ngFor="let society of societyOptions" [value]="society.value">
+      <mat-option value="Nova Sociedade"> Nova Sociedade </mat-option>
+      <mat-option
+        *ngFor="let society of societyOptions"
+        [value]="society.value"
+      >
         {{ society.viewValue }}
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <mat-form-field
-    *ngIf="showNewSocietyFormField()"
-    class="form__field"
-  >
+  <mat-form-field *ngIf="showNewSocietyFormField()" class="form__field">
     <mat-label>Nova Sociedade</mat-label>
     <textarea
       matInput
@@ -50,11 +39,42 @@
       formControlName="newSociety"
     ></textarea>
   </mat-form-field>
-  <mat-checkbox class="form__field" color="primary" formControlName="isTrainee">Trainee</mat-checkbox>
-  <mat-checkbox class="form__field" color="primary" formControlName="blocked">Bloquear</mat-checkbox>
-  <mat-form-field
-    class="form__field form__field--textarea"
+  <ng-container *ngIf="societyIsSdufrj()">
+    <mat-form-field class="form__field form__field--select">
+      <mat-label>Processo Seletivo</mat-label>
+      <mat-select formControlName="selectiveProcess">
+        <mat-option value="Novo Processo Seletivo">
+          Novo Processo Seletivo
+        </mat-option>
+        <mat-option
+          *ngFor="let option of selectiveProcessOptions"
+          [value]="option.value"
+        >
+          {{ option.viewValue }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field
+      *ngIf="showNewSelectiveProcessFormField()"
+      class="form__field"
+    >
+      <mat-label>Novo Processo Seletivo</mat-label>
+      <textarea
+        matInput
+        cdkTextareaAutosize
+        #autosize="cdkTextareaAutosize"
+        cdkAutosizeMinRows="1"
+        formControlName="newSelectiveProcess"
+      ></textarea>
+    </mat-form-field>
+  </ng-container>
+  <mat-checkbox class="form__field" color="primary" formControlName="isTrainee"
+    >Trainee</mat-checkbox
   >
+  <mat-checkbox class="form__field" color="primary" formControlName="blocked"
+    >Bloquear</mat-checkbox
+  >
+  <mat-form-field class="form__field form__field--textarea">
     <mat-label>Descrição</mat-label>
     <textarea
       matInput
@@ -74,6 +94,10 @@
     color="primary"
     [disabled]="!form.valid"
     type="submit"
-  >{{ getButtonText() }}</button>
+  >
+    {{ getButtonText() }}
+  </button>
 </form>
-<button class="cancel" mat-flat-button color="primary" (click)="close()">Cancelar</button>
+<button class="cancel" mat-flat-button color="primary" (click)="close()">
+  Cancelar
+</button>

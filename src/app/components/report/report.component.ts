@@ -1276,7 +1276,8 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       this.member.isTrainee,
       this.member.hasPfp,
       this.member.blocked,
-      this.member.description
+      this.member.description,
+      this.member.selectiveProcess
     );
 
     this.notificationService.createSuccessNotification("Descrição atualizada com sucesso.");
