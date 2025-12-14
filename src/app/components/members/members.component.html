@@ -1,12 +1,9 @@
-<div class="page">
-  <app-navbar
-    class="page__navbar"
-    (checkbox)="onNavbarHamburgerChange($event)"
-  ></app-navbar>
+<div class="members-page">
+  <app-navbar class="members-page__navbar"></app-navbar>
   <div
-    class="page__body"
-    [ngClass]="{ 'page__body--hide': isNavbarHamburgerActive }"
+    class="members-page__content"
+    [ngClass]="{ 'members-page__content--hide': isNavbarHamburgerActive }"
   >
-    <app-members-table class="page__body__table"></app-members-table>
+    <app-members-table></app-members-table>
   </div>
 </div>

@@ -214,9 +214,19 @@
 
           &__icon {
             cursor: pointer;
-            filter: $filter;
+            color: $text-secondary-dark;
+            font-size: 24px;
             width: 24px;
             height: 24px;
+            transition: color $transition-fast;
+
+            &:hover {
+              color: $text-primary-dark;
+            }
+
+            &--delete:hover {
+              color: $danger;
+            }
           }
         }
       }
@@ -328,9 +338,19 @@
 
             &__icon {
               cursor: pointer;
-              filter: $filter;
+              color: $text-secondary-dark;
+              font-size: 24px;
               width: 24px;
               height: 24px;
+              transition: color $transition-fast;
+
+              &:hover {
+                color: $text-primary-dark;
+              }
+
+              &--delete:hover {
+                color: $danger;
+              }
             }
           }
         }

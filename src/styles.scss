@@ -1,24 +1,31 @@
-@use '@angular/material' as mat;
+// ==========================================================================
+// AGORA GLOBAL STYLES
+// ==========================================================================
 
+@use '@angular/material' as mat;
 @import 'src/variables.scss';
+
+// -----------------------------------------------------------------------------
+// ANGULAR MATERIAL THEME
+// -----------------------------------------------------------------------------
 
 @include mat.core();
 
-$my-primary: mat.define-palette((
-  50: #fff7e8,
-  100: #ffecc6,
-  200: #ffe0a0,
-  300: #ffd379,
-  400: #ffc95d,
-  500: #ffc040,
-  600: #ffba3a,
-  700: #ffb232,
-  800: #ffaa2a,
-  900: #ff9c1c,
-  A100: #ffffff,
-  A200: #ffffff,
-  A400: #ffe8cd,
-  A700: #ffdcb3,
+$agora-primary: mat.define-palette((
+  50: #fdf8e8,
+  100: #f9ecc5,
+  200: #f5df9f,
+  300: #f0d279,
+  400: #edc85c,
+  500: $primary,
+  600: #c99a31,
+  700: #b8892b,
+  800: #a77925,
+  900: #8a5f1b,
+  A100: #fff3d6,
+  A200: #ffe4a3,
+  A400: #ffd570,
+  A700: #ffcd57,
   contrast: (
     50: #000000,
     100: #000000,
@@ -27,16 +34,17 @@ $my-primary: mat.define-palette((
     400: #000000,
     500: #000000,
     600: #000000,
-    700: #000000,
-    800: #000000,
-    900: #000000,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
     A100: #000000,
     A200: #000000,
     A400: #000000,
     A700: #000000,
   )
 ));
-$my-accent: mat.define-palette((
+
+$agora-accent: mat.define-palette((
   50: #f2eee6,
   100: #ded4c0,
   200: #c8b797,
@@ -52,115 +60,281 @@ $my-accent: mat.define-palette((
   A400: #ffa032,
   A700: #ff9419,
   contrast: (
-      50: #000000,
-      100: #000000,
-      200: #000000,
-      300: #000000,
-      400: #000000,
-      500: #ffffff,
-      600: #ffffff,
-      700: #ffffff,
-      800: #ffffff,
-      900: #ffffff,
-      A100: #000000,
-      A200: #000000,
-      A400: #000000,
-      A700: #000000,
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #000000,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #000000,
+    A700: #000000,
   )
 ));
 
-$my-theme: mat.define-dark-theme((
- color: (
-   primary: $my-primary,
-   accent: $my-accent,
- ),
- typography: mat.define-typography-config(
-  $font-family: 'Poppins'
- ),
- density: 0,
+$agora-theme: mat.define-dark-theme((
+  color: (
+    primary: $agora-primary,
+    accent: $agora-accent,
+  ),
+  typography: mat.define-typography-config(
+    $font-family: $font-body
+  ),
+  density: 0,
 ));
 
-@include mat.all-component-themes($my-theme);
+@include mat.all-component-themes($agora-theme);
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap');
+// -----------------------------------------------------------------------------
+// CSS CUSTOM PROPERTIES (Theme Variables)
+// -----------------------------------------------------------------------------
 
-@font-face {
-  src: url('assets/fonts/Greek-Freak.ttf');
-  font-family: 'Greek Freak';
+:root {
+  // Colors
+  --color-primary: #{$primary};
+  --color-primary-light: #{$primary-light};
+  --color-primary-dark: #{$primary-dark};
+  --color-primary-muted: #{$primary-muted};
+
+  // Typography
+  --font-display: #{$font-display};
+  --font-body: #{$font-body};
+
+  // Transitions
+  --transition-fast: #{$transition-fast};
+  --transition-base: #{$transition-base};
+  --transition-slow: #{$transition-slow};
+
+  // Spacing
+  --space-1: #{$space-1};
+  --space-2: #{$space-2};
+  --space-3: #{$space-3};
+  --space-4: #{$space-4};
+  --space-6: #{$space-6};
+  --space-8: #{$space-8};
+  --space-12: #{$space-12};
+  --space-16: #{$space-16};
+
+  // Radius
+  --radius-sm: #{$radius-sm};
+  --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
 }
 
-* {
-	margin: 0;
-	padding: 0;
-  font-family: 'Poppins';
-  scroll-margin-top: 16px;
+// Dark Theme (Default)
+.theme-dark,
+:root {
+  --color-background: #{$background-dark};
+  --color-surface: #{$surface-dark};
+  --color-surface-elevated: #{$surface-elevated-dark};
+  --color-border: #{$border-dark};
+
+  --color-text-primary: #{$text-primary-dark};
+  --color-text-secondary: #{$text-secondary-dark};
+  --color-text-muted: #{$text-muted-dark};
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
 }
 
-html, body {
-  height: 100%;
-  scroll-behavior: smooth;
+// Light Theme
+.theme-light {
+  --color-background: #{$background-light};
+  --color-surface: #{$surface-light};
+  --color-surface-elevated: #{$surface-elevated-light};
+  --color-border: #{$border-light};
+
+  --color-text-primary: #{$text-primary-light};
+  --color-text-secondary: #{$text-secondary-light};
+  --color-text-muted: #{$text-muted-light};
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
 }
 
-.cdk-drag-preview {
+// -----------------------------------------------------------------------------
+// CSS RESET & BASE STYLES
+// -----------------------------------------------------------------------------
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  border-radius: 4px;
-  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-              0 8px 10px 1px rgba(0, 0, 0, 0.14),
-              0 3px 14px 2px rgba(0, 0, 0, 0.12);
-}
-
-.cdk-drag-animating {
-  transition: $transition;
-}
-
-body {
-  background: $black;
 }
 
 html {
-  --primary: #FFC040;
-  --secondary: #906E2E;
-  --white: #D9D9D9;
-  --black: #201C1C;
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: $breakpoint-xl) {
+    font-size: 15px;
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    font-size: 14px;
+  }
 }
 
+body {
+  font-family: var(--font-body);
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+// Headings use display font
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-tight;
+  color: var(--color-text-primary);
+}
+
+h1 { font-size: $font-size-5xl; }
+h2 { font-size: $font-size-4xl; }
+h3 { font-size: $font-size-3xl; }
+h4 { font-size: $font-size-2xl; }
+h5 { font-size: $font-size-xl; }
+h6 { font-size: $font-size-lg; }
+
+p {
+  line-height: $line-height-relaxed;
+  color: var(--color-text-secondary);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--color-primary);
+  }
+}
+
+strong, b {
+  font-weight: $font-weight-semibold;
+}
+
+// -----------------------------------------------------------------------------
+// SELECTION
+// -----------------------------------------------------------------------------
+
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+}
+
+// -----------------------------------------------------------------------------
+// SCROLLBAR (Dark theme optimized)
+// -----------------------------------------------------------------------------
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: $radius-full;
+
+  &:hover {
+    background: var(--color-text-muted);
+  }
+}
+
+// Firefox
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) var(--color-background);
+}
+
+// -----------------------------------------------------------------------------
+// FOCUS STATES
+// -----------------------------------------------------------------------------
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+// -----------------------------------------------------------------------------
+// ANGULAR MATERIAL OVERRIDES
+// -----------------------------------------------------------------------------
+
+// Form fields
+.mat-mdc-form-field {
+  --mdc-outlined-text-field-outline-color: var(--color-border);
+  --mdc-outlined-text-field-focus-outline-color: var(--color-primary);
+  --mdc-outlined-text-field-hover-outline-color: var(--color-text-muted);
+}
+
+// Tables
 table {
-  --mat-table-background-color: var(--black) !important;
+  --mat-table-background-color: var(--color-surface) !important;
 }
 
 mat-paginator {
-  --mat-paginator-container-background-color: var(--black) !important;
+  --mat-paginator-container-background-color: var(--color-surface) !important;
 }
 
+// Dialogs
 mat-dialog-container {
-  --mdc-dialog-container-color: var(--black) !important;
+  --mdc-dialog-container-color: var(--color-surface) !important;
 }
 
+// Stepper
 mat-stepper {
-  --mat-stepper-container-color: var(--black) !important;
+  --mat-stepper-container-color: var(--color-surface) !important;
 }
 
+// Checkbox/Radio labels
 .mdc-label {
-  line-height: 125%;
+  line-height: $line-height-normal;
 }
+
+// -----------------------------------------------------------------------------
+// NG-ZORRO OVERRIDES (Legacy - for components still using it)
+// -----------------------------------------------------------------------------
 
 .nz-notification {
-  background: $brown;
-  color: $white;
+  background: var(--color-surface-elevated);
+  color: var(--color-text-primary);
+  border-radius: $radius-md;
 
   .ant-notification-notice-message {
-    color: $white;
-    font-weight: 500;
-    font-size: 18px;
+    color: var(--color-text-primary);
+    font-weight: $font-weight-medium;
+    font-size: $font-size-lg;
   }
 
   .ant-notification-notice-description {
-    color: $white;
-    font-size: 14px;
+    color: var(--color-text-secondary);
+    font-size: $font-size-sm;
   }
 
   svg {
-    fill: $primary;
+    fill: var(--color-primary);
   }
 
   .ant-notification-notice-icon-success svg {
@@ -172,79 +346,56 @@ mat-stepper {
   }
 
   .ant-notification-notice-close-x svg {
-    fill: $white;
+    fill: var(--color-text-secondary);
   }
 }
 
-a {
-  color: inherit;
+// -----------------------------------------------------------------------------
+// CDK DRAG & DROP
+// -----------------------------------------------------------------------------
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: $radius-md;
+  box-shadow: var(--shadow-lg);
 }
 
-input[type=number]::-webkit-inner-spin-button {
+.cdk-drag-animating {
+  transition: transform var(--transition-base);
+}
+
+// -----------------------------------------------------------------------------
+// UTILITY CLASSES
+// -----------------------------------------------------------------------------
+
+.text-primary { color: var(--color-primary) !important; }
+.text-muted { color: var(--color-text-muted) !important; }
+.text-secondary { color: var(--color-text-secondary) !important; }
+
+.bg-surface { background-color: var(--color-surface) !important; }
+.bg-elevated { background-color: var(--color-surface-elevated) !important; }
+
+.font-display { font-family: var(--font-display) !important; }
+.font-body { font-family: var(--font-body) !important; }
+
+// Hide number input spinners
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
+  margin: 0;
 }
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-  box-sizing: content-box;
-  overflow-wrap: break-word;
+input[type=number] {
+  -moz-appearance: textfield;
 }
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-	display: block;
-}
-body {
-	line-height: 1;
-}
-ol, ul {
-	list-style: none;
-}
-blockquote, q {
-	quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
-}
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-}
-b {
-  font-weight: bold;
-}
+
+// -----------------------------------------------------------------------------
+// LEGACY VARIABLES (CSS Custom Properties for backwards compatibility)
+// -----------------------------------------------------------------------------
 
 html {
-  font-size: 16px;
-}
-
-@media (width <= $large) {
-  html {
-    font-size: 14px;
-  }
-}
-
-@media (width <= $medium) {
-  html {
-    font-size: 12px;
-  }
+  --primary: #{$primary};
+  --secondary: #{$secondary};
+  --white: #{$text-primary-dark};
+  --black: #{$background-dark};
 }

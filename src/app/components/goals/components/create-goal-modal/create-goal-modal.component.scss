@@ -1,0 +1,46 @@
+@import 'variables';
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  background: $surface-dark;
+  border-radius: $radius-lg;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $space-6;
+    border-bottom: 1px solid $border-dark;
+    background: $surface-elevated-dark;
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $text-primary-dark;
+    margin: 0;
+  }
+
+  &__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: $text-muted-dark;
+    cursor: pointer;
+    border-radius: $radius-sm;
+    transition: background $transition-fast, color $transition-fast;
+
+    &:hover {
+      background: $border-dark;
+      color: $text-primary-dark;
+    }
+  }
+}

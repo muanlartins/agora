@@ -1,314 +1,1073 @@
-@import '/src/variables.scss';
+@import 'src/variables.scss';
 
-.page {
-  &__banner {
-    height: 4rem;
-    background: $primary;
+// ==========================================================================
+// TABBY ARCHIVE PAGE
+// Aesthetic: Agora Design System with CONDEB Partnership Accent
+// ==========================================================================
+
+// CONDEB accent colors
+$condeb-teal: #5CBCB9;
+$condeb-teal-dark: #0b4349;
+
+.tabby-archive {
+  min-height: 100vh;
+  background-color: var(--color-background);
+}
+
+// -----------------------------------------------------------------------------
+// NAVIGATION (matching landing page)
+// -----------------------------------------------------------------------------
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $space-6 $space-8;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  &__logo {
+    &-img {
+      height: 2.5rem;
+      cursor: pointer;
+      opacity: 0.9;
+      transition: opacity $transition-fast;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: $space-8;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-wide;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color $transition-fast, opacity $transition-fast;
+
+    &--back {
+      color: var(--color-text-muted);
+
+      &:hover {
+        color: var(--color-text-secondary);
+      }
+    }
+
+    &--primary {
+      color: var(--color-primary);
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background-color: var(--color-primary);
+        transition: width $transition-base;
+      }
+
+      &:hover::after {
+        width: 100%;
+      }
+    }
+  }
+
+  &__link-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// HEADER
+// -----------------------------------------------------------------------------
+
+.header {
+  padding: $space-16 $space-8;
+  text-align: center;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba($condeb-teal-dark, 0.05)
+  );
+
+  &__content {
+    max-width: 650px;
+    margin: 0 auto;
+  }
+
+  &__partnership {
+    margin-bottom: $space-6;
+
+    &-logo {
+      height: 2.5rem;
+      opacity: 0.9;
+    }
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: clamp($font-size-3xl, 5vw, $font-size-5xl);
+    font-weight: $font-weight-normal;
+    line-height: $line-height-tight;
+    color: var(--color-text-primary);
+    margin: 0 0 $space-6;
+
+    &--accent {
+      color: var(--color-primary);
+      font-style: italic;
+    }
+  }
+
+  &__description {
+    font-family: $font-body;
+    font-size: $font-size-lg;
+    line-height: $line-height-relaxed;
+    color: var(--color-text-secondary);
+    margin: 0 0 $space-10;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// TOURNAMENT SELECTOR
+// -----------------------------------------------------------------------------
+
+.tournament-selector {
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: left;
+
+  &__label {
+    display: block;
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-wider;
+    text-transform: uppercase;
+    color: $condeb-teal;
+    margin-bottom: $space-3;
+    text-align: center;
+  }
+
+  &__wrapper {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    padding: $space-2;
+    transition: border-color $transition-fast;
+
+    &:hover {
+      border-color: var(--color-border-hover);
+    }
+
+    &:focus-within {
+      border-color: var(--color-primary);
+    }
+  }
+
+  &__field {
     width: 100%;
+
+    ::ng-deep {
+      .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+
+      .mdc-text-field--outlined {
+        --mdc-outlined-text-field-container-shape: #{$radius-sm};
+      }
+
+      .mat-mdc-form-field-flex {
+        background: transparent;
+      }
+
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: transparent !important;
+      }
+    }
+  }
+}
+
+// Global dropdown styling
+::ng-deep .tournament-dropdown {
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+
+  .mat-mdc-option {
+    font-family: $font-body;
+    color: var(--color-text-primary);
+
+    &:hover {
+      background-color: var(--color-surface-elevated);
+    }
+
+    &.mdc-list-item--selected {
+      background-color: rgba($condeb-teal, 0.1);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// LOADING & ERROR STATES
+// -----------------------------------------------------------------------------
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-4;
+  padding: $space-16;
+
+  &__spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--color-border);
+    border-top-color: $condeb-teal;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  &__text {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: var(--color-text-muted);
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-4;
+  padding: $space-16;
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+    color: #ef4444;
+  }
+
+  &__text {
+    font-family: $font-body;
+    font-size: $font-size-base;
+    color: var(--color-text-secondary);
+  }
+}
+
+.empty {
+  font-family: $font-body;
+  font-size: $font-size-sm;
+  color: var(--color-text-muted);
+  padding: $space-8;
+  text-align: center;
+  font-style: italic;
+}
+
+// -----------------------------------------------------------------------------
+// TOURNAMENT OVERVIEW
+// -----------------------------------------------------------------------------
+
+.overview {
+  max-width: 1200px;
+  margin: 0 auto $space-8;
+  padding: $space-8;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-medium;
+    color: var(--color-primary);
+    margin: 0 0 $space-6;
+    text-align: center;
+  }
+
+  &__stats {
     display: flex;
     justify-content: center;
+    gap: $space-12;
+    flex-wrap: wrap;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: $space-1;
+  }
 
-    &__text {
-      color: black;
-      font-size: 1.5rem;
+  &__stat-value {
+    font-family: $font-display;
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-primary);
+  }
 
-      &__link {
-        color: $link;
+  &__stat-label {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// CONTENT & TABS
+// -----------------------------------------------------------------------------
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $space-8 $space-16;
+}
+
+.tabs {
+  ::ng-deep {
+    .mat-mdc-tab-header {
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .mat-mdc-tab {
+      font-family: $font-body;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      letter-spacing: $letter-spacing-wide;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      opacity: 1;
+
+      &.mdc-tab--active {
+        color: var(--color-primary);
       }
+    }
+
+    .mat-mdc-tab-body-wrapper {
+      padding-top: $space-8;
+    }
+
+    .mdc-tab-indicator__content--underline {
+      border-color: var(--color-primary);
+    }
+  }
+}
+
+.tab-content {
+  padding: $space-4 0;
+}
+
+// -----------------------------------------------------------------------------
+// ACCORDIONS (Shared Styles)
+// -----------------------------------------------------------------------------
+
+.sections-accordion,
+.rounds-accordion,
+.rooms-accordion,
+.motions-accordion {
+  ::ng-deep {
+    .mat-expansion-panel {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      box-shadow: none;
+      margin-bottom: $space-3;
+      border-radius: $radius-sm !important;
+
+      &::before {
+        display: none;
+      }
+    }
+
+    .mat-expansion-panel-header {
+      font-family: $font-body;
+      padding: $space-4 $space-6;
+      height: auto !important;
+    }
+
+    .mat-expansion-panel-header-title {
+      font-weight: $font-weight-medium;
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      gap: $space-3;
+    }
+
+    .mat-expansion-panel-header-description {
+      color: var(--color-text-muted);
+      flex-grow: 0;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .mat-expansion-panel-body {
+      padding: 0 $space-6 $space-6;
+    }
+
+    .mat-expansion-indicator::after {
+      color: var(--color-text-muted);
+    }
+  }
+}
+
+.rooms-accordion {
+  ::ng-deep {
+    .mat-expansion-panel {
+      background-color: var(--color-background);
+      margin-bottom: $space-2;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// WINNER & FINALISTS
+// -----------------------------------------------------------------------------
+
+.winner-card {
+  display: flex;
+  align-items: center;
+  gap: $space-6;
+  padding: $space-6;
+  background: linear-gradient(135deg, rgba($condeb-teal-dark, 0.2), rgba(212, 165, 55, 0.1));
+  border-radius: $radius-md;
+
+  &__trophy {
+    font-size: 3rem;
+  }
+
+  &__info {
+    flex: 1;
+  }
+
+  &__team {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-medium;
+    color: var(--color-primary);
+    margin-bottom: $space-1;
+  }
+
+  &__speakers {
+    font-family: $font-body;
+    font-size: $font-size-base;
+    color: $condeb-teal;
+  }
+}
+
+.finalists {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $space-4;
+}
+
+.finalist {
+  padding: $space-4;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+
+  &__name {
+    font-family: $font-body;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-primary);
+    margin-bottom: $space-1;
+  }
+
+  &__speakers {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $condeb-teal;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// PODIUM
+// -----------------------------------------------------------------------------
+
+.podium {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+    padding: $space-4;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-sm;
+
+    &:first-child {
+      background: linear-gradient(90deg, rgba(212, 165, 55, 0.1), transparent);
+      border-color: var(--color-primary);
     }
   }
 
-  &__navbar {
-    background: $condebprimary;
+  &__rank {
+    width: 36px;
+    height: 36px;
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-family: $font-display;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-muted);
+    background-color: var(--color-surface);
+    border-radius: $radius-sm;
+
+    &[data-rank="1"] {
+      color: #FFD700;
+      background-color: rgba(255, 215, 0, 0.15);
+    }
+
+    &[data-rank="2"] {
+      color: #C0C0C0;
+      background-color: rgba(192, 192, 192, 0.15);
+    }
+
+    &[data-rank="3"] {
+      color: #CD7F32;
+      background-color: rgba(205, 127, 50, 0.15);
+    }
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__name {
+    font-family: $font-body;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-primary);
+  }
+
+  &__detail {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $condeb-teal;
+  }
+
+  &__score {
+    font-family: $font-display;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-medium;
+    color: var(--color-primary);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// QUICK STATS
+// -----------------------------------------------------------------------------
+
+.quick-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: $space-4;
+}
+
+.quick-stat {
+  display: flex;
+  flex-direction: column;
+  padding: $space-4;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+
+  &__label {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+    margin-bottom: $space-2;
+  }
+
+  &__value {
+    font-family: $font-display;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-primary);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// ROUND BADGES
+// -----------------------------------------------------------------------------
+
+.round-badge {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wide;
+  padding: $space-1 $space-2;
+  border-radius: $radius-xs;
+
+  &--elim {
+    color: var(--color-primary);
+    background-color: rgba(212, 165, 55, 0.15);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// ROOMS & HOUSES (Rodadas Tab)
+// -----------------------------------------------------------------------------
+
+.room-title {
+  font-family: $font-display;
+  color: $condeb-teal;
+}
+
+.room-content {
+  padding-top: $space-4;
+}
+
+.houses-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-4;
+  margin-bottom: $space-6;
+}
+
+.house {
+  padding: $space-4;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+
+  &__header {
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1rem;
+    margin-bottom: $space-3;
+  }
 
-    &__logo {
-      display: flex;
-      justify-content: flex-start;
-      align-items: flex-end;
-      gap: 1.5rem;
+  &__position {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+    color: var(--color-text-muted);
+  }
 
-      &__agora {
-        padding-bottom: 1rem;
-        height: 2.75rem;
-        cursor: pointer;
-      }
+  &__rank {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    padding: $space-1 $space-2;
+    border-radius: $radius-xs;
+    background-color: rgba(212, 165, 55, 0.15);
+    color: var(--color-primary);
 
-      &__condeb {
-        height: 2rem;
-        padding: 1rem 0 1rem 1.5rem;
-        border-left: 1px solid $condebwhite;
-      }
-    }
-
-    &__menu {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      list-style: none;
-
-      &__option {
-        color: $condebwhite;
-        font-size: 1.125rem;
-        line-height: 100%;
-        padding: 1rem 1.5rem;
-        border-right: 1px solid $condebwhite;
-        cursor: pointer;
-
-        transition: $transition;
-
-        &:hover {
-          text-shadow: 0 0 0.75rem $condebwhite, 0 0 1.5rem $condebwhite;
-        }
-
-        &:last-child {
-          border-right: none;
-        }
-
-        &--active {
-          color: $primary;
-
-          &:hover {
-            text-shadow: 0 0 0.75rem $primary, 0 0 1.5rem $primary;
-          }
-        }
-      }
+    &[data-rank="1"] {
+      background-color: rgba(255, 215, 0, 0.2);
+      color: #FFD700;
     }
   }
 
-  &__introduction {
-    padding: 1rem 1rem;
-    width: calc(100% - 2rem);
+  &__team {
+    font-family: $font-body;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-primary);
+    margin-bottom: $space-3;
+  }
 
-    &__title {
-      font-size: 2rem;
-      color: $primary;
+  &__speakers {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  &__speaker {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: $space-2;
+  }
+
+  &__speaker-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__speaker-name {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: var(--color-text-primary);
+  }
+
+  &__speaker-society {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    color: $condeb-teal;
+  }
+
+  &__speaker-sps {
+    font-family: $font-display;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--color-primary);
+    white-space: nowrap;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// ROOM ADJUDICATORS
+// -----------------------------------------------------------------------------
+
+.room-adjudicators {
+  padding-top: $space-4;
+  border-top: 1px solid var(--color-border);
+
+  &__title {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+    color: var(--color-text-muted);
+    margin-bottom: $space-3;
+  }
+
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-4;
+  }
+
+  &__chair,
+  &__wing {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-2;
+  }
+
+  &__badge {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    color: var(--color-primary);
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__name {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: var(--color-text-primary);
+  }
+
+  &__society {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    color: $condeb-teal;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// MOTION CONTENT
+// -----------------------------------------------------------------------------
+
+.motion-content {
+  font-family: $font-body;
+  font-size: $font-size-base;
+  line-height: $line-height-relaxed;
+  color: var(--color-text-secondary);
+  padding: $space-4;
+  background-color: var(--color-background);
+  border-left: 3px solid var(--color-primary);
+  border-radius: 0 $radius-sm $radius-sm 0;
+}
+
+// -----------------------------------------------------------------------------
+// PARTICIPANTS GRID
+// -----------------------------------------------------------------------------
+
+.participants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $space-4;
+
+  &--compact {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+.participant-card {
+  padding: $space-4;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+  transition: border-color $transition-fast;
+
+  &:hover {
+    border-color: var(--color-border-hover);
+  }
+
+  &--compact {
+    padding: $space-3;
+  }
+
+  &__name {
+    font-family: $font-body;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-primary);
+    margin-bottom: $space-1;
+  }
+
+  &__details {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $condeb-teal;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+    margin-top: $space-2;
+  }
+
+  &__tag {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    color: var(--color-primary);
+    background-color: rgba(212, 165, 55, 0.15);
+    padding: $space-1 $space-2;
+    border-radius: $radius-xs;
+    text-transform: capitalize;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// STATISTICS TABLES
+// -----------------------------------------------------------------------------
+
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: $font-body;
+  font-size: $font-size-sm;
+
+  thead {
+    background-color: var(--color-surface);
+
+    th {
+      padding: $space-3 $space-4;
+      text-align: left;
+      font-weight: $font-weight-medium;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: $letter-spacing-wide;
+      font-size: $font-size-xs;
+      border-bottom: 1px solid var(--color-border);
+      white-space: nowrap;
     }
+  }
+
+  tbody {
+    tr {
+      transition: background-color $transition-fast;
+
+      &:hover {
+        background-color: var(--color-surface);
+      }
+
+      &:not(:last-child) {
+        border-bottom: 1px solid var(--color-border);
+      }
+    }
+
+    td {
+      padding: $space-3 $space-4;
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+    }
+  }
+
+  &__rank {
+    color: var(--color-text-muted);
+    font-weight: $font-weight-medium;
+  }
+
+  &__name {
+    color: var(--color-text-primary);
+    font-weight: $font-weight-medium;
+  }
+
+  &__society {
+    color: $condeb-teal;
+  }
+
+  &__value {
+    text-align: center;
+
+    &--highlight {
+      color: var(--color-primary);
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// FOOTER
+// -----------------------------------------------------------------------------
+
+.footer {
+  padding: $space-8;
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+
+  &__content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-4;
+    text-align: center;
+  }
+
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+  }
+
+  &__logo {
+    height: 1.5rem;
+    opacity: 0.7;
+
+    &--condeb {
+      height: 1.25rem;
+    }
+  }
+
+  &__separator {
+    color: var(--color-text-muted);
+    font-size: $font-size-lg;
+  }
+
+  &__text {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: var(--color-text-muted);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// RESPONSIVE
+// -----------------------------------------------------------------------------
+
+@media (max-width: $breakpoint-lg) {
+  .houses-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .finalists {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .nav {
+    padding: $space-4 $space-6;
+
+    &__links {
+      gap: $space-6;
+    }
+
+    &__link {
+      font-size: $font-size-xs;
+    }
+  }
+
+  .header {
+    padding: $space-10 $space-4;
 
     &__description {
-      font-size: 1.25rem;
-      color: $white;
-      margin-top: 1rem;
-    }
-
-    &__form {
-      margin-top: 2rem;
+      font-size: $font-size-base;
     }
   }
 
-  &__body {
-    display: grid;
-    gap: 2rem;
-    grid-template-columns: 1fr;
-    padding: 2rem 1rem;
+  .tournament-selector {
+    max-width: 100%;
+    padding: 0 $space-2;
+  }
 
-    &__sidebar {
-      &__content {
-        position: block;
-        top: 1rem;
+  .overview {
+    padding: $space-6;
+    margin: 0 $space-4 $space-6;
 
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
-        gap: 1rem;
-
-        &__subtitle {
-          font-size: 1.25rem;
-          color: $white;
-          cursor: pointer;
-          transition: $transition;
-
-          &:hover {
-            color: $primary;
-          }
-        }
-
-        &__items {
-          padding-left: 1rem;
-
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-start;
-          align-items: flex-start;
-          gap: 0.5rem;
-
-          &__item {
-            font-size: 1.25rem;
-            color: $white;
-            cursor: pointer;
-            transition: $transition;
-
-            &:hover {
-              color: $primary;
-            }
-          }
-        }
-      }
-      }
-
-    &__content {
-      width: 100%;
-
-      &__tournament {
-        &__title {
-          font-size: 3rem;
-          color: $primary;
-        }
-
-        &__subtitle {
-          font-size: 2.5rem;
-          margin-top: 2rem;
-          color: $white;
-        }
-
-        &__list {
-          margin-top: 2rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-start;
-          align-items: flex-start;
-          gap: 0.5rem;
-
-          &__item {
-            &__value {
-              font-size: 1.25rem;
-              color: $white;
-
-              &--condebsecondary {
-                color: $condebsecondary;
-              }
-
-              &--primary {
-                color: $primary;
-                text-transform: capitalize;
-              }
-            }
-
-            &__subvalues {
-              margin: 1rem 0;
-              &__subvalue {
-                color: $white;
-              }
-            }
-          }
-        }
-
-        &__rounds {
-          &__round {
-            margin-top: 2rem;
-
-            &__name {
-              font-size: 1.5rem;
-              color: $condebwhite;
-            }
-
-            &__debates {
-              display: grid;
-              grid-template-columns: 1fr;
-              margin-top: 1rem;
-              gap: 4rem;
-              flex-wrap: wrap;
-
-              &__debate {
-                padding: 2rem;
-                border: 1px solid $condebwhite;
-                border-radius: 5px;
-
-                &__venue {
-                  color: $primary;
-                }
-
-                &__motion {
-                  margin-top: 0.5rem;
-                  color: $condebwhite;
-                }
-
-                &__side {
-                  margin-top: 1rem;
-
-                  &__title {
-                    font-size: 1.25rem;
-                    color: $primary;
-
-                    span {
-                      font-size: 1.25rem;
-                    }
-
-                    .primary {
-                      color: $primary;
-                    }
-
-                    .condebsecondary {
-                      color: $condebsecondary;
-                    }
-                  }
-
-                  &__team {
-                    margin-top: 0.5rem;
-                    color: $condebwhite;
-                  }
-
-                  &__speakers {
-                    &__speaker {
-                      margin-top: 1rem;
-                      color: $condebwhite;
-
-                      span {
-                        color: $primary;
-                      }
-
-                      .condebsecondary {
-                        color: $condebsecondary;
-                      }
-                    }
-                  }
-                }
-
-                &__adjudicators {
-                  margin-top: 2rem;
-
-                  &__title {
-                    color: $primary;
-                    font-size: 1.5rem;
-                  }
-
-                  &__chair {
-                    margin-top: 0.5rem;
-                    font-size: 1.125rem;
-                    color: $condebwhite;
-
-                    .primary {
-                      color: $primary;
-                    }
-
-                    .condebsecondary {
-                      color: $condebsecondary;
-                    }
-                  }
-
-                  &__wings {
-                    &__wing {
-                      margin-top: 0.5rem;
-                      color: $condebwhite;
-
-                      .condebsecondary {
-                        color: $condebsecondary;
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+    &__stats {
+      gap: $space-6;
     }
+
+    &__stat-value {
+      font-size: $font-size-2xl;
+    }
+  }
+
+  .content {
+    padding: 0 $space-4 $space-12;
+  }
+
+  .winner-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .quick-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .participants-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-wrapper {
+    margin: 0 (-$space-4);
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
   }
 }

@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment';
 import { DebatePosition } from 'src/app/models/enums/debate-position';
 import { DebateStyle } from 'src/app/models/enums/debate-style';
 import { DebateVenue } from 'src/app/models/enums/debate-venue';
 import { Debate } from 'src/app/models/types/debate';
 import { DebateService } from 'src/app/services/debate.service';
-import { MemberService } from 'src/app/services/member.service';
-import { isUser } from 'src/app/utils/auth';
+import { isUser, isAdmin } from 'src/app/utils/auth';
+import { ConfirmModalComponent } from 'src/app/components/members/components/confirm-modal/confirm-modal.component';
 
 @Component({
   selector: 'app-debate',
@@ -29,13 +30,13 @@ export class DebateComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private debateService: DebateService,
+    private dialog: MatDialog
   ) {}
 
   public ngOnInit() {
     this.route.params.subscribe(async (params: any) => {
       if (params && params.id) {
         const debateId = params.id;
-
         const debate = await this.debateService.getDebate(debateId);
 
         if (!debate) {
@@ -48,20 +49,42 @@ export class DebateComponent implements OnInit {
     });
   }
 
-  public getDate(date: string, time: string) {
+  public getDate(date: string, time: string): string {
     let datetime = moment(date);
-
     datetime = datetime.hour(Number(time.split(':')[0]));
     datetime = datetime.minute(Number(time.split(':')[1]));
-
-    return datetime.locale('pt-br').format(`LLL`);
-  }
-  public goToDebatesPage() {
-    this.router.navigate(["/debates"]);
+    return datetime.locale('pt-br').format('LLL');
   }
 
-  public isUser() {
+  public goToDebatesPage(): void {
+    this.router.navigate(['/debates']);
+  }
+
+  public isUser(): boolean {
     return isUser();
+  }
+
+  public isAdmin(): boolean {
+    return isAdmin();
+  }
+
+  public editDebate(): void {
+    this.router.navigate([`/debates/edit/${this.debate.id}`]);
+  }
+
+  public deleteDebate(): void {
+    this.dialog.open(ConfirmModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      data: {
+        text: `Você tem certeza que quer deletar este debate?`,
+        positiveCallback: async () => {
+          await this.debateService.deleteDebate(this.debate.id);
+          this.goToDebatesPage();
+        },
+        negativeCallback: () => {}
+      }
+    });
   }
 
   public getHouses(debate: Debate) {

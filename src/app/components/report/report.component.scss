@@ -1,13 +1,14 @@
 @import '/src/variables.scss';
 
-.page {
-  width: 100%;
-  height: 100vh;
+// =============================================================================
+// REPORT PAGE
+// Member profile, statistics, and curriculum
+// =============================================================================
 
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
+.report {
+  width: 100%;
+  min-height: 100vh;
+  background: $background-dark;
 
   &__navbar {
     width: 100%;
@@ -16,181 +17,698 @@
   &__content {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    width: calc(100% - 2rem);
-    margin: 0 1rem;
-    padding-bottom: 2rem;
+    gap: $space-8;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: $space-8 $space-6;
 
     &--hide {
       display: none;
     }
+  }
+}
+
+// =============================================================================
+// HEADER WITH MEMBER SELECTOR
+// =============================================================================
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: $space-6;
+
+  &__summary {
+    display: flex;
+    gap: $space-4;
+  }
+}
+
+// =============================================================================
+// MEMBER SELECTOR
+// =============================================================================
+
+.member-selector {
+  min-width: 280px;
+
+  &__selected {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-3 $space-4;
+    background: $surface-dark;
+    border: $border-width solid $border-dark;
+    border-radius: $radius-md;
+    transition: border-color $transition-fast;
+
+    &:hover {
+      border-color: $primary-muted;
+    }
+  }
+
+  &__name {
+    font-family: $font-display;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-medium;
+    color: $text-primary-dark;
+    flex: 1;
+  }
+
+  &__clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: $radius-sm;
+    color: $text-muted-dark;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      background: $surface-elevated-dark;
+      color: $text-primary-dark;
+    }
+  }
+
+  &__search {
+    width: 100%;
+
+    ::ng-deep {
+      .mat-mdc-text-field-wrapper {
+        background: $surface-dark;
+      }
+
+      .mat-mdc-form-field-icon-prefix {
+        color: $text-muted-dark;
+        padding-right: $space-2;
+      }
+    }
+  }
+}
+
+.member-option {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+
+  &__society {
+    margin-left: auto;
+    font-size: $font-size-xs;
+    color: $text-muted-dark;
+  }
+}
+
+// =============================================================================
+// SUMMARY STATS
+// =============================================================================
+
+.summary-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $space-3 $space-5;
+  background: $surface-dark;
+  border: $border-width solid $border-dark;
+  border-radius: $radius-lg;
+  transition: border-color $transition-fast;
+
+  &:hover {
+    border-color: $primary-muted;
+  }
+
+  &__value {
+    font-family: $font-display;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $primary;
+    line-height: $line-height-tight;
+  }
+
+  &__label {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    color: $text-secondary-dark;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+    margin-top: $space-1;
+  }
+}
+
+// =============================================================================
+// PROFILE CARD
+// =============================================================================
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: $space-6;
+  padding: $space-6;
+  background: $surface-dark;
+  border: $border-width solid $border-dark;
+  border-radius: $radius-lg;
+  transition: border-color $transition-fast;
+
+  &:hover {
+    border-color: $primary-muted;
+  }
+
+  &__pfp {
+    flex-shrink: 0;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  &__name {
+    font-family: $font-display;
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-semibold;
+    color: $primary;
+    margin: 0;
+    line-height: $line-height-tight;
+  }
+
+  &__society {
+    font-family: $font-body;
+    font-size: $font-size-lg;
+    color: $text-secondary-dark;
+  }
+}
+
+// =============================================================================
+// TABS
+// =============================================================================
+
+.stats-tabs {
+  ::ng-deep {
+    .mat-mdc-tab-header {
+      border-bottom: 1px solid $border-dark;
+    }
+
+    .mat-mdc-tab {
+      font-family: $font-body;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      letter-spacing: $letter-spacing-wide;
+      text-transform: uppercase;
+      color: $text-muted-dark;
+      opacity: 1;
+
+      &.mdc-tab--active {
+        color: $primary;
+      }
+    }
+
+    .mat-mdc-tab-body-wrapper {
+      padding-top: $space-6;
+    }
+
+    .mdc-tab-indicator__content--underline {
+      border-color: $primary;
+    }
+  }
+}
+
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+}
+
+// =============================================================================
+// SECTION HEADERS
+// =============================================================================
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: $space-4;
+  margin-bottom: $space-6;
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $text-primary-dark;
+    margin: 0;
+  }
+
+  &__divider {
+    flex: 1;
+    height: 1px;
+    background: $border-dark;
+  }
+}
+
+// =============================================================================
+// CHARTS GRID
+// =============================================================================
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-6;
+}
+
+// =============================================================================
+// CHART CARD
+// =============================================================================
+
+.chart-card {
+  display: flex;
+  flex-direction: column;
+  background: $surface-dark;
+  border: $border-width solid $border-dark;
+  border-radius: $radius-lg;
+  padding: $space-6;
+  transition: border-color $transition-fast;
+
+  &:hover {
+    border-color: $primary-muted;
+  }
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $primary;
+    margin: 0 0 $space-2 0;
+    line-height: $line-height-snug;
+  }
+
+  &__description {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-secondary-dark;
+    margin: 0 0 $space-4 0;
+    line-height: $line-height-relaxed;
+  }
+
+  &__canvas {
+    position: relative;
+    width: 100%;
+    height: 300px;
+
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+}
+
+// =============================================================================
+// DEBATES SECTION
+// =============================================================================
+
+.debates-section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-6;
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $primary;
+    margin: 0;
+  }
+}
+
+// =============================================================================
+// CURRICULUM SECTION
+// =============================================================================
+
+.curriculum {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  background: $surface-dark;
+  border: $border-width solid $border-dark;
+  border-radius: $radius-lg;
+  padding: $space-6;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $text-primary-dark;
+    margin: 0;
+  }
+
+  &__toggle {
+    display: flex;
+    gap: $space-2;
+  }
+
+  &__toggle-btn {
+    background: transparent;
+    border: $border-width solid $border-dark;
+    border-radius: $radius-md;
+    color: $text-secondary-dark;
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    padding: $space-2 $space-4;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover {
+      border-color: $primary-muted;
+      color: $text-primary-dark;
+    }
+
+    &--active {
+      background: $primary;
+      border-color: $primary;
+      color: $background-dark;
+
+      &:hover {
+        background: $primary-light;
+        border-color: $primary-light;
+      }
+    }
+  }
+
+  // View Mode
+  &__view {
+    padding-top: $space-4;
+  }
+
+  // Edit Mode - Side by Side
+  &__editor {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-6;
+    padding-top: $space-4;
+  }
+
+  &__input {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__input-label {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-secondary-dark;
+    margin-bottom: $space-2;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+  }
+
+  &__textarea {
+    width: 100%;
+    min-height: 400px;
+    padding: $space-4;
+    background: $surface-elevated-dark;
+    border: $border-width solid $border-dark;
+    border-radius: $radius-md;
+    color: $text-primary-dark;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: $font-size-sm;
+    line-height: $line-height-relaxed;
+    resize: vertical;
+    transition: border-color $transition-fast;
+
+    &:focus {
+      outline: none;
+      border-color: $primary;
+    }
+
+    &::placeholder {
+      color: $text-muted-dark;
+    }
+  }
+
+  &__preview {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__preview-label {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-secondary-dark;
+    margin-bottom: $space-2;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+  }
+
+  &__preview-content {
+    padding: $space-4;
+    background: $surface-elevated-dark;
+    border: $border-width solid $border-dark;
+    border-radius: $radius-md;
+    min-height: 400px;
+    overflow-y: auto;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-3;
+    padding-top: $space-4;
+  }
+
+  &__cancel-btn {
+    background: transparent;
+    border: $border-width solid $border-dark;
+    border-radius: $radius-md;
+    color: $text-secondary-dark;
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    padding: $space-3 $space-6;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover {
+      border-color: $text-secondary-dark;
+      color: $text-primary-dark;
+    }
+  }
+
+  &__save-btn {
+    background: $primary;
+    border: none;
+    border-radius: $radius-md;
+    color: $background-dark;
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    padding: $space-3 $space-6;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: $primary-light;
+      box-shadow: $glow-primary;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// =============================================================================
+// EMPTY STATE
+// =============================================================================
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-4;
+  min-height: 200px;
+  padding: $space-8;
+  text-align: center;
+
+  &__icon {
+    color: $text-muted-dark;
+    opacity: 0.5;
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  &__message {
+    font-family: $font-body;
+    font-size: $font-size-base;
+    color: $text-secondary-dark;
+    margin: 0;
+  }
+}
+
+// =============================================================================
+// RESPONSIVE DESIGN
+// =============================================================================
+
+@media (max-width: $breakpoint-lg) {
+  .report {
+    &__content {
+      padding: $space-6 $space-4;
+    }
+  }
+
+  .report-header {
+    flex-direction: column;
+    align-items: stretch;
+
+    &__summary {
+      justify-content: flex-start;
+    }
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-card {
+    &--full {
+      grid-column: 1;
+    }
+  }
+
+  .curriculum__editor {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .report {
+    &__content {
+      padding: $space-4;
+      gap: $space-6;
+    }
+  }
+
+  .report-header {
+    &__filter {
+      width: 100%;
+    }
+
+    &__summary {
+      flex-wrap: wrap;
+      gap: $space-2;
+    }
+  }
+
+  .summary-stat {
+    flex: 1;
+    min-width: 80px;
+    padding: $space-2 $space-3;
+
+    &__value {
+      font-size: $font-size-xl;
+    }
+
+    &__label {
+      font-size: 10px;
+    }
+  }
+
+  .profile-card {
+    flex-direction: column;
+    text-align: center;
+    padding: $space-4;
+
+    &__info {
+      align-items: center;
+    }
+
+    &__name {
+      font-size: $font-size-2xl;
+    }
+  }
+
+  .section-header__title {
+    font-size: $font-size-lg;
+  }
+
+  .chart-card {
+    padding: $space-4;
+
+    &__title {
+      font-size: $font-size-base;
+    }
+
+    &__canvas {
+      height: 250px;
+    }
+  }
+
+  .curriculum {
+    padding: $space-4;
 
     &__header {
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 2rem;
-      margin-bottom: 2rem;
-
-      &__input {
-        width: 20rem;
-      }
-    }
-
-    &__body {
-      width: 100%;
-      display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      gap: 2rem;
+      align-items: flex-start;
+      gap: $space-3;
+    }
 
-      &__profile {
-        width: 100%;
-      }
+    &__textarea,
+    &__preview-content {
+      min-height: 300px;
+    }
+  }
 
-      &__debates {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        gap: 1rem;
+  .debates-section__title {
+    font-size: $font-size-lg;
+  }
+}
 
-        &__title {
-          font-size: 2rem;
-          color: $primary;
-          line-height: 100%;
-        }
-      }
+@media (max-width: $breakpoint-sm) {
+  .profile-card {
+    &__name {
+      font-size: $font-size-xl;
+    }
 
-      &__upper {
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
+    &__society {
+      font-size: $font-size-base;
+    }
+  }
 
-        &__member {
-          display: flex;
-          flex-direction: row;
-          justify-content: flex-start;
-          align-items: center;
-          gap: 2rem;
-
-          &__name {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: flex-start;
-            gap: 1rem;
-            font-size: 2.5rem;
-            color: $primary;
-            line-height: 100%;
-
-            &__society {
-              font-size: 1.5rem;
-              color: $white;
-              line-height: 100%;
-            }
-          }
-        }
-
-        // &__statistics {
-        //   padding-left: 64px;
-
-        //   display: flex;
-        //   flex-direction: row;
-        //   flex-wrap: wrap;
-        //   justify-content: flex-start;
-        //   align-items: center;
-
-        //   &__statistic {
-        //     display: flex;
-        //     flex-direction: column;
-        //     justify-content: flex-start;
-        //     align-items: flex-start;
-        //     gap: 8px;
-        //     padding: 1rem;
-        //     color: $white;
-        //     font-size: 1.25rem;
-
-        //     &--100 {
-        //       width: 100%;
-        //     }
-
-        //     &__title {
-        //       font-size: 1rem;
-        //       color: $primary;
-        //       line-height: 100%;
-        //     }
-
-        //     &__value {
-        //       font-size: 1.25rem;
-        //       color: $white;
-        //       line-height: 100%;
-        //     }
-        //   }
-        // }
-      }
-
-      &__description {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 2rem;
-
-        &__markdown {
-          &--full {
-            grid-column: 1;
-          }
-        }
-      }
-
-      &__button {
-        width: 100%;
-      }
-
-      &__statistics {
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 2rem;
-
-        &__chart {
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          margin-bottom: 3rem;
-          height: 40rem;
-
-          &__title {
-            font-size: 2rem;
-            color: $primary;
-            line-height: 100%;
-            margin-bottom: 1rem;
-          }
-
-          &__description {
-            font-size: 1.25rem;
-            color: $white;
-            line-height: 125%;
-            margin-bottom: 2rem;
-          }
-
-          &__chart {
-            height: 100%;
-          }
-        }
-
-        &__section {
-          width: 100%;
-          font-size: 3rem;
-          color: $white;
-          line-height: 100%;
-        }
+  .stats-tabs {
+    ::ng-deep {
+      .mat-mdc-tab {
+        font-size: $font-size-xs;
+        padding: 0 $space-3;
       }
     }
+  }
+
+  .chart-card__canvas {
+    height: 200px;
   }
 }

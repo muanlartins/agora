@@ -1,32 +1,44 @@
 <div class="login">
-  <div class="login__header">
-    <div class="login__header__logo">
-      <img src="assets/agora-logo.png" class="login__header__logo__agora" />
-      <img src="assets/sd-logo.png" class="login__header__logo__sd" />
-    </div>
-  </div>
-  <div class="login__body">
-    <form [formGroup]="form" class="login__body__form" (submit)="onSubmit()">
-      <mat-form-field class="login__body__form__field">
+  <!-- Back Navigation -->
+  <nav class="login__nav">
+    <a routerLink="/" class="login__back">
+      <mat-icon class="login__back-icon">arrow_back</mat-icon>
+      Voltar
+    </a>
+  </nav>
+
+  <!-- Login Card -->
+  <div class="login__card">
+    <!-- Logo -->
+    <a routerLink="/" class="login__logo-link">
+      <img src="assets/agora-logo.png" alt="Agora" class="login__logo" />
+    </a>
+
+    <!-- Title -->
+    <h1 class="login__title">Entrar</h1>
+
+    <!-- Form -->
+    <form [formGroup]="form" class="login__form" (submit)="onSubmit()">
+      <mat-form-field class="login__field" appearance="outline">
         <mat-label>Login</mat-label>
-        <input matInput formControlName="login">
+        <input matInput formControlName="login" autocomplete="username">
         <mat-error *ngIf="!form.valid">O login é obrigatório</mat-error>
       </mat-form-field>
-      <mat-form-field class="login__body__form__field">
+
+      <mat-form-field class="login__field" appearance="outline">
         <mat-label>Senha</mat-label>
-        <input matInput formControlName="password" type="password">
+        <input matInput formControlName="password" type="password" autocomplete="current-password">
         <mat-error *ngIf="!form.valid">A senha é obrigatória</mat-error>
       </mat-form-field>
-      <p class="login__body__form__text" *ngIf="wrongLogin">O login ou senha estão errados.</p>
-      <button
-        class="login__body__form__button"
-        mat-raised-button
-        color="primary"
-        type="submit"
-      >Enviar</button>
+
+      <p class="login__error" *ngIf="wrongLogin">O login ou senha estão errados.</p>
+
+      <button class="login__submit" mat-raised-button type="submit">
+        Entrar
+      </button>
     </form>
-    <!-- <p class="login__body__text">
-      Não possui um cadastro? Crie um <b routerLink="/signup" class="login__body__text__link">aqui</b>.
-    </p> -->
   </div>
+
+  <!-- Decorative Element -->
+  <div class="login__decoration"></div>
 </div>

@@ -1,54 +1,265 @@
-@import 'src/variables.scss';
+@import 'variables';
 
-.debates {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  margin: 1rem 0;
+.debates-table {
+  background: $surface-dark;
+  border: 1px solid $border-dark;
+  border-radius: $radius-lg;
+  overflow: hidden;
 
   &__header {
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr 2.5rem 2.5rem;
-    gap: 1rem;
-    padding-bottom: 1rem;
+    grid-template-columns: 130px 1fr 80px 100px 180px 80px;
+    gap: $space-4;
+    padding: $space-4 $space-5;
+    background: $surface-elevated-dark;
+    border-bottom: 1px solid $border-dark;
 
-    &__title {
-      color: $primary;
+    @media (max-width: $breakpoint-lg) {
+      display: none;
+    }
+  }
+
+  &__cell {
+    font-family: $font-body;
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    min-width: 0;
+
+    // Header cells
+    .debates-table__header & {
+      color: $text-muted-dark;
+      font-size: $font-size-xs;
+      text-transform: uppercase;
+      letter-spacing: $letter-spacing-wider;
+      font-weight: $font-weight-semibold;
+    }
+
+    // Body cells
+    .debates-table__row & {
+      color: $text-primary-dark;
+      font-size: $font-size-sm;
+    }
+
+    &--motion {
+      overflow: hidden;
+    }
+
+    &--actions {
+      justify-content: flex-end;
+      gap: $space-2;
     }
   }
 
   &__body {
-    &__row {
-      padding: 0.5rem 0;
-      display: grid;
-      grid-template-columns: 1fr 2fr 1fr 2.5rem 2.5rem;
-      gap: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
 
-      border-top: 1px solid $secondary;
-      cursor: pointer;
-      transition: $transition;
+  &__row {
+    display: grid;
+    grid-template-columns: 130px 1fr 80px 100px 180px 80px;
+    gap: $space-4;
+    padding: $space-4 $space-5;
+    border-bottom: 1px solid $border-dark;
+    cursor: pointer;
+    transition: background $transition-fast;
 
-      &:last-child {
-        border-bottom: 1px solid $secondary;
-      }
+    &:last-child {
+      border-bottom: none;
+    }
 
-      &:hover {
-        background: $brown;
-      }
+    &:hover {
+      background: $surface-elevated-dark;
 
-      &__value {
-        color: $white;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        line-height: 125%;
-
-        &__icon {
-          filter: $filter;
-          width: 1.5rem;
-          height: 1.5rem;
-        }
+      .debates-table__action {
+        opacity: 1;
       }
     }
+
+    @media (max-width: $breakpoint-lg) {
+      display: flex;
+      flex-direction: column;
+      gap: $space-3;
+      padding: $space-4;
+    }
+  }
+
+  &__date {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-secondary-dark;
+    white-space: nowrap;
+
+    @media (max-width: $breakpoint-lg) {
+      font-size: $font-size-xs;
+      color: $text-muted-dark;
+    }
+  }
+
+  &__motion {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-primary-dark;
+    line-height: $line-height-relaxed;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    @media (max-width: $breakpoint-lg) {
+      -webkit-line-clamp: 3;
+      font-size: $font-size-base;
+    }
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    padding: $space-1 $space-2;
+    border-radius: $radius-sm;
+    white-space: nowrap;
+
+    &--bp {
+      color: $primary;
+      background: $primary-muted;
+    }
+
+    &--fundamentals {
+      color: $info;
+      background: rgba($info, 0.15);
+    }
+
+    &--remote {
+      color: $text-secondary-dark;
+      background: $surface-elevated-dark;
+      border: 1px solid $border-dark;
+    }
+
+    &--inPerson {
+      color: $success;
+      background: rgba($success, 0.15);
+    }
+  }
+
+  &__chair-name {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-primary-dark;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity $transition-fast, background $transition-fast, color $transition-fast;
+    color: $text-muted-dark;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      background: $border-dark;
+      color: $text-primary-dark;
+    }
+
+    &--delete:hover {
+      background: rgba($danger, 0.15);
+      color: $danger;
+    }
+
+    @media (max-width: $breakpoint-lg) {
+      opacity: 1;
+    }
+  }
+}
+
+// Responsive: mobile card layout
+@media (max-width: $breakpoint-lg) {
+  .debates-table__cell {
+    &--date {
+      order: 1;
+    }
+
+    &--motion {
+      order: 2;
+    }
+
+    &--style,
+    &--venue {
+      display: inline-flex;
+    }
+
+    &--chair {
+      order: 4;
+    }
+
+    &--actions {
+      order: 5;
+      justify-content: flex-start;
+    }
+  }
+
+  .debates-table__row {
+    position: relative;
+
+    // Show badges inline on mobile
+    .debates-table__cell--style,
+    .debates-table__cell--venue {
+      position: absolute;
+      top: $space-4;
+      right: $space-4;
+    }
+
+    .debates-table__cell--venue {
+      right: calc($space-4 + 60px);
+    }
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $space-16 $space-6;
+  background: $surface-dark;
+  border: 1px solid $border-dark;
+  border-radius: $radius-lg;
+
+  &__icon {
+    color: $text-muted-dark;
+    margin-bottom: $space-4;
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  &__message {
+    font-family: $font-body;
+    font-size: $font-size-lg;
+    color: $text-secondary-dark;
+    margin: 0;
   }
 }

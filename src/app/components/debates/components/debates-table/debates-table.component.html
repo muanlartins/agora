@@ -1,22 +1,65 @@
-<div class="debates">
-  <div class="debates__header">
-    <div class="debates__header__title">Data</div>
-    <div class="debates__header__title">Moção</div>
-    <div class="debates__header__title">Chair</div>
-    <div class="debates__header__title"></div>
-    <div class="debates__header__title"></div>
+<div class="debates-table" *ngIf="debates?.length; else emptyState">
+  <div class="debates-table__header">
+    <div class="debates-table__cell debates-table__cell--date">Data</div>
+    <div class="debates-table__cell debates-table__cell--motion">Moção</div>
+    <div class="debates-table__cell debates-table__cell--style">Estilo</div>
+    <div class="debates-table__cell debates-table__cell--venue">Local</div>
+    <div class="debates-table__cell debates-table__cell--chair">Chair</div>
+    <div class="debates-table__cell debates-table__cell--actions" *ngIf="isAdmin()"></div>
   </div>
-  <div class="debates__body">
-    <div class="debates__body__row" *ngFor="let debate of debates" (click)="goToDebatePage(debate.id)">
-      <div class="debates__body__row__value">{{ getDate(debate.date, debate.time) }}</div>
-      <div class="debates__body__row__value">{{ debate.motion }}</div>
-      <div class="debates__body__row__value">{{ debate.chair.name }}</div>
-      <div class="debates__body__row__value">
-        <img *ngIf="showEdit()" (click)="editDebate(debate.id, $event)" src="assets/edit-text.png" class="debates__body__row__value__icon" />
+  <div class="debates-table__body">
+    <div
+      class="debates-table__row"
+      *ngFor="let debate of debates"
+      (click)="goToDebatePage(debate.id)"
+    >
+      <div class="debates-table__cell debates-table__cell--date">
+        <span class="debates-table__date">{{ getDate(debate.date, debate.time) }}</span>
       </div>
-      <div class="debates__body__row__value">
-        <img *ngIf="showDelete()" (click)="deleteDebate(debate.id, $event)" src="assets/delete.png" class="debates__body__row__value__icon" />
+      <div class="debates-table__cell debates-table__cell--motion">
+        <span class="debates-table__motion">{{ debate.motion }}</span>
+      </div>
+      <div class="debates-table__cell debates-table__cell--style">
+        <span class="debates-table__badge debates-table__badge--{{ debate.style }}">
+          {{ getStyleLabel(debate.style) }}
+        </span>
+      </div>
+      <div class="debates-table__cell debates-table__cell--venue">
+        <span class="debates-table__badge debates-table__badge--{{ debate.venue }}">
+          {{ getVenueLabel(debate.venue) }}
+        </span>
+      </div>
+      <div class="debates-table__cell debates-table__cell--chair">
+        <app-pfp [id]="debate.chair.id" [hasPfp]="debate.chair.hasPfp" [size]="28"></app-pfp>
+        <span class="debates-table__chair-name">{{ debate.chair.name }}</span>
+      </div>
+      <div class="debates-table__cell debates-table__cell--actions" *ngIf="isAdmin()">
+        <button
+          class="debates-table__action"
+          (click)="editDebate(debate.id, $event)"
+          title="Editar"
+          type="button"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          class="debates-table__action debates-table__action--delete"
+          (click)="deleteDebate(debate.id, $event)"
+          title="Excluir"
+          type="button"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
       </div>
     </div>
   </div>
 </div>
+
+<ng-template #emptyState>
+  <div class="empty-state">
+    <div class="empty-state__icon">
+      <mat-icon>event</mat-icon>
+    </div>
+    <p class="empty-state__message">Nenhum debate encontrado.</p>
+  </div>
+</ng-template>

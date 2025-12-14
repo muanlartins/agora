@@ -13,7 +13,10 @@ import { ReportComponent } from './components/report/report.component';
 import { TournamentComponent } from './components/tournament/tournament.component';
 import { TabbyArchiveComponent } from './components/tabby-archive/tabby-archive.component';
 import { ArticleComponent } from './components/articles/components/article/article.component';
+import { ArticleEditorComponent } from './components/articles/components/article-editor/article-editor.component';
 import { DebateComponent } from './components/debates/components/debate/debate.component';
+import { DebateEditorComponent } from './components/debates/components/debate-editor/debate-editor.component';
+import { UnsavedChangesGuard } from './guards/unsaved-changes.guard';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: "full" },
@@ -22,10 +25,14 @@ const routes: Routes = [
   { path: 'tabby-archive', component: TabbyArchiveComponent, data: {} },
   { path: 'dashboard', component: DashboardComponent, canActivate: [LoginGuard] },
   { path: 'debates', component: DebatesComponent, canActivate: [LoginGuard] },
+  { path: 'debates/create', component: DebateEditorComponent, canActivate: [LoginGuard], canDeactivate: [UnsavedChangesGuard] },
+  { path: 'debates/edit/:id', component: DebateEditorComponent, canActivate: [LoginGuard], canDeactivate: [UnsavedChangesGuard] },
   { path: 'debate/:id', component: DebateComponent },
   { path: 'members', component: MembersComponent, canActivate: [LoginGuard] },
   { path: 'goals', component: GoalsComponent, canActivate: [LoginGuard] },
   { path: 'articles', component: ArticlesComponent, canActivate: [LoginGuard] },
+  { path: 'articles/new', component: ArticleEditorComponent, canActivate: [LoginGuard], canDeactivate: [UnsavedChangesGuard] },
+  { path: 'articles/edit/:id', component: ArticleEditorComponent, canActivate: [LoginGuard], canDeactivate: [UnsavedChangesGuard] },
   { path: 'article/:id', component: ArticleComponent },
   { path: 'member', component: ReportComponent, canActivate: [LoginGuard, AdminGuard] },
   { path: 'member/:id', component: ReportComponent },

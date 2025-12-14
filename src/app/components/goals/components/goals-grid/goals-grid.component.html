@@ -1,0 +1,59 @@
+<header class="goals-header">
+  <div class="goals-header__left">
+    <h1 class="goals-header__title">Metas</h1>
+    <span class="goals-header__count">{{ goalCount }} {{ goalCount === 1 ? 'meta' : 'metas' }}</span>
+  </div>
+
+  <div class="goals-header__right">
+    <form [formGroup]="form" class="goals-header__filters" *ngIf="isAdmin()">
+      <mat-form-field class="goals-header__filter">
+        <mat-label>Tipo</mat-label>
+        <mat-select formControlName="type">
+          <mat-option *ngFor="let option of typeOptions" [value]="option.value">
+            {{ option.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+
+    <button
+      *ngIf="isAdmin()"
+      class="goals-header__create"
+      mat-flat-button
+      color="primary"
+      (click)="createGoal()"
+    >
+      <mat-icon class="goals-header__create-icon">add</mat-icon>
+      Nova Meta
+    </button>
+  </div>
+</header>
+
+<div class="goals-grid" *ngIf="filteredGoals.length; else emptyState">
+  <app-goal-card
+    *ngFor="let goal of filteredGoals"
+    [goal]="goal"
+    [showActions]="isAdmin()"
+    (cardClick)="openGoalDetail($event)"
+    (edit)="editGoal($event)"
+    (delete)="deleteGoal($event)"
+  ></app-goal-card>
+</div>
+
+<ng-template #emptyState>
+  <div class="empty-state">
+    <div class="empty-state__icon">
+      <mat-icon>check_circle</mat-icon>
+    </div>
+    <p class="empty-state__message">Nenhuma meta encontrada.</p>
+    <button
+      *ngIf="isAdmin()"
+      class="empty-state__action"
+      mat-flat-button
+      color="primary"
+      (click)="createGoal()"
+    >
+      Criar primeira meta
+    </button>
+  </div>
+</ng-template>

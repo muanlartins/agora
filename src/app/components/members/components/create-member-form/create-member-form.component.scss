@@ -1,63 +1,115 @@
-@import './src/variables.scss';
-
-:host {
-  --button-height: 3.2rem;
-}
-
-.cancel {
-  width: calc(100% - 64px);
-  margin: 16px 0 32px 32px;
-}
+@import 'variables';
 
 .form {
   display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 32px;
-  padding: 32px;
+  flex-direction: column;
+  gap: $space-5;
+
+  &__avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-4 0;
+  }
+
+  &__avatar {
+    position: relative;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all $transition-fast;
+
+    &:hover {
+      transform: scale(1.02);
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 50%;
+      }
+    }
+
+    input {
+      display: none;
+    }
+  }
+
+  &__avatar-hint {
+    font-size: $font-size-xs;
+    color: $text-muted-dark;
+  }
+
+  &__avatar-previews {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+  }
+
+  &__avatar-preview {
+    opacity: 0.6;
+    border-radius: 50%;
+    overflow: hidden;
+  }
 
   &__field {
-    position: relative;
+    width: 100%;
 
-    &--textarea {
-      width: 100%;
+    &--half {
+      width: calc(50% - #{$space-2});
     }
+  }
 
-    &--markdown {
-      width: 100%;
+  &__row {
+    display: flex;
+    gap: $space-4;
+    width: 100%;
+  }
+
+  &__checkboxes {
+    display: flex;
+    gap: $space-6;
+    padding: $space-2 0;
+  }
+
+  &__textarea {
+    width: 100%;
+
+    textarea {
+      min-height: 80px;
     }
+  }
+
+  &__markdown {
+    width: 100%;
+    padding: $space-4;
+    background: $surface-elevated-dark;
+    border: 1px solid $border-dark;
+    border-radius: $radius-md;
+    min-height: 60px;
+
+    &:empty::before {
+      content: 'Pré-visualização do markdown...';
+      color: $text-muted-dark;
+      font-size: $font-size-sm;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-3;
+    padding-top: $space-4;
+    border-top: 1px solid $border-dark;
+    margin-top: $space-2;
   }
 
   &__button {
-    height: var(--button-height);
-  }
-
-  &__avatars {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 16px;
-
-    &__avatar {
-      position: relative;
-      transition: $transition;
-
-      &:hover {
-        cursor: pointer;
-      }
-
-      &:hover::after {
-        content: '';
-        background: black;
-        opacity: 0.3;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        border-radius: 50%;
-        top: 0;
-        left: 0;
-      }
-    }
+    min-width: 120px;
+    height: 40px;
   }
 }

@@ -1,0 +1,136 @@
+@import 'variables';
+
+.article-card {
+  display: flex;
+  flex-direction: column;
+  background: $surface-dark;
+  border: 1px solid $border-dark;
+  border-radius: $radius-lg;
+  padding: $space-6;
+  cursor: pointer;
+  transition: transform $transition-fast, border-color $transition-fast, box-shadow $transition-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: $primary-muted;
+    box-shadow: $shadow-lg;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: $space-4;
+  }
+
+  &__tag {
+    display: inline-block;
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wider;
+    color: $primary;
+    background: $primary-muted;
+    padding: $space-1 $space-3;
+    border-radius: $radius-sm;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $space-2;
+    opacity: 0;
+    transition: opacity $transition-fast;
+
+    .article-card:hover & {
+      opacity: 1;
+    }
+  }
+
+  &__action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    background: $surface-elevated-dark;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition: background $transition-fast;
+    color: $text-muted-dark;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      transition: color $transition-fast;
+    }
+
+    &:hover {
+      background: $border-dark;
+      color: $text-primary-dark;
+    }
+
+    &--delete:hover {
+      background: rgba($danger, 0.15);
+      color: $danger;
+    }
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $text-primary-dark;
+    line-height: $line-height-snug;
+    margin: 0 0 $space-3 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__excerpt {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-secondary-dark;
+    line-height: $line-height-relaxed;
+    margin: 0 0 $space-6 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: $space-4;
+    border-top: 1px solid $border-dark;
+  }
+
+  &__author {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+  }
+
+  &__author-name {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-primary-dark;
+  }
+
+  &__date {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    color: $text-muted-dark;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+  }
+}

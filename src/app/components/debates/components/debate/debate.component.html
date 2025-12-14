@@ -1,77 +1,131 @@
-<div class="debate" *ngIf="debate">
-  <button
-    *ngIf="isUser()"
-    class="debate__button"
-    mat-raised-button
-    color="primary"
-    type="submit"
-    (click)="goToDebatesPage()"
-  >Voltar</button>
-  <div class="debate__call">
-    <div class="debate__call__house" *ngFor="let house of getHouses(debate); index as index">
-      <div class="debate__call__house__header">
-        <div class="debate__call__house__header__placement">{{ index+1 }}º</div>
-        <div class="debate__call__house__header__name">{{ house.title }}</div>
+<div class="debate-page" *ngIf="debate">
+  <app-navbar class="debate-page__navbar"></app-navbar>
+
+  <div class="debate-page__content">
+    <!-- Header -->
+    <header class="debate-header">
+      <div class="debate-header__left">
+        <button
+          class="debate-header__back"
+          (click)="goToDebatesPage()"
+          type="button"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Voltar</span>
+        </button>
       </div>
-      <div class="debate__call__house__debater" *ngFor="let debater of house.debaters">
-        <app-pfp class="debate__call__house__debater__pfp" [size]="48" [hasPfp]="debater.debater.hasPfp" [id]="debater.debater.id"></app-pfp>
-        <div class="debate__call__house__debater__content">
-          <div class="debate__call__house__debater__content__position">{{ debater.position }}</div>
-          <div class="debate__call__house__debater__content__name">{{ debater.debater.name }}
-            <span class="debate__call__house__debater__content__name__society">{{ debater.debater.society }}</span></div>
-          <div class="debate__call__house__debater__content__sps">{{ debater.sps }}
-            <span class="debate__call__house__debater__content__sps__text">SPs</span></div>
+      <div class="debate-header__right" *ngIf="isAdmin()">
+        <button
+          class="debate-header__action"
+          (click)="editDebate()"
+          title="Editar"
+          type="button"
+        >
+          <img src="assets/edit-text.png" alt="Editar" />
+        </button>
+        <button
+          class="debate-header__action debate-header__action--delete"
+          (click)="deleteDebate()"
+          title="Excluir"
+          type="button"
+        >
+          <img src="assets/delete.png" alt="Excluir" />
+        </button>
+      </div>
+    </header>
+
+    <!-- Motion Section -->
+    <section class="debate-motion">
+      <div class="debate-motion__meta">
+        <span class="debate-motion__date">{{ getDate(debate.date, debate.time) }}</span>
+        <span class="debate-badge debate-badge--{{ debate.style }}">
+          {{ DebateStyle[debate.style] }}
+        </span>
+        <span class="debate-badge debate-badge--{{ debate.venue }}">
+          {{ DebateVenue[debate.venue] }}
+        </span>
+      </div>
+      <h1 class="debate-motion__text">{{ debate.motion }}</h1>
+      <div class="debate-motion__details">
+        <div class="debate-motion__detail" *ngIf="debate.motionType">
+          <span class="debate-motion__detail-label">Tipo</span>
+          <span class="debate-motion__detail-value">{{ debate.motionType }}</span>
+        </div>
+        <div class="debate-motion__detail" *ngIf="debate.motionTheme">
+          <span class="debate-motion__detail-label">Tema</span>
+          <span class="debate-motion__detail-value">{{ debate.motionTheme }}</span>
+        </div>
+        <div class="debate-motion__detail" *ngIf="debate.tournament">
+          <span class="debate-motion__detail-label">Torneio</span>
+          <span class="debate-motion__detail-value">{{ debate.tournament }}</span>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="debate__debate">
-    <div
-      class="
-        debate__debate__detail
-        debate__debate__detail--100
-        debate__debate__detail--big
-      "
-    >
-      <div class="debate__debate__detail__title">Moção</div>
-      <div class="debate__debate__detail__value">{{ debate.motion }}</div>
-    </div>
-    <div
-      class="
-        debate__debate__detail
-        debate__debate__detail--100
-        debate__debate__detail--big
-      "
-    >
-      <div class="debate__debate__detail__title">Chair</div>
-      <div class="debate__debate__detail__value">
-        <app-pfp class="debate__debate__detail__value__pfp" [size]="48" [hasPfp]="debate.chair.hasPfp" [id]="debate.chair.id"></app-pfp>
-        {{ debate.chair.name }}
-        <span class="debate__debate__detail__value__detail">{{ debate.chair.society }}</span>
+    </section>
+
+    <!-- Info Slides Section -->
+    <section class="debate-infoslides" *ngIf="debate.infoSlides?.length">
+      <h2 class="debate-section__title">InfoSlides</h2>
+      <div class="debate-infoslides__list">
+        <div class="debate-infoslide" *ngFor="let infoSlide of debate.infoSlides; index as index">
+          <span class="debate-infoslide__number">{{ index + 1 }}</span>
+          <p class="debate-infoslide__text">{{ infoSlide }}</p>
+        </div>
       </div>
-    </div>
-    <div class="debate__debate__detail">
-      <div class="debate__debate__detail__title">Estilo</div>
-      <div class="debate__debate__detail__value">{{ DebateStyle[debate.style] }}</div>
-    </div>
-    <div class="debate__debate__detail">
-      <div class="debate__debate__detail__title">Lugar</div>
-      <div class="debate__debate__detail__value">{{ DebateVenue[debate.venue] }}</div>
-    </div>
-    <div class="debate__debate__detail">
-      <div class="debate__debate__detail__title">Tipo da Moção</div>
-      <div class="debate__debate__detail__value">{{ debate.motionType }}</div>
-    </div>
-    <div class="debate__debate__detail">
-      <div class="debate__debate__detail__title">Tema da Moção</div>
-      <div class="debate__debate__detail__value">{{ debate.motionTheme }}</div>
-    </div>
-    <div
-      class="debate__debate__detail debate__debate__detail--100"
-      *ngFor="let infoSlide of debate.infoSlides; index as index"
-    >
-      <div class="debate__debate__detail__title">InfoSlide {{ index+1 }}</div>
-      <div class="debate__debate__detail__value">{{ infoSlide }}</div>
-    </div>
+    </section>
+
+    <!-- Judges Section -->
+    <section class="debate-judges">
+      <h2 class="debate-section__title">Adjudicação</h2>
+      <div class="debate-judges__list">
+        <div class="debate-judge debate-judge--chair">
+          <app-pfp [id]="debate.chair.id" [hasPfp]="debate.chair.hasPfp" [size]="48"></app-pfp>
+          <div class="debate-judge__info">
+            <span class="debate-judge__role">Chair</span>
+            <span class="debate-judge__name">{{ debate.chair.name }}</span>
+            <span class="debate-judge__society" *ngIf="debate.chair.society">{{ debate.chair.society }}</span>
+          </div>
+        </div>
+        <div class="debate-judge" *ngFor="let wing of debate.wings">
+          <app-pfp [id]="wing.id" [hasPfp]="wing.hasPfp" [size]="40"></app-pfp>
+          <div class="debate-judge__info">
+            <span class="debate-judge__role">Wing</span>
+            <span class="debate-judge__name">{{ wing.name }}</span>
+            <span class="debate-judge__society" *ngIf="wing.society">{{ wing.society }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="debate-results">
+      <h2 class="debate-section__title">Resultado</h2>
+      <div class="debate-results__grid">
+        <div
+          class="debate-house"
+          *ngFor="let house of getHouses(debate); index as index"
+          [ngClass]="{ 'debate-house--winner': index === 0 }"
+        >
+          <div class="debate-house__header">
+            <span class="debate-house__placement">{{ index + 1 }}º</span>
+            <span class="debate-house__title">{{ house.title }}</span>
+          </div>
+          <div class="debate-house__debaters">
+            <div class="debate-debater" *ngFor="let debater of house.debaters">
+              <app-pfp [id]="debater.debater.id" [hasPfp]="debater.debater.hasPfp" [size]="44"></app-pfp>
+              <div class="debate-debater__info">
+                <span class="debate-debater__position">{{ debater.position }}</span>
+                <span class="debate-debater__name">{{ debater.debater.name }}</span>
+                <span class="debate-debater__society" *ngIf="debater.debater.society">{{ debater.debater.society }}</span>
+              </div>
+              <span class="debate-debater__sps" *ngIf="debater.sps">
+                {{ debater.sps }} <span class="debate-debater__sps-label">SPs</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </div>

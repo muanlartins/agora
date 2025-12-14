@@ -1,0 +1,102 @@
+<div class="editor-page" *ngIf="!loading">
+  <header class="editor-header">
+    <button class="editor-header__back" (click)="goBack()">
+      <span class="editor-header__back-icon">&larr;</span>
+      Voltar
+    </button>
+
+    <h1 class="editor-header__title">
+      {{ isEditing ? 'Editar Artigo' : 'Novo Artigo' }}
+    </h1>
+
+    <button
+      class="editor-header__save"
+      mat-flat-button
+      color="primary"
+      [disabled]="!isFormValid || saving"
+      (click)="save()"
+    >
+      {{ saving ? 'Salvando...' : 'Salvar' }}
+    </button>
+  </header>
+
+  <div class="editor-content" [formGroup]="form">
+    <div class="editor-pane editor-pane--edit">
+      <div class="editor-section">
+        <label class="editor-label">Título</label>
+        <textarea
+          class="editor-input editor-input--title"
+          formControlName="title"
+          placeholder="Digite o título do artigo..."
+          rows="1"
+        ></textarea>
+      </div>
+
+      <div class="editor-meta">
+        <div class="editor-meta__field">
+          <mat-form-field class="editor-meta__select">
+            <mat-label>Tag</mat-label>
+            <mat-select formControlName="tag">
+              <mat-option *ngFor="let tag of tagOptions" [value]="tag.value">
+                {{ tag.viewValue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field *ngIf="showNewTagField" class="editor-meta__select">
+            <mat-label>Nova Tag</mat-label>
+            <input matInput formControlName="newTag" placeholder="Nome da nova tag" />
+          </mat-form-field>
+        </div>
+
+        <div class="editor-meta__field">
+          <mat-form-field class="editor-meta__select">
+            <mat-label>Autor</mat-label>
+            <mat-select formControlName="authorId">
+              <mat-form-field class="editor-meta__filter">
+                <mat-label>Buscar</mat-label>
+                <input matInput formControlName="memberFilter" (keydown)="$event.stopPropagation()" />
+              </mat-form-field>
+              <mat-option *ngFor="let author of filteredAuthorOptions" [value]="author.value">
+                {{ author.viewValue }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="editor-section editor-section--content">
+        <label class="editor-label">Conteúdo (Markdown)</label>
+        <textarea
+          class="editor-input editor-input--content"
+          formControlName="content"
+          placeholder="Escreva o conteúdo do artigo em Markdown..."
+        ></textarea>
+      </div>
+    </div>
+
+    <div class="editor-pane editor-pane--preview">
+      <div class="preview-header">
+        <span class="preview-header__label">Preview</span>
+      </div>
+
+      <article class="preview-article">
+        <header class="preview-article__header">
+          <span class="preview-article__tag" *ngIf="selectedTag">{{ selectedTag }}</span>
+          <h1 class="preview-article__title">{{ title || 'Título do Artigo' }}</h1>
+          <div class="preview-article__meta">
+            <span class="preview-article__author" *ngIf="authorName">{{ authorName }}</span>
+          </div>
+        </header>
+
+        <div class="preview-article__content">
+          <app-markdown [data]="content"></app-markdown>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+
+<div class="loading-state" *ngIf="loading">
+  <app-spinner></app-spinner>
+</div>

@@ -1,0 +1,57 @@
+<header class="articles-header">
+  <div class="articles-header__left">
+    <h1 class="articles-header__title">Artigos</h1>
+    <span class="articles-header__count">{{ articleCount }} artigos</span>
+  </div>
+
+  <div class="articles-header__right">
+    <form [formGroup]="form" class="articles-header__filters">
+      <mat-form-field class="articles-header__filter">
+        <mat-label>Tag</mat-label>
+        <mat-select formControlName="tag">
+          <mat-option [value]="''">Todas</mat-option>
+          <mat-option *ngFor="let tag of tagOptions" [value]="tag.value">
+            {{ tag.viewValue }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+
+    <button
+      *ngIf="isAdmin()"
+      class="articles-header__create"
+      mat-flat-button
+      color="primary"
+      (click)="createArticle()"
+    >
+      <mat-icon class="articles-header__create-icon">add</mat-icon>
+      Novo Artigo
+    </button>
+  </div>
+</header>
+
+<div class="articles-grid" *ngIf="filteredArticles.length; else emptyState">
+  <app-article-card
+    *ngFor="let article of filteredArticles"
+    [article]="article"
+    [author]="getAuthor(article.authorId)"
+    [showActions]="isAdmin()"
+    (edit)="editArticle($event)"
+    (delete)="deleteArticle($event)"
+  ></app-article-card>
+</div>
+
+<ng-template #emptyState>
+  <div class="empty-state">
+    <p class="empty-state__message">Nenhum artigo encontrado.</p>
+    <button
+      *ngIf="isAdmin()"
+      class="empty-state__action"
+      mat-flat-button
+      color="primary"
+      (click)="createArticle()"
+    >
+      Criar primeiro artigo
+    </button>
+  </div>
+</ng-template>

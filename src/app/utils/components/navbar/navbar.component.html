@@ -1,32 +1,55 @@
-<div class="navbar">
-  <div class="navbar__logo">
-    <img src="assets/agora-logo.png" class="navbar__logo__agora" routerLink="/" />
-    <img src="assets/sd-logo.png" class="navbar__logo__sd" />
+<nav class="navbar">
+  <div class="navbar__brand">
+    <img src="assets/agora-logo.png" alt="Agora" class="navbar__logo" routerLink="/" />
   </div>
-  <ul class="navbar__pages">
-    <li class="navbar__pages__option" routerLink="/dashboard" routerLinkActive="navbar__pages__option--active">
+
+  <ul class="navbar__menu">
+    <li class="navbar__item" routerLink="/dashboard" routerLinkActive="navbar__item--active">
       Dashboard
     </li>
-    <li class="navbar__pages__option" routerLink="/articles" routerLinkActive="navbar__pages__option--active">
+    <li class="navbar__item" routerLink="/articles" routerLinkActive="navbar__item--active">
       Artigos
     </li>
-    <li class="navbar__pages__option" routerLink="/goals" routerLinkActive="navbar__pages__option--active">
+    <li class="navbar__item" routerLink="/goals" routerLinkActive="navbar__item--active">
       Metas
     </li>
-    <li class="navbar__pages__option" routerLink="/debates" routerLinkActive="navbar__pages__option--active">
+    <li class="navbar__item" routerLink="/debates" routerLinkActive="navbar__item--active">
       Debates
     </li>
-    <li class="navbar__pages__option" routerLink="/members" routerLinkActive="navbar__pages__option--active">
+    <li class="navbar__item" routerLink="/members" routerLinkActive="navbar__item--active">
       Membros
     </li>
-    <li *ngIf="isAdmin()" class="navbar__pages__option" routerLink="/member" routerLinkActive="navbar__pages__option--active">
-      Relatório
+    <li *ngIf="isAdmin()" class="navbar__item" routerLink="/member" routerLinkActive="navbar__item--active">
+      Relatorio
     </li>
   </ul>
-  <div class="navbar__menu" [formGroup]="form">
-    <span class="navbar__menu__hamburger navbar__menu__hamburger--top"></span>
-    <span class="navbar__menu__hamburger navbar__menu__hamburger--mid"></span>
-    <span class="navbar__menu__hamburger navbar__menu__hamburger--bot"></span>
-    <input class="navbar__menu__input" type="checkbox" formControlName="checkbox" />
+
+  <button class="navbar__toggle" [class.navbar__toggle--open]="isMenuOpen" (click)="toggleMenu()">
+    <span class="navbar__toggle-bar"></span>
+    <span class="navbar__toggle-bar"></span>
+    <span class="navbar__toggle-bar"></span>
+  </button>
+
+  <div class="navbar__mobile" [class.navbar__mobile--open]="isMenuOpen">
+    <ul class="navbar__mobile-menu">
+      <li class="navbar__mobile-item" routerLink="/dashboard" routerLinkActive="navbar__mobile-item--active" (click)="closeMenu()">
+        Dashboard
+      </li>
+      <li class="navbar__mobile-item" routerLink="/articles" routerLinkActive="navbar__mobile-item--active" (click)="closeMenu()">
+        Artigos
+      </li>
+      <li class="navbar__mobile-item" routerLink="/goals" routerLinkActive="navbar__mobile-item--active" (click)="closeMenu()">
+        Metas
+      </li>
+      <li class="navbar__mobile-item" routerLink="/debates" routerLinkActive="navbar__mobile-item--active" (click)="closeMenu()">
+        Debates
+      </li>
+      <li class="navbar__mobile-item" routerLink="/members" routerLinkActive="navbar__mobile-item--active" (click)="closeMenu()">
+        Membros
+      </li>
+      <li *ngIf="isAdmin()" class="navbar__mobile-item" routerLink="/member" routerLinkActive="navbar__mobile-item--active" (click)="closeMenu()">
+        Relatorio
+      </li>
+    </ul>
   </div>
-</div>
+</nav>

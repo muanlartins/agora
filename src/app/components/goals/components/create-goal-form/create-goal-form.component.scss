@@ -1,14 +1,125 @@
+@import 'variables';
+
 .form {
-  padding: 32px;
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 32px;
-  align-items: center;
+  flex-direction: column;
+
+  &__body {
+    padding: $space-6;
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+    overflow-y: auto;
+    max-height: calc(90vh - 160px);
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-4;
+
+    @media (max-width: $breakpoint-sm) {
+      grid-template-columns: 1fr;
+    }
+  }
 
   &__field {
-    &--title, &--textarea, &--markdown {
+    width: 100%;
+
+    &--full {
       width: 100%;
     }
+
+    &--textarea {
+      textarea {
+        min-height: 100px;
+      }
+    }
+  }
+
+  &__description-section {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+  }
+
+  &__description-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__description-label {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-secondary-dark;
+  }
+
+  &__toggle-label {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-secondary-dark;
+    margin-left: $space-2;
+  }
+
+  &__preview {
+    background: $surface-elevated-dark;
+    border: 1px solid $border-dark;
+    border-radius: $radius-md;
+    padding: $space-4;
+    min-height: 120px;
+    max-height: 200px;
+    overflow-y: auto;
+
+    ::ng-deep {
+      p {
+        margin: 0 0 $space-3 0;
+        font-family: $font-body;
+        font-size: $font-size-sm;
+        color: $text-primary-dark;
+        line-height: $line-height-relaxed;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        font-family: $font-display;
+        color: $text-primary-dark;
+        margin: 0 0 $space-2 0;
+      }
+
+      ul, ol {
+        margin: 0 0 $space-3 0;
+        padding-left: $space-6;
+      }
+
+      li {
+        font-family: $font-body;
+        font-size: $font-size-sm;
+        color: $text-primary-dark;
+        line-height: $line-height-relaxed;
+      }
+    }
+  }
+
+  &__preview-empty {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-muted-dark;
+    font-style: italic;
+    margin: 0;
+    text-align: center;
+    padding: $space-4;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-4;
+    padding: $space-6;
+    border-top: 1px solid $border-dark;
+    background: $surface-elevated-dark;
   }
 }

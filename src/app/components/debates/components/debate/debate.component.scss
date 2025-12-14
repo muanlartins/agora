@@ -1,164 +1,426 @@
-@import 'src/variables.scss';
+@import 'variables';
 
-.debate {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  max-width: 50rem;
-  margin: 0 auto;
+.debate-page {
+  min-height: 100vh;
+  background: $background-dark;
 
-  &__call {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 1rem;
-
-    &__house {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      width: 100%;
-      gap: 1rem;
-
-      padding-bottom: 1rem;
-      border-bottom: 1px solid $secondary;
-
-      &:last-child {
-        padding-bottom: 0;
-        border-bottom: none;
-      }
-
-      &__header {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 0.5rem;
-
-        &__placement {
-          font-size: 1.25rem;
-          line-height: 100%;
-          color: $primary;
-        }
-
-        &__name {
-          font-size: 1.25rem;
-          line-height: 125%;
-          color: $white;
-        }
-      }
-
-      &__debater {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
-        gap: 0.5rem;
-
-        &__content {
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-start;
-          align-items: flex-start;
-          gap: 0.25rem;
-
-          &__position {
-            font-size: 1rem;
-            line-height: 100%;
-            color: $white;
-          }
-
-          &__name {
-            font-size: 0.875rem;
-            line-height: 100%;
-            color: $primary;
-
-            &__society {
-              font-size: 1rem;
-              line-height: 100%;
-              color: $white;
-            }
-          }
-
-          &__sps {
-            font-size: 0.875rem;
-            line-height: 100%;
-            color: $primary;
-
-            &__text {
-              font-size: 1rem;
-              line-height: 100%;
-              color: $white;
-            }
-          }
-        }
-      }
-    }
+  &__navbar {
+    width: 100%;
   }
 
-  &__debate {
+  &__content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: $space-8 $space-6;
     display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 1rem;
-    padding-right: 2rem;
+    flex-direction: column;
+    gap: $space-8;
 
-    &__detail {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 0.5rem;
-
-      &--100 {
-        width: 100%;
-      }
-
-      &--100 &__value {
-        line-height: 125%;
-      }
-
-      &--big &__title {
-        font-size: 0.875rem;
-      }
-
-      &--big &__value{
-        font-size: 1.25rem;
-
-        &__detail {
-          font-size: 1.125rem;
-        }
-      }
-
-      &__title {
-        font-size: 1rem;
-        line-height: 100%;
-        color: $white;
-      }
-
-      &__value {
-        font-size: 0.875rem;
-        line-height: 100%;
-        color: $primary;
-        display: flex;
-        gap: 0.5rem;
-        justify-content: flex-start;
-        align-items: center;
-
-        &__detail {
-          font-size: 1rem;
-          line-height: 100%;
-          color: $white;
-        }
-      }
+    @media (max-width: $breakpoint-md) {
+      padding: $space-6 $space-4;
+      gap: $space-6;
     }
-
   }
 }
 
-@media (width <= $medium) {
+// Header
+.debate-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
+  &__left {
+    display: flex;
+    align-items: center;
+  }
+
+  &__back {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-2 $space-3;
+    background: transparent;
+    border: 1px solid $border-dark;
+    border-radius: $radius-md;
+    color: $text-secondary-dark;
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    svg {
+      color: $text-muted-dark;
+      transition: color $transition-fast;
+    }
+
+    &:hover {
+      background: $surface-elevated-dark;
+      color: $text-primary-dark;
+      border-color: $border-dark;
+
+      svg {
+        color: $text-primary-dark;
+      }
+    }
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  &__action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 1px solid $border-dark;
+    background: $surface-dark;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    img {
+      width: 18px;
+      height: 18px;
+      filter: $filter;
+      opacity: 0.6;
+      transition: opacity $transition-fast;
+    }
+
+    &:hover {
+      background: $surface-elevated-dark;
+      border-color: $primary-muted;
+
+      img {
+        opacity: 1;
+      }
+    }
+
+    &--delete:hover {
+      background: rgba($danger, 0.1);
+      border-color: rgba($danger, 0.3);
+
+      img {
+        filter: brightness(0) saturate(100%) invert(28%) sepia(75%) saturate(2057%) hue-rotate(340deg) brightness(94%) contrast(93%);
+      }
+    }
+  }
+}
+
+// Motion Section
+.debate-motion {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $space-3;
+  }
+
+  &__date {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-muted-dark;
+  }
+
+  &__text {
+    font-family: $font-display;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-semibold;
+    color: $text-primary-dark;
+    line-height: $line-height-relaxed;
+    margin: 0;
+
+    @media (max-width: $breakpoint-md) {
+      font-size: $font-size-xl;
+    }
+  }
+
+  &__details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-4 $space-6;
+  }
+
+  &__detail {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+
+    &-label {
+      font-family: $font-body;
+      font-size: $font-size-xs;
+      font-weight: $font-weight-semibold;
+      color: $text-muted-dark;
+      text-transform: uppercase;
+      letter-spacing: $letter-spacing-wider;
+    }
+
+    &-value {
+      font-family: $font-body;
+      font-size: $font-size-sm;
+      color: $text-secondary-dark;
+    }
+  }
+}
+
+// Badge
+.debate-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: $space-1 $space-2;
+  border-radius: $radius-sm;
+  white-space: nowrap;
+
+  &--bp {
+    color: $primary;
+    background: $primary-muted;
+  }
+
+  &--fundamentals {
+    color: $info;
+    background: rgba($info, 0.15);
+  }
+
+  &--remote {
+    color: $text-secondary-dark;
+    background: $surface-elevated-dark;
+    border: 1px solid $border-dark;
+  }
+
+  &--inPerson {
+    color: $success;
+    background: rgba($success, 0.15);
+  }
+}
+
+// Section Title
+.debate-section__title {
+  font-family: $font-display;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $text-primary-dark;
+  margin: 0 0 $space-4 0;
+}
+
+// Info Slides Section
+.debate-infoslides {
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+  }
+}
+
+.debate-infoslide {
+  display: flex;
+  gap: $space-3;
+  padding: $space-4;
+  background: $surface-dark;
+  border: 1px solid $border-dark;
+  border-radius: $radius-md;
+
+  &__number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $primary;
+    background: $primary-muted;
+    border-radius: $radius-sm;
+  }
+
+  &__text {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-secondary-dark;
+    line-height: $line-height-relaxed;
+    margin: 0;
+  }
+}
+
+// Judges Section
+.debate-judges {
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-4;
+  }
+}
+
+.debate-judge {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  background: $surface-dark;
+  border: 1px solid $border-dark;
+  border-radius: $radius-md;
+
+  &--chair {
+    border-color: $primary-muted;
+    background: rgba($primary, 0.05);
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+  }
+
+  &__role {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    color: $text-muted-dark;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wider;
+  }
+
+  &__name {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-primary-dark;
+  }
+
+  &__society {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    color: $text-muted-dark;
+  }
+}
+
+// Results Section
+.debate-results {
+  &__grid {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+  }
+}
+
+.debate-house {
+  background: $surface-dark;
+  border: 1px solid $border-dark;
+  border-radius: $radius-lg;
+  overflow: hidden;
+
+  &--winner {
+    border-color: $primary-muted;
+
+    .debate-house__header {
+      background: rgba($primary, 0.1);
+    }
+
+    .debate-house__placement {
+      color: $primary;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-3 $space-4;
+    background: $surface-elevated-dark;
+    border-bottom: 1px solid $border-dark;
+  }
+
+  &__placement {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $text-muted-dark;
+  }
+
+  &__title {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $text-primary-dark;
+  }
+
+  &__debaters {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.debate-debater {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  border-bottom: 1px solid $border-dark;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__position {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    color: $primary;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wider;
+  }
+
+  &__name {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-primary-dark;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__society {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    color: $text-muted-dark;
+  }
+
+  &__sps {
+    display: flex;
+    align-items: baseline;
+    gap: $space-1;
+    font-family: $font-display;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $primary;
+    white-space: nowrap;
+
+    &-label {
+      font-family: $font-body;
+      font-size: $font-size-xs;
+      font-weight: $font-weight-medium;
+      color: $text-muted-dark;
+    }
+  }
 }

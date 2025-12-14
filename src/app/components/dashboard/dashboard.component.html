@@ -1,157 +1,186 @@
-<div class="page">
-  <app-navbar
-    class="page__navbar"
-    (checkbox)="onNavbarHamburgerChange($event)"
-  ></app-navbar>
-  <div
-    class="page__content"
-    [ngClass]="{ 'page__content--hide': isNavbarHamburgerActive }"
-  >
-    <div class="page__content__header" [formGroup]="form">
-      <mat-form-field class="page__content__header__input">
-        <mat-label>Sociedade</mat-label>
-        <mat-select formControlName="society">
-          <mat-option>Nenhum</mat-option>
-          <mat-option
-            *ngFor="let option of societyOptions"
-            [value]="option.value"
-          >
-            {{ option.viewValue }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field class="page__content__header__input">
-        <mat-label>Processo Seletivo</mat-label>
-        <mat-select formControlName="selectiveProcess">
-          <mat-option>Nenhum</mat-option>
-          <mat-option
-            *ngFor="let option of selectiveProcessOptions"
-            [value]="option.value"
-          >
-            {{ option.viewValue }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div class="page__content__ranks">
-      <div class="page__content__ranks__rank" *ngFor="let rank of ranks">
-        <div
-          class="page__content__ranks__rank__title"
-          [innerHTML]="rank.title"
-        ></div>
-        <div
-          class="page__content__ranks__rank__disclaimer"
-          [innerHTML]="rank.disclaimer"
-        ></div>
-        <div class="page__content__ranks__rank__placements">
-          <div
-            class="page__content__ranks__rank__placements__placement"
-            *ngFor="let placement of rank.placements; index as index"
-          >
-            <div
-              [class]="
-                'page__content__ranks__rank__placements__placement__title ' +
-                'page__content__ranks__rank__placements__placement__title--' +
-                index
-              "
-              [innerHTML]="placement.title"
-            ></div>
-            <div
-              class="page__content__ranks__rank__placements__placement__members"
+<div class="dashboard">
+  <app-navbar class="dashboard__navbar"></app-navbar>
+
+  <div class="dashboard__content">
+    <!-- Page Header -->
+    <header class="dashboard__header">
+      <h1 class="dashboard__title">Dashboard</h1>
+      <div class="dashboard__summary" *ngIf="!loading">
+        <div class="summary-stat">
+          <span class="summary-stat__value">{{ totalDebates }}</span>
+          <span class="summary-stat__label">Treinos</span>
+        </div>
+        <div class="summary-stat">
+          <span class="summary-stat__value">{{ activeMembersCount }}</span>
+          <span class="summary-stat__label">Membros Ativos</span>
+        </div>
+        <div class="summary-stat">
+          <span class="summary-stat__value">{{ goalsAchieved }}/{{ totalGoals }}</span>
+          <span class="summary-stat__label">Metas</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Filters Card -->
+    <section class="filters-card" [formGroup]="form">
+      <div class="filters-card__header">
+        <h2 class="filters-card__title">Filtros</h2>
+        <button
+          *ngIf="hasActiveFilters()"
+          class="filters-card__clear"
+          (click)="clearFilters()"
+        >
+          Limpar filtros
+        </button>
+      </div>
+
+      <div class="filters-card__controls">
+        <mat-form-field class="filter-field">
+          <mat-label>Período dos Debates</mat-label>
+          <mat-select formControlName="debatePeriod">
+            <mat-option
+              *ngFor="let option of debatePeriodOptions"
+              [value]="option.value"
             >
-              <div
-                class="page__content__ranks__rank__placements__placement__members__member"
-                *ngFor="let member of placement.members"
-              >
-                <div
-                  class="page__content__ranks__rank__placements__placement__members__member__pfp"
+              {{ option.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="filter-field">
+          <mat-label>Atividade do Membro</mat-label>
+          <mat-select formControlName="activityPeriod">
+            <mat-option
+              *ngFor="let option of activityPeriodOptions"
+              [value]="option.value"
+            >
+              {{ option.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="filter-field">
+          <mat-label>Sociedade</mat-label>
+          <mat-select formControlName="society">
+            <mat-option [value]="null">Todas</mat-option>
+            <mat-option
+              *ngFor="let option of societyOptions"
+              [value]="option.value"
+            >
+              {{ option.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="filter-field">
+          <mat-label>Processo Seletivo</mat-label>
+          <mat-select formControlName="selectiveProcess">
+            <mat-option [value]="null">Todos</mat-option>
+            <mat-option
+              *ngFor="let option of selectiveProcessOptions"
+              [value]="option.value"
+            >
+              {{ option.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </section>
+
+    <!-- Rankings Section -->
+    <section class="rankings-section" *ngIf="!loading && ranks.length">
+      <h2 class="section-title">Rankings</h2>
+      <div class="rankings-grid">
+        <article class="ranking-card" *ngFor="let rank of ranks">
+          <h3 class="ranking-card__title" [innerHTML]="rank.title"></h3>
+          <p
+            class="ranking-card__disclaimer"
+            *ngIf="rank.disclaimer"
+            [innerHTML]="rank.disclaimer"
+          ></p>
+
+          <div class="ranking-card__podium">
+            <div
+              class="podium-place"
+              [ngClass]="'podium-place--' + (i + 1)"
+              *ngFor="let placement of rank.placements; let i = index"
+            >
+              <div class="podium-place__header">
+                <img
+                  class="podium-place__icon"
+                  [src]="'/assets/' + getIconNameByIndex(i)"
+                  [alt]="'Posição ' + (i + 1)"
+                />
+                <span class="podium-place__label" [innerHTML]="placement.title"></span>
+              </div>
+
+              <div class="podium-place__members">
+                <a
+                  class="member-item member-item--clickable"
+                  *ngFor="let member of placement.members"
+                  [routerLink]="['/member', member.id]"
                 >
                   <app-pfp
-                    class="page__content__ranks__rank__placements__placement__members__member__pfp"
+                    class="member-item__avatar"
                     [id]="member.id"
                     [hasPfp]="member.hasPfp"
-                    [size]="getPfpSizeByIndex(index)"
+                    [size]="getPfpSizeByIndex(i)"
                   ></app-pfp>
-                  <img
-                    [class]="
-                      'page__content__ranks__rank__placements__placement__members__member__pfp__icon ' +
-                      'page__content__ranks__rank__placements__placement__members__member__pfp__icon--' +
-                      index
-                    "
-                    [src]="'/assets/' + getIconNameByIndex(index)"
-                  />
-                </div>
-                <div
-                  class="page__content__ranks__rank__placements__placement__members__member__description"
-                >
-                  <div
-                    [class]="
-                      'page__content__ranks__rank__placements__placement__members__member__description__name ' +
-                      'page__content__ranks__rank__placements__placement__members__member__description__name--' +
-                      index
-                    "
-                  >
-                    {{ member.name }}
+                  <div class="member-item__info">
+                    <span class="member-item__name">{{ member.name }}</span>
+                    <span class="member-item__society">{{ member.society }}</span>
                   </div>
-                  <div
-                    [class]="
-                      'page__content__ranks__rank__placements__placement__members__member__description__society ' +
-                      'page__content__ranks__rank__placements__placement__members__member__description__society--' +
-                      index
-                    "
-                  >
-                    {{ member.society }}
-                  </div>
-                </div>
+                </a>
               </div>
             </div>
           </div>
-        </div>
+        </article>
       </div>
-    </div>
-    <div *ngIf="!loading" class="page__content__divider"></div>
-    <div class="page__content__statistics">
-      <div
-        class="page__content__statistics__statistic"
-        *ngFor="let statistic of statistics"
-      >
-        <div
-          class="page__content__statistics__statistic__title"
-          [innerHTML]="statistic.title"
-        ></div>
-        <div class="page__content__statistics__statistic__fields">
-          <div
-            class="page__content__statistics__statistic__fields__field"
-            [class.page__content__statistics__statistic__fields__field--full]="
-              field.full
-            "
-            *ngFor="let field of statistic.fields"
-          >
+    </section>
+
+    <!-- Divider -->
+    <hr class="section-divider" *ngIf="!loading && statistics.length" />
+
+    <!-- Statistics Section -->
+    <section class="statistics-section" *ngIf="!loading && statistics.length">
+      <h2 class="section-title">Estatísticas</h2>
+      <div class="statistics-list">
+        <article class="statistic-card" *ngFor="let statistic of statistics">
+          <h3 class="statistic-card__title" [innerHTML]="statistic.title"></h3>
+
+          <div class="statistic-card__charts">
             <div
-              class="page__content__statistics__statistic__fields__field__title"
-              [innerHTML]="field.title"
-            ></div>
-            <div
-              *ngIf="field.description"
-              class="page__content__statistics__statistic__fields__field__description"
+              class="chart-wrapper"
+              [ngClass]="{ 'chart-wrapper--full': field.full }"
+              *ngFor="let field of statistic.fields"
             >
-              {{ field.description }}
-            </div>
-            <div
-              *ngIf="field.chart"
-              class="page__content__statistics__statistic__fields__field__chart"
-            >
-              <canvas
-                class="page__content__statistics__statistic__fields__field__chart__canvas"
-                [class.page__content__statistics__statistic__fields__field__chart__canvas--full]="
-                  field.full
-                "
-                #chart
-              ></canvas>
+              <h4 class="chart-wrapper__title" [innerHTML]="field.title"></h4>
+              <p
+                *ngIf="field.description"
+                class="chart-wrapper__description"
+              >
+                {{ field.description }}
+              </p>
+              <div *ngIf="field.chart" class="chart-wrapper__canvas-container">
+                <canvas #chart></canvas>
+              </div>
             </div>
           </div>
-        </div>
+        </article>
       </div>
+    </section>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="loading">
+      <app-spinner></app-spinner>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!loading && !ranks.length">
+      <p class="empty-state__message">Nenhum dado encontrado para os filtros selecionados.</p>
+      <button class="empty-state__action" (click)="clearFilters()">
+        Limpar filtros
+      </button>
     </div>
   </div>
 </div>

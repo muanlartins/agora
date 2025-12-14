@@ -1,229 +1,620 @@
-<div class="page">
-  <!-- <app-banner></app-banner> -->
-  <div class="page__navbar">
-    <div class="page__navbar__logo">
-      <img src="assets/agora-logo-white.png" class="page__navbar__logo__agora" (click)="goToLandingPage()" />
-      <!-- <img src="assets/sd-logo-white.png" class="page__navbar__logo__sd" /> -->
-      <img src="assets/condeb-logo.png" class="page__navbar__logo__condeb" />
+<div class="tabby-archive">
+  <!-- Navigation (matching landing page) -->
+  <nav class="nav">
+    <div class="nav__logo">
+      <img src="assets/agora-logo.png" alt="Agora" class="nav__logo-img" (click)="goToLandingPage()" />
     </div>
-    <ul class="page__navbar__menu">
-      <li class="page__navbar__menu__option" routerLink="/login">Login</li>
-      <!-- <li class="page__navbar__menu__option" routerLink="/tabby-archive" routerLinkActive="page__navbar__menu__option--active">Tabby Archive</li> -->
-      <!-- <li class="page__navbar__menu__option">Cadastre-se</li> -->
-    </ul>
-  </div>
-  <div class="page__introduction" #introduction>
-    <div class="page__introduction__title">Tabby Archive</div>
-    <div class="page__introduction__description">
-      O Tabby Archive, ou Arquivo Tabby, é um projeto da CONDEB de disponibilizar publicamente
-      registros dos tabbies dos campeonatos de debates.
+    <div class="nav__links">
+      <a routerLink="/" class="nav__link nav__link--back">
+        <svg class="nav__link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Voltar
+      </a>
+      <a routerLink="/login" class="nav__link nav__link--primary">Entrar</a>
     </div>
-    <div class="page__introduction__description">Selecione um torneio abaixo para poder ver os seus dados.</div>
-    <form class="page__introduction__form" [formGroup]="form">
-      <mat-form-field>
-        <mat-label>Torneio</mat-label>
-        <mat-select formControlName="tournament">
-          <mat-option>Nenhum</mat-option>
-          <mat-option *ngFor="let option of tournamentOptions" [value]="option.value">
-            {{ option.viewValue }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </form>
-  </div>
-  <div class="page__body" *ngIf="data">
-    <div class="page__body__sidebar">
-      <div class="page__body__sidebar__content">
-        <div class="page__body__sidebar__content__subtitle" (click)="scrollToIntroduction()">Introdução</div>
-        <div class="page__body__sidebar__content__subtitle" (click)="scrollToSubtitle(0)">Juízes</div>
-        <div class="page__body__sidebar__content__subtitle" (click)="scrollToSubtitle(1)">Debatedores</div>
-        <div class="page__body__sidebar__content__subtitle" (click)="scrollToSubtitle(2)">Times</div>
-        <div class="page__body__sidebar__content__subtitle" (click)="scrollToSubtitle(3)">Instituições</div>
-        <div class="page__body__sidebar__content__subtitle" (click)="scrollToSubtitle(4)">Salas</div>
-        <div class="page__body__sidebar__content__subtitle" (click)="scrollToSubtitle(5)">Rodadas</div>
-        <ul class="page__body__sidebar__content__items">
-          <li (click)="scrollToRound(index)" class="page__body__sidebar__content__items__item" *ngFor="let round of data.rounds; index as index">
-            {{ round.roundName }} ({{round.roundAbbreviation}})
-          </li>
-        </ul>
-        <div class="page__body__sidebar__content__subtitle" (click)="scrollToSubtitle(6)">Team Standings Open</div>
-        <div class="page__body__sidebar__content__subtitle" (click)="scrollToSubtitle(7)">Top Speakers Open</div>
-        <div class="page__body__sidebar__content__subtitle" (click)="scrollToSubtitle(8)">Top Speakers Novice</div>
+  </nav>
+
+  <!-- Header Section -->
+  <header class="header">
+    <div class="header__content">
+      <div class="header__partnership">
+        <img src="assets/condeb-logo.png" alt="CONDEB" class="header__partnership-logo" />
+      </div>
+      <h1 class="header__title">Tabby <span class="header__title--accent">Archive</span></h1>
+      <p class="header__description">
+        O Tabby Archive é um projeto da SDUFRJ em parceria com a CONDEB para disponibilizar
+        publicamente os registros dos tabbies dos campeonatos de debates brasileiros.
+      </p>
+
+      <!-- Searchable Tournament Selector -->
+      <div class="tournament-selector">
+        <label class="tournament-selector__label">Selecione um torneio</label>
+        <div class="tournament-selector__wrapper">
+          <mat-form-field appearance="outline" class="tournament-selector__field">
+            <input matInput
+                   [formControl]="tournamentFilter"
+                   [matAutocomplete]="tournamentAuto"
+                   placeholder="Buscar torneio..." />
+            <mat-autocomplete #tournamentAuto="matAutocomplete"
+                              (optionSelected)="onTournamentSelected($event)"
+                              panelClass="tournament-dropdown">
+              <mat-option *ngFor="let option of filteredTournaments$ | async" [value]="option.viewValue">
+                {{ option.viewValue }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
       </div>
     </div>
-    <div class="page__body__content">
-      <div class="page__body__content__tournament" *ngIf="data">
-        <div class="page__body__content__tournament__title">
-          {{ data.tournamentName }}
+  </header>
+
+  <!-- Loading State -->
+  <div class="loading" *ngIf="isLoading">
+    <div class="loading__spinner"></div>
+    <span class="loading__text">Carregando dados do torneio...</span>
+  </div>
+
+  <!-- Error State -->
+  <div class="error" *ngIf="error">
+    <svg class="error__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <span class="error__text">{{ error }}</span>
+  </div>
+
+  <!-- Tournament Content -->
+  <main class="content" *ngIf="data && !isLoading && !error">
+    <!-- Tournament Overview Card -->
+    <div class="overview">
+      <h2 class="overview__title">{{ data.tournamentName }}</h2>
+      <div class="overview__stats">
+        <div class="overview__stat">
+          <span class="overview__stat-value">{{ data.teams?.length || 0 }}</span>
+          <span class="overview__stat-label">Times</span>
         </div>
-        <div #subtitle class="page__body__content__tournament__subtitle">
-          Juízes
+        <div class="overview__stat">
+          <span class="overview__stat-value">{{ data.speakers?.length || 0 }}</span>
+          <span class="overview__stat-label">Debatedores</span>
         </div>
-        <div class="page__body__content__tournament__list">
-          <div class="page__body__content__tournament__list__item" *ngFor="let adjudicator of data.adjudicators">
-            <div class="page__body__content__tournament__list__item__value">
-              {{ adjudicator.name }} <span class="page__body__content__tournament__list__item__value--condebsecondary">({{ adjudicator.society }})</span>
-            </div>
-          </div>
+        <div class="overview__stat">
+          <span class="overview__stat-value">{{ data.adjudicators?.length || 0 }}</span>
+          <span class="overview__stat-label">Juízes</span>
         </div>
-        <div #subtitle class="page__body__content__tournament__subtitle">
-          Debatedores
+        <div class="overview__stat">
+          <span class="overview__stat-value">{{ data.rounds?.length || 0 }}</span>
+          <span class="overview__stat-label">Rodadas</span>
         </div>
-        <div class="page__body__content__tournament__list">
-          <div class="page__body__content__tournament__list__item" *ngFor="let speaker of data.speakers">
-            <div class="page__body__content__tournament__list__item__value">
-              {{ speaker.name }}
-              <span class="page__body__content__tournament__list__item__value--condebsecondary">({{ speaker.society }})</span>
-              <span *ngIf="speaker.speakerCategories" class="page__body__content__tournament__list__item__value--primary"> ({{ speaker.speakerCategories.join(', ') }}) </span>
-            </div>
-          </div>
+      </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <mat-tab-group class="tabs" animationDuration="200ms">
+
+      <!-- Tab 1: Estatísticas (Summary) -->
+      <mat-tab label="Estatísticas">
+        <div class="tab-content">
+          <!-- Category Sub-Tabs -->
+          <mat-tab-group class="category-tabs" animationDuration="150ms">
+            <!-- Todos Tab -->
+            <mat-tab label="Todos">
+              <div class="category-tab-content">
+                <mat-accordion class="sections-accordion" multi>
+                  <!-- Top 3 Teams -->
+                  <mat-expansion-panel expanded>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>Top 3 Times</mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="podium">
+                      <div class="podium__item" *ngFor="let team of getTopTeams(3); let i = index">
+                        <div class="podium__rank" [attr.data-rank]="i + 1">{{ i + 1 }}</div>
+                        <div class="podium__info">
+                          <div class="podium__name">{{ team.name }}</div>
+                          <div class="podium__detail">{{ getTeamSpeakerNames(team) }}</div>
+                        </div>
+                        <div class="podium__score">{{ getTeamTotal(team.id) }} pts</div>
+                      </div>
+                      <div class="empty" *ngIf="getTopTeams(3).length === 0">Nenhum dado disponível.</div>
+                    </div>
+                  </mat-expansion-panel>
+
+                  <!-- Top 3 Speakers -->
+                  <mat-expansion-panel expanded>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>Top 3 Speakers</mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="podium">
+                      <div class="podium__item" *ngFor="let speaker of getTopSpeakers(3); let i = index">
+                        <div class="podium__rank" [attr.data-rank]="i + 1">{{ i + 1 }}</div>
+                        <div class="podium__info">
+                          <div class="podium__name">{{ speaker.name }}</div>
+                          <div class="podium__detail">{{ speaker.society }}</div>
+                        </div>
+                        <div class="podium__score">{{ getSpeakerAverage(speaker.id) }}</div>
+                      </div>
+                      <div class="empty" *ngIf="getTopSpeakers(3).length === 0">Nenhum dado disponível.</div>
+                    </div>
+                  </mat-expansion-panel>
+
+                  <!-- Quick Stats -->
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>Resumo do Torneio</mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="quick-stats">
+                      <div class="quick-stat">
+                        <span class="quick-stat__label">Total de Times</span>
+                        <span class="quick-stat__value">{{ data.teams?.length || 0 }}</span>
+                      </div>
+                      <div class="quick-stat">
+                        <span class="quick-stat__label">Total de Debatedores</span>
+                        <span class="quick-stat__value">{{ data.speakers?.length || 0 }}</span>
+                      </div>
+                      <div class="quick-stat">
+                        <span class="quick-stat__label">Total de Juízes</span>
+                        <span class="quick-stat__value">{{ data.adjudicators?.length || 0 }}</span>
+                      </div>
+                      <div class="quick-stat">
+                        <span class="quick-stat__label">Rodadas Classificatórias</span>
+                        <span class="quick-stat__value">{{ getNonEliminationRounds().length }}</span>
+                      </div>
+                      <div class="quick-stat">
+                        <span class="quick-stat__label">Rodadas Eliminatórias</span>
+                        <span class="quick-stat__value">{{ eliminationRounds.length }}</span>
+                      </div>
+                      <div class="quick-stat">
+                        <span class="quick-stat__label">Instituições</span>
+                        <span class="quick-stat__value">{{ data.institutions?.length || 0 }}</span>
+                      </div>
+                    </div>
+                  </mat-expansion-panel>
+                </mat-accordion>
+              </div>
+            </mat-tab>
+
+            <!-- Category Tabs (dynamic) -->
+            <mat-tab *ngFor="let category of speakerCategories" [label]="category">
+              <div class="category-tab-content">
+                <mat-accordion class="sections-accordion" multi>
+                  <!-- Category Champion -->
+                  <mat-expansion-panel expanded *ngIf="winnersByCategory.get(category)?.team">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>Campeão {{ category }}</mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="winner-card">
+                      <div class="winner-card__trophy">🏆</div>
+                      <div class="winner-card__info">
+                        <div class="winner-card__team">{{ winnersByCategory.get(category)?.team?.name }}</div>
+                        <div class="winner-card__speakers">{{ getTeamSpeakerNames(winnersByCategory.get(category)?.team!) }}</div>
+                      </div>
+                    </div>
+                  </mat-expansion-panel>
+
+                  <!-- Category Finalists -->
+                  <mat-expansion-panel expanded *ngIf="getFinalistsForCategory(category).length > 0">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>Finalistas {{ category }}</mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="finalists">
+                      <div class="finalist" *ngFor="let team of getFinalistsForCategory(category)">
+                        <div class="finalist__name">{{ team.name }}</div>
+                        <div class="finalist__speakers">{{ getTeamSpeakerNames(team) }}</div>
+                      </div>
+                    </div>
+                  </mat-expansion-panel>
+
+                  <!-- Top 3 Teams for Category -->
+                  <mat-expansion-panel expanded *ngIf="teamsByCategoryCached.get(category)?.length">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>Top 3 Times {{ category }}</mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="podium">
+                      <ng-container *ngFor="let team of teamsByCategoryCached.get(category); let i = index">
+                        <div class="podium__item" *ngIf="i < 3">
+                          <div class="podium__rank" [attr.data-rank]="i + 1">{{ i + 1 }}</div>
+                          <div class="podium__info">
+                            <div class="podium__name">{{ team.name }}</div>
+                            <div class="podium__detail">{{ getTeamSpeakerNames(team) }}</div>
+                          </div>
+                          <div class="podium__score">{{ getTeamTotal(team.id) }} pts</div>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </mat-expansion-panel>
+
+                  <!-- Top 3 Speakers for Category -->
+                  <mat-expansion-panel expanded *ngIf="topSpeakersByCategoryLimited.get(category)?.length">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>Top 3 Speakers {{ category }}</mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="podium">
+                      <div class="podium__item" *ngFor="let speaker of topSpeakersByCategoryLimited.get(category); let i = index">
+                        <div class="podium__rank" [attr.data-rank]="i + 1">{{ i + 1 }}</div>
+                        <div class="podium__info">
+                          <div class="podium__name">{{ speaker.name }}</div>
+                          <div class="podium__detail">{{ speaker.society }}</div>
+                        </div>
+                        <div class="podium__score">{{ getSpeakerAverage(speaker.id) }}</div>
+                      </div>
+                    </div>
+                  </mat-expansion-panel>
+
+                  <!-- Category Stats Summary -->
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>Estatísticas {{ category }}</mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="quick-stats">
+                      <div class="quick-stat">
+                        <span class="quick-stat__label">Times {{ category }}</span>
+                        <span class="quick-stat__value">{{ teamsByCategoryCached.get(category)?.length || 0 }}</span>
+                      </div>
+                      <div class="quick-stat">
+                        <span class="quick-stat__label">Speakers {{ category }}</span>
+                        <span class="quick-stat__value">{{ speakersByCategoryCached.get(category)?.length || 0 }}</span>
+                      </div>
+                    </div>
+                  </mat-expansion-panel>
+                </mat-accordion>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
         </div>
-        <div #subtitle class="page__body__content__tournament__subtitle">
-          Times
+      </mat-tab>
+
+      <!-- Tab 2: Rodadas -->
+      <mat-tab label="Rodadas">
+        <div class="tab-content">
+          <mat-accordion class="rounds-accordion" multi>
+            <mat-expansion-panel *ngFor="let round of getAllRounds()">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ round.roundName }}
+                  <span class="round-badge round-badge--elim" *ngIf="round.isEliminationRound">Eliminatória</span>
+                </mat-panel-title>
+                <mat-panel-description>
+                  {{ round.roundAbbreviation }} · {{ round.debates.length || 0 }} salas
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+
+              <!-- Nested accordion for rooms/debates -->
+              <mat-accordion class="rooms-accordion" multi>
+                <mat-expansion-panel *ngFor="let debate of round.debates" class="room-panel">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title class="room-title">
+                      {{ debate.debateVenue }}
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+
+                  <div class="room-content">
+                    <!-- Four houses in a 2x2 grid -->
+                    <div class="houses-grid">
+                      <ng-container *ngFor="let side of debate.debateSides; let sideIndex = index">
+                        <div class="house" *ngIf="side">
+                          <div class="house__header">
+                            <span class="house__position">{{ getSideTitle(sideIndex) }}</span>
+                            <span class="house__rank" [attr.data-rank]="side.sideRank">
+                              {{ getSideRankFull(side.sideRank) }}
+                            </span>
+                          </div>
+                          <div class="house__team" *ngIf="side.sideTeam">{{ side.sideTeam.name }}</div>
+                          <div class="house__speakers" *ngIf="side.sideSpeakers?.length">
+                            <div class="house__speaker" *ngFor="let speechData of side.sideSpeakers">
+                              <div class="house__speaker-info" *ngIf="speechData?.speechSpeaker">
+                                <span class="house__speaker-name">{{ speechData.speechSpeaker.name }}</span>
+                                <span class="house__speaker-society">{{ speechData.speechSpeaker.society }}</span>
+                              </div>
+                              <span class="house__speaker-sps" *ngIf="speechData?.speechSps">
+                                {{ speechData.speechSps }}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-container>
+                    </div>
+
+                    <!-- Adjudicators -->
+                    <div class="room-adjudicators">
+                      <div class="room-adjudicators__title">Mesa Adjudicadora</div>
+                      <div class="room-adjudicators__list">
+                        <div class="room-adjudicators__chair" *ngIf="debate.debateChair">
+                          <span class="room-adjudicators__badge">©</span>
+                          <div class="room-adjudicators__info">
+                            <span class="room-adjudicators__name">{{ debate.debateChair.name }}</span>
+                            <span class="room-adjudicators__society">{{ debate.debateChair.society }}</span>
+                          </div>
+                        </div>
+                        <div class="room-adjudicators__wing" *ngFor="let wing of debate.debateWings">
+                          <div class="room-adjudicators__info">
+                            <span class="room-adjudicators__name">{{ wing.name }}</span>
+                            <span class="room-adjudicators__society">{{ wing.society }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </mat-expansion-panel>
+          </mat-accordion>
         </div>
-        <div class="page__body__content__tournament__list">
-          <div class="page__body__content__tournament__list__item" *ngFor="let team of data.teams">
-            <div class="page__body__content__tournament__list__item__value">
-              {{ team.name }}
-              <span *ngIf="team.speakers && team.speakers.length === 2" class="page__body__content__tournament__list__item__value--condebsecondary">({{ team.speakers[0].name }} e {{ team.speakers[1].name }})</span>
-            </div>
-          </div>
-        </div>
-        <div #subtitle class="page__body__content__tournament__subtitle">
-          Instituições
-        </div>
-        <div class="page__body__content__tournament__list">
-          <div class="page__body__content__tournament__list__item" *ngFor="let institution of data.institutions">
-            <div class="page__body__content__tournament__list__item__value">
-              {{ institution.name }}
-            </div>
-          </div>
-        </div>
-        <div #subtitle class="page__body__content__tournament__subtitle">
-          Salas
-        </div>
-        <div class="page__body__content__tournament__list">
-          <div class="page__body__content__tournament__list__item" *ngFor="let venue of data.venues">
-            <div class="page__body__content__tournament__list__item__value">
-              {{ venue.venue }}
-            </div>
-          </div>
-        </div>
-        <div #subtitle class="page__body__content__tournament__subtitle">
-          Rodadas
-        </div>
-        <div class="page__body__content__tournament__rounds">
-          <div #round [id]="round.roundAbbreviation" class="page__body__content__tournament__rounds__round" *ngFor="let round of data.rounds">
-            <div class="page__body__content__tournament__rounds__round__name">
-              {{ round.roundName }} ({{round.roundAbbreviation}})
-            </div>
-            <div class="page__body__content__tournament__rounds__round__debates">
-              <div class="page__body__content__tournament__rounds__round__debates__debate" *ngFor="let debate of round.debates">
-                <div class="page__body__content__tournament__rounds__round__debates__debate__venue">
-                  {{ debate.debateVenue }}
+      </mat-tab>
+
+      <!-- Tab 3: Participantes -->
+      <mat-tab label="Participantes">
+        <div class="tab-content">
+          <mat-accordion class="sections-accordion" multi>
+            <!-- Teams -->
+            <mat-expansion-panel expanded>
+              <mat-expansion-panel-header>
+                <mat-panel-title>Times ({{ data.teams?.length || 0 }})</mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="participants-grid">
+                <div class="participant-card" *ngFor="let team of data.teams">
+                  <div class="participant-card__name">{{ team.name }}</div>
+                  <div class="participant-card__details" *ngIf="team.speakers?.length">
+                    {{ getTeamSpeakerNames(team) }}
+                  </div>
                 </div>
-                <div class="page__body__content__tournament__rounds__round__debates__debate__motion"
-                  [innerHTML]="debate.debateMotion"
-                ></div>
-                <div class="page__body__content__tournament__rounds__round__debates__debate__side" *ngFor="let i of [0,1,2,3]">
-                  <div class="page__body__content__tournament__rounds__round__debates__debate__side__title">
-                    {{ getSideTitle(i) }} <span class="condebsecondary">({{ debate.debateSides[i].sideTeam.name }})</span>
-                    <span class="primary">
-                      ({{ getSideRank(debate.debateSides[i].sideRank) }})
+                <div class="empty" *ngIf="!data.teams?.length">Nenhum time registrado.</div>
+              </div>
+            </mat-expansion-panel>
+
+            <!-- Speakers -->
+            <mat-expansion-panel expanded>
+              <mat-expansion-panel-header>
+                <mat-panel-title>Debatedores ({{ data.speakers?.length || 0 }})</mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="participants-grid">
+                <div class="participant-card" *ngFor="let speaker of data.speakers">
+                  <div class="participant-card__name">{{ speaker.name }}</div>
+                  <div class="participant-card__details">{{ speaker.society }}</div>
+                  <div class="participant-card__tags" *ngIf="speaker.speakerCategories?.length">
+                    <span class="participant-card__tag" *ngFor="let cat of speaker.speakerCategories">
+                      {{ cat }}
                     </span>
                   </div>
-                  <div class="page__body__content__tournament__rounds__round__debates__debate__side__team">
+                </div>
+                <div class="empty" *ngIf="!data.speakers?.length">Nenhum debatedor registrado.</div>
+              </div>
+            </mat-expansion-panel>
 
-                  </div>
-                  <div class="page__body__content__tournament__rounds__round__debates__debate__side__speakers">
-                    <div
-                    class="page__body__content__tournament__rounds__round__debates__debate__side__speakers__speaker"
-                      *ngFor="let speaker of debate.debateSides[i].sideSpeakers; index as speakerIndex"
-                    >
-                      {{ speaker.speechSpeaker.name }} <span class="condebsecondary">({{ speaker.speechSpeaker.society }})</span>
-                      <span *ngIf="debate.debateSides[i].sideSpeakers.length > 0" class="primary"> ({{
-                        debate.debateSides[i].sideSpeakers[speakerIndex].speechSps
-                      }})</span>
-                    </div>
-                  </div>
+            <!-- Adjudicators -->
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>Juízes ({{ data.adjudicators?.length || 0 }})</mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="participants-grid">
+                <div class="participant-card" *ngFor="let adj of data.adjudicators">
+                  <div class="participant-card__name">{{ adj.name }}</div>
+                  <div class="participant-card__details">{{ adj.society }}</div>
                 </div>
-                <div class="page__body__content__tournament__rounds__round__debates__debate__adjudicators">
-                  <div class="page__body__content__tournament__rounds__round__debates__debate__adjudicators__title">
-                    Mesa Adjudicadora
-                  </div>
-                  <div class="page__body__content__tournament__rounds__round__debates__debate__adjudicators__chair">
-                    <span class="primary">©</span> {{ debate.debateChair.name }} <span class="condebsecondary">({{ debate.debateChair.society }})</span>
-                  </div>
-                  <div class="page__body__content__tournament__rounds__round__debates__debate__adjudicators__wings">
-                    <div
-                      *ngFor="let wing of debate.debateWings"
-                      class="page__body__content__tournament__rounds__round__debates__debate__adjudicators__wings__wing"
-                    >
-                      {{ wing.name }} <span class="condebsecondary">({{ wing.society }})</span>
-                    </div>
-                  </div>
+                <div class="empty" *ngIf="!data.adjudicators?.length">Nenhum juiz registrado.</div>
+              </div>
+            </mat-expansion-panel>
+
+            <!-- Institutions -->
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>Instituições ({{ data.institutions?.length || 0 }})</mat-panel-title>
+              </mat-expansion-panel-header>
+              <div class="participants-grid participants-grid--compact">
+                <div class="participant-card participant-card--compact" *ngFor="let inst of data.institutions">
+                  <div class="participant-card__name">{{ inst.name }}</div>
                 </div>
+                <div class="empty" *ngIf="!data.institutions?.length">Nenhuma instituição registrada.</div>
               </div>
-            </div>
-          </div>
+            </mat-expansion-panel>
+          </mat-accordion>
         </div>
-        <div #subtitle class="page__body__content__tournament__subtitle">
-          Team Standings Open
+      </mat-tab>
+
+      <!-- Tab 4: Moções -->
+      <mat-tab label="Moções">
+        <div class="tab-content">
+          <mat-accordion class="motions-accordion" multi>
+            <mat-expansion-panel *ngFor="let item of motionsByRound" [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ item.round.roundName }}
+                  <span class="round-badge round-badge--elim" *ngIf="item.round.isEliminationRound">Eliminatória</span>
+                </mat-panel-title>
+                <mat-panel-description>{{ item.round.roundAbbreviation }}</mat-panel-description>
+              </mat-expansion-panel-header>
+              <div class="motion-content" *ngIf="item.motion" [innerHTML]="getSafeMotionHtml(item.motion)"></div>
+              <div class="empty" *ngIf="!item.motion">Moção não disponível.</div>
+            </mat-expansion-panel>
+          </mat-accordion>
+          <div class="empty" *ngIf="motionsByRound.length === 0">Nenhuma moção registrada.</div>
         </div>
-        <div class="page__body__content__tournament__list">
-          <div class="page__body__content__tournament__list__item" *ngFor="let team of getTeamStandingsOpen(); index as index">
-            <div class="page__body__content__tournament__list__item__value">
-              <span class="page__body__content__tournament__list__item__value--primary">{{ index+1 }}.</span>
-              {{ team.name }}
-              <span class="page__body__content__tournament__list__item__value--condebsecondary">({{ team.speakers[0].name }} e {{ team.speakers[1].name }})</span>
-            </div>
-            <div class="page__body__content__tournament__list__item__subvalues">
-              <div class="page__body__content__tournament__list__item__subvalues__subvalue">Pontos: {{ points[team.id].total }}</div>
-              <div class="page__body__content__tournament__list__item__subvalues__subvalue" *ngFor="let round of getNonElinimationRounds()">
-                {{ round.roundAbbreviation }}: {{ points[team.id][round.roundAbbreviation] }}
+      </mat-tab>
+
+      <!-- Tab 5: Resultados (Full Tables with Category Tabs) -->
+      <mat-tab label="Resultados">
+        <div class="tab-content">
+          <mat-tab-group class="category-tabs" animationDuration="150ms">
+            <!-- Todos Tab -->
+            <mat-tab label="Todos">
+              <div class="category-tab-content">
+                <mat-accordion class="sections-accordion" multi>
+                  <!-- Team Standings Full -->
+                  <mat-expansion-panel expanded>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>Team Standings</mat-panel-title>
+                      <mat-panel-description>{{ teamStandingsOpenCached.length }} times</mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <div class="table-wrapper">
+                      <table class="stats-table">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Time</th>
+                            <th>Pontos</th>
+                            <th>1ºs</th>
+                            <th>2ºs</th>
+                            <th *ngFor="let round of nonEliminationRoundsCached">{{ round.roundAbbreviation }}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let team of teamStandingsOpenCached; let i = index">
+                            <td class="stats-table__rank">{{ i + 1 }}</td>
+                            <td class="stats-table__name">{{ team.name }}</td>
+                            <td class="stats-table__value stats-table__value--highlight">
+                              {{ getTeamTotal(team.id) }}
+                            </td>
+                            <td class="stats-table__value">{{ getTeamFirsts(team.id) }}</td>
+                            <td class="stats-table__value">{{ getTeamSeconds(team.id) }}</td>
+                            <td class="stats-table__value" *ngFor="let round of nonEliminationRoundsCached">
+                              {{ getTeamRoundPoints(team.id, round.roundAbbreviation) }}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </mat-expansion-panel>
+
+                  <!-- Speaker Stats Full -->
+                  <mat-expansion-panel expanded>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>Speaker Stats</mat-panel-title>
+                      <mat-panel-description>{{ topSpeakersOpenCached.length }} speakers</mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <div class="table-wrapper">
+                      <table class="stats-table">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Nome</th>
+                            <th>Instituição</th>
+                            <th>Média</th>
+                            <th>σ</th>
+                            <th *ngFor="let round of nonEliminationRoundsCached">{{ round.roundAbbreviation }}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let speaker of topSpeakersOpenCached; let i = index">
+                            <td class="stats-table__rank">{{ i + 1 }}</td>
+                            <td class="stats-table__name">{{ speaker.name }}</td>
+                            <td class="stats-table__society">{{ speaker.society }}</td>
+                            <td class="stats-table__value stats-table__value--highlight">
+                              {{ getSpeakerAverage(speaker.id) }}
+                            </td>
+                            <td class="stats-table__value">{{ getSpeakerSd(speaker.id) }}</td>
+                            <td class="stats-table__value" *ngFor="let round of nonEliminationRoundsCached">
+                              {{ getSpeakerRoundSps(speaker.id, round.roundAbbreviation) }}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </mat-expansion-panel>
+                </mat-accordion>
               </div>
-            </div>
-          </div>
-        </div>
-        <div #subtitle class="page__body__content__tournament__subtitle">
-          Top Speakers Open
-        </div>
-        <div class="page__body__content__tournament__list">
-          <div class="page__body__content__tournament__list__item" *ngFor="let speaker of getTopSpeakersOpen(); index as index">
-            <div class="page__body__content__tournament__list__item__value">
-              <span class="page__body__content__tournament__list__item__value--primary">{{ index+1 }}.</span>
-              {{ speaker.name }}
-              <span class="page__body__content__tournament__list__item__value--condebsecondary">({{ speaker.society }})</span>
-            </div>
-            <div class="page__body__content__tournament__list__item__subvalues">
-              <div class="page__body__content__tournament__list__item__subvalues__subvalue">Média: {{ sps[speaker.id].average }}</div>
-              <div class="page__body__content__tournament__list__item__subvalues__subvalue">Desvio Padrão: {{ sps[speaker.id].sd }}</div>
-              <div class="page__body__content__tournament__list__item__subvalues__subvalue" *ngFor="let round of getNonElinimationRounds()">
-                {{ round.roundAbbreviation }}: {{ sps[speaker.id][round.roundAbbreviation] }}
+            </mat-tab>
+
+            <!-- Category Tabs -->
+            <mat-tab *ngFor="let category of speakerCategories" [label]="category">
+              <div class="category-tab-content">
+                <mat-accordion class="sections-accordion" multi>
+                  <!-- Team Standings for Category -->
+                  <mat-expansion-panel expanded>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>Team Standings {{ category }}</mat-panel-title>
+                      <mat-panel-description>{{ teamsByCategoryCached.get(category)?.length || 0 }} times</mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <div class="table-wrapper">
+                      <table class="stats-table">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Time</th>
+                            <th>Pontos</th>
+                            <th>1ºs</th>
+                            <th>2ºs</th>
+                            <th *ngFor="let round of nonEliminationRoundsCached">{{ round.roundAbbreviation }}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let team of teamsByCategoryCached.get(category); let i = index">
+                            <td class="stats-table__rank">{{ i + 1 }}</td>
+                            <td class="stats-table__name">{{ team.name }}</td>
+                            <td class="stats-table__value stats-table__value--highlight">
+                              {{ getTeamTotal(team.id) }}
+                            </td>
+                            <td class="stats-table__value">{{ getTeamFirsts(team.id) }}</td>
+                            <td class="stats-table__value">{{ getTeamSeconds(team.id) }}</td>
+                            <td class="stats-table__value" *ngFor="let round of nonEliminationRoundsCached">
+                              {{ getTeamRoundPoints(team.id, round.roundAbbreviation) }}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="empty" *ngIf="!teamsByCategoryCached.get(category)?.length">
+                      Nenhum time na categoria {{ category }}.
+                    </div>
+                  </mat-expansion-panel>
+
+                  <!-- Speaker Stats for Category -->
+                  <mat-expansion-panel expanded>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>Speaker Stats {{ category }}</mat-panel-title>
+                      <mat-panel-description>{{ speakersByCategoryCached.get(category)?.length || 0 }} speakers</mat-panel-description>
+                    </mat-expansion-panel-header>
+                    <div class="table-wrapper">
+                      <table class="stats-table">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Nome</th>
+                            <th>Instituição</th>
+                            <th>Média</th>
+                            <th>σ</th>
+                            <th *ngFor="let round of nonEliminationRoundsCached">{{ round.roundAbbreviation }}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let speaker of speakersByCategoryCached.get(category); let i = index">
+                            <td class="stats-table__rank">{{ i + 1 }}</td>
+                            <td class="stats-table__name">{{ speaker.name }}</td>
+                            <td class="stats-table__society">{{ speaker.society }}</td>
+                            <td class="stats-table__value stats-table__value--highlight">
+                              {{ getSpeakerAverage(speaker.id) }}
+                            </td>
+                            <td class="stats-table__value">{{ getSpeakerSd(speaker.id) }}</td>
+                            <td class="stats-table__value" *ngFor="let round of nonEliminationRoundsCached">
+                              {{ getSpeakerRoundSps(speaker.id, round.roundAbbreviation) }}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="empty" *ngIf="!speakersByCategoryCached.get(category)?.length">
+                      Nenhum speaker na categoria {{ category }}.
+                    </div>
+                  </mat-expansion-panel>
+                </mat-accordion>
               </div>
-            </div>
-          </div>
+            </mat-tab>
+          </mat-tab-group>
         </div>
-        <div #subtitle class="page__body__content__tournament__subtitle">
-          Top Speakers Novice
-        </div>
-        <div class="page__body__content__tournament__list">
-          <div class="page__body__content__tournament__list__item" *ngFor="let speaker of getTopSpeakersNovice(); index as index">
-            <div class="page__body__content__tournament__list__item__value">
-              <span class="page__body__content__tournament__list__item__value--primary">{{ index+1 }}.</span>
-              {{ speaker.name }}
-              <span class="page__body__content__tournament__list__item__value--condebsecondary">({{ speaker.society }})</span>
-            </div>
-            <div class="page__body__content__tournament__list__item__subvalues">
-              <div class="page__body__content__tournament__list__item__subvalues__subvalue">Média: {{ sps[speaker.id].average }}</div>
-              <div class="page__body__content__tournament__list__item__subvalues__subvalue">Desvio Padrão: {{ sps[speaker.id].sd }}</div>
-              <div class="page__body__content__tournament__list__item__subvalues__subvalue" *ngFor="let round of getNonElinimationRounds()">
-                {{ round.roundAbbreviation }}: {{ sps[speaker.id][round.roundAbbreviation] }}
-              </div>
-            </div>
-          </div>
-        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__content">
+      <div class="footer__brand">
+        <img src="assets/agora-logo.png" alt="Agora" class="footer__logo" />
+        <span class="footer__separator">×</span>
+        <img src="assets/condeb-logo.png" alt="CONDEB" class="footer__logo footer__logo--condeb" />
+      </div>
+      <div class="footer__text">
+        Uma parceria entre a Sociedade de Debates UFRJ e a CONDEB
       </div>
     </div>
-  </div>
+  </footer>
 </div>

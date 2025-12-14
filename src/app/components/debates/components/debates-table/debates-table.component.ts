@@ -1,98 +1,71 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Debate } from 'src/app/models/types/debate';
 import { DebateService } from 'src/app/services/debate.service';
-import { CreateDebateModalComponent } from '../create-debate-modal/create-debate-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import * as moment from 'moment';
 import { ConfirmModalComponent } from 'src/app/components/members/components/confirm-modal/confirm-modal.component';
 import { isAdmin } from 'src/app/utils/auth';
 import { Router } from '@angular/router';
+import { DebateStyle } from 'src/app/models/enums/debate-style';
+import { DebateVenue } from 'src/app/models/enums/debate-venue';
 
 @Component({
   selector: 'app-debates-table',
   templateUrl: './debates-table.component.html',
   styleUrls: ['./debates-table.component.scss'],
 })
-export class DebatesTableComponent implements OnInit {
-  @Input()
-  public debates: Debate[];
-
-  @Input()
-  public display: boolean = false;
+export class DebatesTableComponent {
+  @Input() public debates: Debate[] = [];
 
   public constructor(
     private debateService: DebateService,
     private dialog: MatDialog,
     private router: Router
-  ) {
-  }
+  ) {}
 
-  public ngOnInit(): void {}
-
-  public getDate(date: string, time: string) {
+  public getDate(date: string, time: string): string {
     let datetime = moment(date);
-
     datetime = datetime.hour(Number(time.split(':')[0]));
     datetime = datetime.minute(Number(time.split(':')[1]));
-
-    return datetime.locale('pt-br').format(`DD MMM, YYYY`);
+    return datetime.locale('pt-br').format('DD MMM, YYYY');
   }
 
-  public editDebate(id: string, event: any) {
-    this.dialog.open(CreateDebateModalComponent, {
-      minWidth: 'calc(100vw - 2rem)',
-      minHeight: 'calc(100vh - 2rem)',
-      maxHeight: 'calc(100vh - 2rem)',
-      maxWidth: 'calc(100vw - 2rem)',
-      disableClose: true,
-      data: {
-        isEditing: true,
-        debate: this.debates.find((debate) => debate.id === id)
-      }
-    });
+  public getStyleLabel(style: keyof typeof DebateStyle): string {
+    return style === 'bp' ? 'BP' : 'Fund.';
+  }
 
+  public getVenueLabel(venue: keyof typeof DebateVenue): string {
+    return DebateVenue[venue];
+  }
+
+  public editDebate(id: string, event: Event): void {
     event.stopPropagation();
+    this.router.navigate([`/debates/edit/${id}`]);
   }
 
-  public deleteDebate(id: string, event: any) {
-    const debate = this.debates.find((debate) => debate.id === id)!;
+  public deleteDebate(id: string, event: Event): void {
+    event.stopPropagation();
+    const debate = this.debates.find((d) => d.id === id);
+    if (!debate) return;
 
-    this.dialog.open(ConfirmModalComponent, { 
-      minWidth: 'calc(100vw - 2rem)',
-      minHeight: 'calc(100vh - 2rem)',
-      maxHeight: 'calc(100vh - 2rem)',
-      maxWidth: 'calc(100vw - 2rem)',
+    this.dialog.open(ConfirmModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
       data: {
-        text: `Você tem certeza que quer deletar o debate de data <b>${moment(debate.date)
-          .hour(Number(debate.time.split(':')[0]))
-          .minute(Number(debate.time.split(':')[1]))
-          .locale('pt-br')
-          .format(`LLL`)}</b>, moção <b>${debate.motion}
-          (${debate.motionTheme})</b>, chair <b>${debate.chair.name} (${debate.chair.society})</b> e debatedores
-          <b>${debate.debaters.map((member) => `${member.name} (${member.society})`).join(', ')}</b>?`,
+        text: `Você tem certeza que quer deletar o debate de <b>${this.getDate(debate.date, debate.time)}</b>?`,
         positiveCallback: async () => {
           await this.debateService.deleteDebate(id);
         },
         negativeCallback: () => {}
       }
     });
-
-    event.stopPropagation();
   }
 
-  public goToDebatePage(id: string) {
+  public goToDebatePage(id: string): void {
     this.router.navigate([`/debate/${id}`]);
   }
 
-  public isAdmin() {
-    return isAdmin();
-  }
-
-  public showEdit() {
-    return isAdmin();
-  }
-
-  public showDelete() {
+  public isAdmin(): boolean {
     return isAdmin();
   }
 }

@@ -1,262 +1,300 @@
-<div class="page">
-  <app-navbar class="page__navbar" (checkbox)="onNavbarHamburgerChange($event)"></app-navbar>
-  <div class="page__content" [ngClass]="{ 'page__content--hide': isNavbarHamburgerActive }" [formGroup]="form">
-    <div class="page__content__header" *ngIf="isAdmin">
-      <mat-form-field class="page__content__header__input">
-        <mat-label>Membro</mat-label>
-        <mat-select formControlName="member">
-          <mat-form-field style="width: 100%; padding: 8px;" >
-            <mat-label>Nome</mat-label>
-            <input matInput formControlName="memberFilter"
-            (keydown)="$event.stopPropagation()" />
-          </mat-form-field>
-          <mat-option>Nenhum</mat-option>
-          <mat-option *ngFor="let option of memberOptions" [value]="option.value">
-            {{ option.viewValue }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div class="page__content__body">
-      <div class="page__content__body__profile" *ngIf="member">
-        <div class="page__content__body__upper__member">
-          <app-pfp class="page__content__body__upper__member__pfp" [id]="member.id" [size]="192" [hasPfp]="member.hasPfp" shape="square"></app-pfp>
-          <div class="page__content__body__upper__member__name">{{ member.name }}
-            <span class="page__content__body__upper__member__name__society">{{ member.society }}</span>
-          </div>
+<div class="report">
+  <app-navbar class="report__navbar"></app-navbar>
+
+  <div class="report__content" [ngClass]="{ 'report__content--hide': isNavbarHamburgerActive }">
+    <!-- Header with Member Selector (Admin Only) -->
+    <header class="report-header" *ngIf="isAdmin" [formGroup]="form">
+      <div class="member-selector">
+        <div class="member-selector__selected" *ngIf="member">
+          <app-pfp [id]="member.id" [size]="32" [hasPfp]="member.hasPfp"></app-pfp>
+          <span class="member-selector__name">{{ member.name }}</span>
+          <button class="member-selector__clear" (click)="clearMember()" type="button">
+            <mat-icon>close</mat-icon>
+          </button>
         </div>
-      </div>
-      <!-- <div class="page__content__body__upper" *ngIf="member">
-        <div class="page__content__body__upper__statistics" *ngIf="isAdmin">
-          <div class="page__content__body__upper__statistics__statistic page__content__body__upper__statistics__statistic--100">Como debatedor(a)</div>
-          <div *ngFor="let statistic of debaterStatistics" class="page__content__body__upper__statistics__statistic">
-            <div class="page__content__body__upper__statistics__statistic__title">{{ statistic.title }}</div>
-            <div class="page__content__body__upper__statistics__statistic__value">{{ statistic.value }}</div>
-          </div>
-        </div>
-        <div class="page__content__body__upper__statistics" *ngIf="isAdmin">
-          <div class="page__content__body__upper__statistics__statistic page__content__body__upper__statistics__statistic--100">Como juíz(a)</div>
-          <div *ngFor="let statistic of judgeStatistics" class="page__content__body__upper__statistics__statistic">
-            <div class="page__content__body__upper__statistics__statistic__title">{{ statistic.title }}</div>
-            <div class="page__content__body__upper__statistics__statistic__value">{{ statistic.value }}</div>
-          </div>
-        </div>
-      </div> -->
-      <div class="page__content__body__debates" *ngIf="member">
-        <ng-container *ngIf="debatesParticipatedAsDebater?.length">
-          <div class="page__content__body__debates__title">Debates participados como Debatedor</div>
-          <app-debates-table [debates]="debatesParticipatedAsDebater" [display]="true"></app-debates-table>
-        </ng-container>
-        <ng-container *ngIf="debatesParticipatedAsJudge?.length">
-          <div class="page__content__body__debates__title">Debates participados como Juíz</div>
-          <app-debates-table [debates]="debatesParticipatedAsJudge" [display]="true"></app-debates-table>
-        </ng-container>
-      </div>
-      <div class="page__content__body__description" *ngIf="member">
-        <mat-form-field
-          class="page__content__body__description__field"
-          *ngIf="checked"
-        >
-          <mat-label>Descrição</mat-label>
-          <textarea
+        <mat-form-field class="member-selector__search" *ngIf="!member">
+          <mat-label>Buscar membro</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <input
             matInput
-            cdkTextareaAutosize
-            #autosize="cdkTextareaAutosize"
-            cdkAutosizeMinRows="1"
-            formControlName="description"
-          ></textarea>
+            formControlName="memberSearch"
+            [matAutocomplete]="memberAuto"
+            placeholder="Digite o nome..."
+          />
+          <mat-autocomplete #memberAuto="matAutocomplete" (optionSelected)="selectMember($event.option.value)">
+            <mat-option *ngFor="let m of filteredMembers" [value]="m.id">
+              <div class="member-option">
+                <app-pfp [id]="m.id" [size]="24" [hasPfp]="m.hasPfp"></app-pfp>
+                <span>{{ m.name }}</span>
+                <span class="member-option__society">{{ m.society }}</span>
+              </div>
+            </mat-option>
+          </mat-autocomplete>
         </mat-form-field>
-        <app-markdown
-          class="page__content__body__description__markdown"
-          [class.page__content__body__description__markdown--full]="!checked"
-          [data]="member.description!"
-        ></app-markdown>
       </div>
-      <button *ngIf="checked" class="page__content__body__button" mat-flat-button color="primary" (click)="saveDescription()">Salvar</button>
-      <div class="page__content__body__statistics" [style.opacity]="member ? 1 : 0" *ngIf="isAdmin">
-        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__statistics__section">
-          Como debatedor(a)
+
+      <div class="report-header__summary" *ngIf="member">
+        <div class="summary-stat">
+          <span class="summary-stat__value">{{ debatesParticipatedAsDebater.length }}</span>
+          <span class="summary-stat__label">Debatedor</span>
         </div>
-        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Atividade em Debates por horário
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Quantidade de debates participados como debatedor pelo membro por horário do treino
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
+        <div class="summary-stat">
+          <span class="summary-stat__value">{{ debatesParticipatedAsJudge.length }}</span>
+          <span class="summary-stat__label">Juíz</span>
         </div>
-        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Atividade em Debates por mês
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Quantidade de debates participados como debatedor pelo membro por mês
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Speaker Points
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Speaker points obtidos pelo membro como debatedor
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Speaker Points por debate
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Speaker points obtidos pelo membro como debatedor por debate
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Colocações
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Resultado do membro como debatedor nos debates
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Duplas
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Frequência com as diferentes duplas do membro
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Performance por Casas
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Performance do membro como debatedor nas quatro casas
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Performance por Dupla
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Performance do membro com as diferentes duplas
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Performance por Tipo de Moção
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Performance do membro com diferentes tipos de moção
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Performance por Tema de Moção
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Performance do membro com diferentes temas de moção
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showDebaterStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Performance por Chair
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Performance do membro com diferentes chairs
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__statistics__section">
-          Como juíz(a)
-        </div>
-        <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Speaker Points
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Speaker points concedidos pelo membro como juíz
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Resultado dos debates (por posição)
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Proporção das casas nos resultados dos debates para cada posição
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Resultado dos debates (por casa)
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Proporção de posições nos resultados dos debates para cada casa
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Prefixos de Moções
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Proporção dos tipos das moções escolhidas pelo membro como juíz
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
-        </div>
-        <div [style.opacity]="showJudgeStatistics() ? 1 : 0" class="page__content__body__statistics__chart">
-          <div class="page__content__body__statistics__chart__title">
-            Temas de Moções
-          </div>
-          <div class="page__content__body__statistics__chart__description">
-            Proporção dos temas das moções escolhidas pelo membro como juíz
-          </div>
-          <div class="page__content__body__statistics__chart__chart">
-            <canvas #chart></canvas>
-          </div>
+        <div class="summary-stat">
+          <span class="summary-stat__value">{{ debatesParticipatedAsDebater.length + debatesParticipatedAsJudge.length }}</span>
+          <span class="summary-stat__label">Total</span>
         </div>
       </div>
-    </div>
+    </header>
+
+    <!-- Profile Card -->
+    <section class="profile-card" *ngIf="member">
+      <app-pfp class="profile-card__pfp" [id]="member.id" [size]="128" [hasPfp]="member.hasPfp" shape="square"></app-pfp>
+      <div class="profile-card__info">
+        <h1 class="profile-card__name">{{ member.name }}</h1>
+        <span class="profile-card__society">{{ member.society }}</span>
+      </div>
+    </section>
+
+    <!-- Stats Tabs (Admin Only) -->
+    <mat-tab-group class="stats-tabs" *ngIf="isAdmin && member" [selectedIndex]="selectedTabIndex" (selectedIndexChange)="selectedTabIndex = $event">
+      <!-- Debater Stats Tab -->
+      <mat-tab label="Estatísticas de Debatedor">
+        <div class="tab-content" [style.opacity]="showDebaterStatistics() ? 1 : 0">
+          <div class="charts-grid">
+            <!-- Activity by Time -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Atividade em Debates por horário</h3>
+              <p class="chart-card__description">Quantidade de debates participados como debatedor pelo membro por horário do treino</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Activity by Month -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Atividade em Debates por mês</h3>
+              <p class="chart-card__description">Quantidade de debates participados como debatedor pelo membro por mês</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Speaker Points Summary -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Speaker Points</h3>
+              <p class="chart-card__description">Speaker points obtidos pelo membro como debatedor</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Speaker Points Trend -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Speaker Points por debate</h3>
+              <p class="chart-card__description">Speaker points obtidos pelo membro como debatedor por debate</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Placements -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Colocações</h3>
+              <p class="chart-card__description">Resultado do membro como debatedor nos debates</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Duo Partners -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Duplas</h3>
+              <p class="chart-card__description">Frequência com as diferentes duplas do membro</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Performance by House -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Performance por Casas</h3>
+              <p class="chart-card__description">Performance do membro como debatedor nas quatro casas</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Performance by Duo -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Performance por Dupla</h3>
+              <p class="chart-card__description">Performance do membro com as diferentes duplas</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Performance by Motion Type -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Performance por Tipo de Moção</h3>
+              <p class="chart-card__description">Performance do membro com diferentes tipos de moção</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Performance by Motion Theme -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Performance por Tema de Moção</h3>
+              <p class="chart-card__description">Performance do membro com diferentes temas de moção</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Performance by Chair -->
+            <article class="chart-card chart-card--full">
+              <h3 class="chart-card__title">Performance por Chair</h3>
+              <p class="chart-card__description">Performance do membro com diferentes chairs</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Judge Stats Tab -->
+      <mat-tab label="Estatísticas de Juíz">
+        <div class="tab-content" [style.opacity]="showJudgeStatistics() ? 1 : 0">
+          <div class="charts-grid">
+            <!-- SP Given Summary -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Speaker Points</h3>
+              <p class="chart-card__description">Speaker points concedidos pelo membro como juíz</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Results by Position -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Resultado dos debates (por posição)</h3>
+              <p class="chart-card__description">Proporção das casas nos resultados dos debates para cada posição</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Results by House -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Resultado dos debates (por casa)</h3>
+              <p class="chart-card__description">Proporção de posições nos resultados dos debates para cada casa</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Motion Type Distribution -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Prefixos de Moções</h3>
+              <p class="chart-card__description">Proporção dos tipos das moções escolhidas pelo membro como juíz</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+
+            <!-- Motion Theme Distribution -->
+            <article class="chart-card">
+              <h3 class="chart-card__title">Temas de Moções</h3>
+              <p class="chart-card__description">Proporção dos temas das moções escolhidas pelo membro como juíz</p>
+              <div class="chart-card__canvas">
+                <canvas #chart></canvas>
+              </div>
+            </article>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Debates History Tab -->
+      <mat-tab label="Histórico de Debates">
+        <div class="tab-content">
+          <section class="debates-section" *ngIf="debatesParticipatedAsDebater.length">
+            <h2 class="debates-section__title">Debates como Debatedor</h2>
+            <app-debates-table [debates]="debatesParticipatedAsDebater" [display]="true"></app-debates-table>
+          </section>
+
+          <section class="debates-section" *ngIf="debatesParticipatedAsJudge.length">
+            <h2 class="debates-section__title">Debates como Juíz</h2>
+            <app-debates-table [debates]="debatesParticipatedAsJudge" [display]="true"></app-debates-table>
+          </section>
+
+          <div class="empty-state" *ngIf="!debatesParticipatedAsDebater.length && !debatesParticipatedAsJudge.length">
+            <div class="empty-state__icon">
+              <mat-icon>history</mat-icon>
+            </div>
+            <p class="empty-state__message">Nenhum debate encontrado para este membro.</p>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+
+    <!-- Curriculum Section -->
+    <section class="curriculum" *ngIf="member" [formGroup]="form">
+      <header class="curriculum__header">
+        <h2 class="curriculum__title">Currículo</h2>
+        <div class="curriculum__toggle" *ngIf="checked">
+          <button
+            class="curriculum__toggle-btn"
+            [class.curriculum__toggle-btn--active]="!isEditMode"
+            (click)="isEditMode = false"
+          >
+            Visualizar
+          </button>
+          <button
+            class="curriculum__toggle-btn"
+            [class.curriculum__toggle-btn--active]="isEditMode"
+            (click)="isEditMode = true"
+          >
+            Editar
+          </button>
+        </div>
+      </header>
+
+      <!-- View Mode -->
+      <div class="curriculum__view" *ngIf="!isEditMode">
+        <app-markdown [data]="member.description || ''"></app-markdown>
+      </div>
+
+      <!-- Edit Mode - Side by Side -->
+      <div class="curriculum__editor" *ngIf="isEditMode && checked">
+        <div class="curriculum__input">
+          <label class="curriculum__input-label">Markdown</label>
+          <textarea
+            class="curriculum__textarea"
+            formControlName="description"
+            placeholder="Digite o currículo em markdown..."
+          ></textarea>
+        </div>
+        <div class="curriculum__preview">
+          <label class="curriculum__preview-label">Preview</label>
+          <div class="curriculum__preview-content">
+            <app-markdown [data]="description || ''"></app-markdown>
+          </div>
+        </div>
+      </div>
+
+      <!-- Save Button -->
+      <div class="curriculum__actions" *ngIf="isEditMode && checked">
+        <button class="curriculum__cancel-btn" (click)="isEditMode = false">
+          Cancelar
+        </button>
+        <button class="curriculum__save-btn" (click)="saveDescription()">
+          Salvar Alterações
+        </button>
+      </div>
+    </section>
   </div>
 </div>

@@ -1,0 +1,60 @@
+<div class="detail-modal" [class.detail-modal--achieved]="isAchieved">
+  <header class="detail-modal__header">
+    <span
+      class="detail-modal__badge"
+      [class.detail-modal__badge--management]="goal.type === 'management'"
+    >
+      {{ typeBadgeText }}
+    </span>
+    <button class="detail-modal__close" (click)="close()" type="button" title="Fechar">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <div class="detail-modal__content">
+    <h2 class="detail-modal__title">{{ goal.title }}</h2>
+
+    <div class="detail-modal__progress">
+      <app-circular-progress
+        [current]="goal.currentCount"
+        [total]="goal.totalCount"
+        [size]="120"
+        [strokeWidth]="10"
+      ></app-circular-progress>
+      <span class="detail-modal__percentage">{{ percentage }}% concluído</span>
+    </div>
+
+    <div class="detail-modal__description" *ngIf="goal.description">
+      <h3 class="detail-modal__description-label">Progresso</h3>
+      <div class="detail-modal__description-content">
+        <app-markdown [data]="goal.description"></app-markdown>
+      </div>
+    </div>
+
+    <div class="detail-modal__description detail-modal__description--empty" *ngIf="!goal.description">
+      <p>Nenhuma descrição disponível.</p>
+    </div>
+  </div>
+
+  <footer class="detail-modal__footer" *ngIf="isAdmin()">
+    <button
+      class="detail-modal__action detail-modal__action--delete"
+      mat-stroked-button
+      (click)="deleteGoal()"
+      type="button"
+    >
+      <mat-icon class="detail-modal__action-icon">delete</mat-icon>
+      Excluir
+    </button>
+    <button
+      class="detail-modal__action"
+      mat-flat-button
+      color="primary"
+      (click)="editGoal()"
+      type="button"
+    >
+      <mat-icon class="detail-modal__action-icon">edit</mat-icon>
+      Editar
+    </button>
+  </footer>
+</div>

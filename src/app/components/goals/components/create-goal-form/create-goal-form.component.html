@@ -1,39 +1,73 @@
 <form class="form" [formGroup]="form">
-  <mat-form-field class="form__field form__field--title">
-    <mat-label>Título</mat-label>
-    <input type="text" matInput formControlName="title" />
-  </mat-form-field>
-  <mat-form-field class="form__field">
-    <mat-label>Progresso Atual</mat-label>
-    <input type="number" matInput formControlName="currentCount" />
-  </mat-form-field>
-  <mat-form-field class="form__field">
-    <mat-label>Total</mat-label>
-    <input type="number" matInput formControlName="totalCount" />
-  </mat-form-field>
-  <mat-form-field class="form__field">
-    <mat-label>Tipo</mat-label>
-    <mat-select formControlName="type">
-      <mat-option value="competition">Competição</mat-option>
-      <mat-option value="management">Gestão</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <mat-form-field
-    class="form__field form__field--textarea"
-  >
-    <mat-label>Descrição</mat-label>
-    <textarea
-      matInput
-      cdkTextareaAutosize
-      #autosize="cdkTextareaAutosize"
-      cdkAutosizeMinRows="1"
-      formControlName="description"
-    ></textarea>
-  </mat-form-field>
-  <app-markdown
-    class="form__field form__field--markdown"
-    [data]="description"
-  ></app-markdown>
-  <button mat-flat-button color="primary" (click)="close()">Cancelar</button>
-  <button [disabled]="!form.valid" mat-flat-button color="primary" (click)="submit()">{{ getButtonText() }}</button>
+  <div class="form__body">
+    <mat-form-field class="form__field form__field--full">
+      <mat-label>Título</mat-label>
+      <input type="text" matInput formControlName="title" />
+    </mat-form-field>
+
+    <div class="form__row">
+      <mat-form-field class="form__field">
+        <mat-label>Progresso Atual</mat-label>
+        <input type="number" matInput formControlName="currentCount" min="0" />
+      </mat-form-field>
+
+      <mat-form-field class="form__field">
+        <mat-label>Total</mat-label>
+        <input type="number" matInput formControlName="totalCount" min="1" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field class="form__field form__field--full">
+      <mat-label>Tipo</mat-label>
+      <mat-select formControlName="type">
+        <mat-option value="competition">Competição</mat-option>
+        <mat-option value="management">Gestão</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="form__description-section">
+      <div class="form__description-header">
+        <span class="form__description-label">Descrição (Markdown)</span>
+        <mat-slide-toggle
+          [checked]="showPreview"
+          (change)="showPreview = $event.checked"
+          color="primary"
+        >
+          <span class="form__toggle-label">Preview</span>
+        </mat-slide-toggle>
+      </div>
+
+      <mat-form-field class="form__field form__field--full form__field--textarea" *ngIf="!showPreview">
+        <mat-label>Descrição</mat-label>
+        <textarea
+          matInput
+          cdkTextareaAutosize
+          cdkAutosizeMinRows="4"
+          cdkAutosizeMaxRows="8"
+          formControlName="description"
+          placeholder="Use markdown para formatar..."
+        ></textarea>
+      </mat-form-field>
+
+      <div class="form__preview" *ngIf="showPreview">
+        <app-markdown [data]="description" *ngIf="description; else noPreview"></app-markdown>
+        <ng-template #noPreview>
+          <p class="form__preview-empty">Nenhum conteúdo para visualizar.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <footer class="form__footer">
+    <button mat-stroked-button type="button" (click)="close()">Cancelar</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="!form.valid"
+      (click)="submit()"
+    >
+      {{ getButtonText() }}
+    </button>
+  </footer>
 </form>

@@ -65,9 +65,9 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public debates: Debate[];
 
-  public debatesParticipatedAsDebater: Debate[];
+  public debatesParticipatedAsDebater: Debate[] = [];
 
-  public debatesParticipatedAsJudge: Debate[];
+  public debatesParticipatedAsJudge: Debate[] = [];
 
   public articles: Article[];
 
@@ -80,6 +80,12 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   public hashedId: string;
 
   public checked: boolean = false;
+
+  public isEditMode: boolean = false;
+
+  public selectedTabIndex: number = 0;
+
+  public pendingMemberId: string = '';
 
   @ViewChildren('chart')
   public chartRefs: QueryList<ElementRef<HTMLCanvasElement>>;
@@ -129,7 +135,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   public initForm() {
     this.form = this.formBuilder.group({
       member: [''],
-      memberFilter: [''],
+      memberSearch: [''],
       description: ['']
     });
 
@@ -139,38 +145,55 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
   public subscribeToValueChanges() {
     this.route.params.subscribe((params: any) => {
       if (params && params.id && params.hashedId) {
-        this.form.controls['member'].patchValue(params.id);
+        this.pendingMemberId = params.id;
         this.hashedId = params.hashedId;
         if (!this.isAdmin) this.getMember();
       } else if (params && params.id) {
-        this.form.controls['member'].patchValue(params.id);
+        this.pendingMemberId = params.id;
         if (!this.isAdmin) this.getMember();
-      }
-        else {
-        this.form.controls['member'].patchValue('');
+      } else {
+        this.pendingMemberId = '';
       }
     });
 
     this.form.controls['member'].valueChanges.subscribe((id: string) => {
-      if (id) {
+      if (id && this.members && this.debates) {
         this.generateStatistics();
         this.generateGraphs();
         this.router.navigate(['/member/' + id]);
-      } else
+      } else if (!id) {
+        this.member = null!;
         this.router.navigate(['/member']);
+      }
     });
 
     this.form.controls['description'].valueChanges.subscribe((description) => {
-      this.member.description = description;
+      if (this.member) this.member.description = description;
     });
 
-    this.form.controls['memberFilter'].valueChanges.subscribe((name: string) => {
-      this.filteredMembers = this.members.filter((member: Member) =>
-        removeAccents(member.name.toLowerCase()).includes(removeAccents(name.toLowerCase()))
-      );
+    this.form.controls['memberSearch'].valueChanges.subscribe((search: string) => {
+      if (typeof search === 'string') {
+        this.filteredMembers = this.members?.filter((member: Member) =>
+          removeAccents(member.name.toLowerCase()).includes(removeAccents(search.toLowerCase()))
+        ) || [];
+      }
+    });
+  }
 
-      this.initOptions();
-    })
+  public selectMember(memberId: string) {
+    this.form.controls['member'].patchValue(memberId);
+    this.form.controls['memberSearch'].patchValue('');
+  }
+
+  public getMemberName(memberId: string): string {
+    if (!memberId || !this.members) return '';
+    const member = this.members.find(m => m.id === memberId);
+    return member ? member.name : '';
+  }
+
+  public clearMember() {
+    this.form.controls['member'].patchValue('');
+    this.form.controls['memberSearch'].patchValue('');
   }
 
   public async getMember() {
@@ -194,11 +217,11 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
         this.filteredMembers = members;
         this.debates = this.utilService.sortDebates(debates);
         this.articles = articles;
-        this.initOptions();
 
-        if (this.id) {
-          this.generateStatistics();
-          this.generateGraphs();
+        // If there was a pending member ID from the URL, apply it now
+        if (this.pendingMemberId) {
+          this.form.controls['member'].patchValue(this.pendingMemberId);
+          this.pendingMemberId = '';
         }
       }
     });
@@ -1280,6 +1303,7 @@ export class ReportComponent implements OnInit, OnDestroy, AfterViewInit {
       this.member.selectiveProcess
     );
 
+    this.isEditMode = false;
     this.notificationService.createSuccessNotification("Descrição atualizada com sucesso.");
   }
 

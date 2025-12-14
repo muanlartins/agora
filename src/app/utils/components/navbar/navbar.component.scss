@@ -1,142 +1,171 @@
 @import 'src/variables.scss';
 
+// ==========================================================================
+// NAVBAR (Authenticated Pages)
+// ==========================================================================
+
 .navbar {
-  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
-  background: $black;
+  padding: $space-4 $space-6;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: $z-sticky;
 
-  &__logo {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-end;
-    gap: 1.5rem;
-
-    &__agora {
-      padding-bottom: 1rem;
-      height: 4rem;
-      cursor: pointer;
-    }
-
-    &__sd {
-      width: 3rem;
-      height: 3rem;
-      padding: 1rem 0 1rem 1.5rem;
-      border-left: 1px solid $secondary;
-    }
+  &__brand {
+    flex-shrink: 0;
   }
 
-  &__pages {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    list-style: none;
+  &__logo {
+    height: 2rem;
+    cursor: pointer;
+    opacity: 0.9;
+    transition: opacity $transition-fast;
 
-    &:has(+ .navbar__menu .navbar__menu__input:checked) {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 1rem;
-
-      position: absolute;
-      z-index: 2;
-      width: 100%;
-      min-height: calc(100vh - 6rem);
-      max-height: 100%;
-      inset: 0 0 0 0;
-      padding: 5rem 0 1rem 0;
-      list-style: none;
-      background: $brown;
-    }
-
-    &:has(+ .navbar__menu .navbar__menu__input:checked) &__option {
-      border-right: none;
-    }
-
-    &__option {
-      color: $primary;
-      font-size: 18px;
-      line-height: 100%;
-      padding: 16px 24px;
-      border-right: 1px solid $secondary;
-      cursor: pointer;
-
-      transition: $transition;
-
-      &:hover, &--active {
-        text-shadow: 0 0 12px $primary, 0 0 24px $primary;
-      }
-
-      &:last-child {
-        border-right: none;
-      }
+    &:hover {
+      opacity: 1;
     }
   }
 
   &__menu {
-    display: none;
+    display: flex;
+    align-items: center;
+    gap: $space-1;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 
-    position: relative;
-    z-index: 2;
-    width: 1.5rem;
-    height: 1.5rem;
+  &__item {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-secondary);
+    padding: $space-2 $space-4;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition: color $transition-fast, background-color $transition-fast;
 
-    &__hamburger {
-      position: absolute;
-      width: 1.5rem;
-      height: 0.25rem;
-      border-radius: 0.125rem;
-      background: $primary;
-      transition: ease 0.3s;
-
-      &--top {
-        inset: 0.125rem 0 0 0;
-
-        &:has(+ * + * + .navbar__menu__input:checked) {
-          background: $primary;
-          transform: translateY(0.5rem) rotate(45deg);
-        }
-      }
-
-      &--mid {
-        inset: 0.625rem 0 0 0;
-
-        &:has(+ * + .navbar__menu__input:checked) {
-          background: $primary;
-          opacity: 0;
-        }
-      }
-
-      &--bot {
-        inset: 1.125rem 0 0 0;
-
-        &:has(+ .navbar__menu__input:checked) {
-          background: $primary;
-          transform: translateY(-0.5rem) rotate(-45deg);
-        }
-      }
+    &:hover {
+      color: var(--color-text-primary);
+      background-color: var(--color-surface-elevated);
     }
 
-    &__input {
-      width: 100%;
-      height: 100%;
-      opacity: 0;
+    &--active {
+      color: var(--color-primary);
+      background-color: var(--color-primary-muted);
+
+      &:hover {
+        color: var(--color-primary);
+        background-color: var(--color-primary-muted);
+      }
+    }
+  }
+
+  // Mobile Toggle Button
+  &__toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: $z-fixed + 1;
+
+    &-bar {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background-color: var(--color-primary);
+      border-radius: 1px;
+      transition: transform $transition-fast, opacity $transition-fast;
+    }
+
+    &--open {
+      .navbar__toggle-bar:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+      .navbar__toggle-bar:nth-child(2) {
+        opacity: 0;
+      }
+      .navbar__toggle-bar:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
+    }
+  }
+
+  // Mobile Menu Overlay
+  &__mobile {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: var(--color-surface);
+    z-index: $z-fixed;
+    padding: $space-20 $space-6 $space-6;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity $transition-base, visibility $transition-base;
+
+    &--open {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  &__mobile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__mobile-item {
+    font-family: $font-body;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-secondary);
+    padding: $space-4;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: color $transition-fast, background-color $transition-fast;
+
+    &:hover {
+      color: var(--color-text-primary);
+      background-color: var(--color-surface-elevated);
+    }
+
+    &--active {
+      color: var(--color-primary);
+      background-color: var(--color-primary-muted);
     }
   }
 }
 
-@media (width <= $medium) {
+// -----------------------------------------------------------------------------
+// RESPONSIVE
+// -----------------------------------------------------------------------------
+
+@media (max-width: $breakpoint-lg) {
   .navbar {
-    &__pages {
+    &__menu {
       display: none;
     }
 
-    &__menu {
+    &__toggle {
+      display: flex;
+    }
+
+    &__mobile {
       display: block;
     }
   }

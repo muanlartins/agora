@@ -1,0 +1,47 @@
+<div
+  class="circular-progress"
+  [class.circular-progress--achieved]="isAchieved"
+  [style.width.px]="size"
+  [style.height.px]="size"
+>
+  <svg
+    class="circular-progress__svg"
+    [attr.width]="size"
+    [attr.height]="size"
+    [attr.viewBox]="'0 0 ' + size + ' ' + size"
+  >
+    <!-- Background circle -->
+    <circle
+      class="circular-progress__bg"
+      [attr.cx]="center"
+      [attr.cy]="center"
+      [attr.r]="radius"
+      [attr.stroke-width]="strokeWidth"
+      fill="none"
+    />
+
+    <!-- Progress arc -->
+    <circle
+      class="circular-progress__arc"
+      [class.circular-progress__arc--achieved]="isAchieved"
+      [attr.cx]="center"
+      [attr.cy]="center"
+      [attr.r]="radius"
+      [attr.stroke-width]="strokeWidth"
+      [attr.stroke-dasharray]="circumference"
+      [attr.stroke-dashoffset]="dashOffset"
+      fill="none"
+    />
+  </svg>
+
+  <div class="circular-progress__content">
+    <span class="circular-progress__count" *ngIf="!isAchieved">
+      {{ current }}/{{ total }}
+    </span>
+    <span class="circular-progress__check" *ngIf="isAchieved">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+  </div>
+</div>

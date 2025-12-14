@@ -1,0 +1,320 @@
+@import 'variables';
+
+.editor-page {
+  min-height: 100vh;
+  background: $background-dark;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-4 $space-6;
+  background: $surface-dark;
+  border-bottom: 1px solid $border-dark;
+  position: sticky;
+  top: 0;
+  z-index: $z-sticky;
+
+  &__back {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-2 $space-4;
+    background: transparent;
+    border: 1px solid $border-dark;
+    border-radius: $radius-md;
+    color: $text-secondary-dark;
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover {
+      border-color: $text-muted-dark;
+      color: $text-primary-dark;
+    }
+  }
+
+  &__back-icon {
+    font-size: $font-size-lg;
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $text-primary-dark;
+    margin: 0;
+  }
+
+  &__save {
+    font-family: $font-body;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.editor-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+  min-height: 0;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.editor-pane {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+
+  &--edit {
+    padding: $space-6;
+    background: $surface-dark;
+    border-right: 1px solid $border-dark;
+
+    @media (max-width: $breakpoint-lg) {
+      border-right: none;
+      border-bottom: 1px solid $border-dark;
+    }
+  }
+
+  &--preview {
+    background: $background-dark;
+  }
+}
+
+.editor-section {
+  margin-bottom: $space-6;
+
+  &--content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+  }
+}
+
+.editor-label {
+  display: block;
+  font-family: $font-body;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: $letter-spacing-wider;
+  color: $text-muted-dark;
+  margin-bottom: $space-2;
+}
+
+.editor-input {
+  width: 100%;
+  padding: $space-3 $space-4;
+  background: $surface-elevated-dark;
+  border: 1px solid $border-dark;
+  border-radius: $radius-md;
+  color: $text-primary-dark;
+  font-family: $font-body;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  resize: none;
+  transition: border-color $transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+  }
+
+  &::placeholder {
+    color: $text-muted-dark;
+  }
+
+  &--title {
+    font-family: $font-display;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-semibold;
+    line-height: $line-height-snug;
+  }
+
+  &--content {
+    flex: 1;
+    min-height: 300px;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: $font-size-sm;
+    line-height: $line-height-relaxed;
+  }
+}
+
+.editor-meta {
+  display: flex;
+  gap: $space-4;
+  margin-bottom: $space-6;
+  flex-wrap: wrap;
+
+  &__field {
+    display: flex;
+    gap: $space-3;
+  }
+
+  &__select {
+    min-width: 180px;
+  }
+
+  &__filter {
+    width: 100%;
+    padding: $space-2;
+  }
+}
+
+.preview-header {
+  padding: $space-3 $space-6;
+  background: $surface-dark;
+  border-bottom: 1px solid $border-dark;
+
+  &__label {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wider;
+    color: $text-muted-dark;
+  }
+}
+
+.preview-article {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: $space-10 $space-6;
+
+  &__header {
+    text-align: center;
+    margin-bottom: $space-10;
+  }
+
+  &__tag {
+    display: inline-block;
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wider;
+    color: $primary;
+    background: $primary-muted;
+    padding: $space-1 $space-3;
+    border-radius: $radius-sm;
+    margin-bottom: $space-4;
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-4xl;
+    font-weight: $font-weight-bold;
+    color: $text-primary-dark;
+    line-height: $line-height-tight;
+    margin: 0 0 $space-6 0;
+
+    @media (max-width: $breakpoint-md) {
+      font-size: $font-size-3xl;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    justify-content: center;
+    gap: $space-6;
+  }
+
+  &__author {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-secondary-dark;
+  }
+
+  &__content {
+    font-family: $font-body;
+    font-size: $font-size-lg;
+    color: $text-primary-dark;
+    line-height: $line-height-relaxed;
+
+    ::ng-deep {
+      h1, h2, h3, h4, h5, h6 {
+        font-family: $font-display;
+        color: $text-primary-dark;
+        margin-top: $space-8;
+        margin-bottom: $space-4;
+      }
+
+      p {
+        margin-bottom: $space-4;
+      }
+
+      a {
+        color: $primary;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      blockquote {
+        border-left: 3px solid $primary;
+        padding-left: $space-4;
+        margin: $space-6 0;
+        color: $text-secondary-dark;
+        font-style: italic;
+      }
+
+      code {
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        background: $surface-elevated-dark;
+        padding: $space-1 $space-2;
+        border-radius: $radius-sm;
+        font-size: 0.9em;
+      }
+
+      pre {
+        background: $surface-elevated-dark;
+        padding: $space-4;
+        border-radius: $radius-md;
+        overflow-x: auto;
+
+        code {
+          background: none;
+          padding: 0;
+        }
+      }
+
+      ul, ol {
+        padding-left: $space-6;
+        margin-bottom: $space-4;
+      }
+
+      li {
+        margin-bottom: $space-2;
+      }
+
+      hr {
+        border: none;
+        border-top: 1px solid $border-dark;
+        margin: $space-8 0;
+      }
+
+      img {
+        max-width: 100%;
+        border-radius: $radius-md;
+      }
+    }
+  }
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: $background-dark;
+}

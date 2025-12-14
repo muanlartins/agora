@@ -1,5 +1,5 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Input, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Optional, Output, QueryList, ViewChildren } from '@angular/core';
 import { FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { DebateHouse } from 'src/app/models/enums/debate-house';
@@ -28,6 +28,21 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
 
   @Input()
   public debate: Debate;
+
+  @Input()
+  public isStandalone: boolean = false;
+
+  @Output()
+  public formDirtyChange = new EventEmitter<boolean>();
+
+  @Output()
+  public saveStart = new EventEmitter<void>();
+
+  @Output()
+  public saveComplete = new EventEmitter<void>();
+
+  @Output()
+  public cancel = new EventEmitter<void>();
 
   public form: FormGroup;
 
@@ -133,7 +148,7 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
     private memberService: MemberService,
     private debateService: DebateService,
     private dialog: MatDialog,
-    private dialogRef: MatDialogRef<CreateDebateModalComponent>,
+    @Optional() private dialogRef: MatDialogRef<CreateDebateModalComponent>,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -676,6 +691,18 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
         (this.selectedDebaters.length === 8 && this.ironsFormArray.controls.reduce((prev, curr) => prev + curr.value ? 1 : 0, 0)));
   }
 
+  public hasAllDebatersSelected(): boolean {
+    return this.selectedDebaters.length === 8;
+  }
+
+  public removeDebater(index: number): void {
+    const debater = this.selectedDebaters[index];
+    const debaterFormIndex = this.debaters.findIndex(d => d.id === debater.id);
+    if (debaterFormIndex !== -1) {
+      this.debatersFormArray.controls[debaterFormIndex].setValue(false);
+    }
+  }
+
   public getJudgeById(judgeId: string) {
     return this.judges.find((judge) => judge.id === judgeId)!;
   }
@@ -685,6 +712,8 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
   }
 
   public async onSubmit() {
+    this.saveStart.emit();
+
     const date: string = new Date(this.debateFormGroup.controls['date'].value).toISOString();
     const time: string = this.debateFormGroup.controls['time'].value;
     const style: keyof typeof DebateStyle = this.debateFormGroup.controls['style'].value;
@@ -763,7 +792,11 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
 
     setState(state);
 
-    this.dialog.closeAll();
+    if (this.isStandalone) {
+      this.saveComplete.emit();
+    } else {
+      this.dialog.closeAll();
+    }
   }
 
   public checkIsEditing() {
@@ -853,48 +886,56 @@ export class CreateDebateFormComponent implements OnInit, AfterViewInit {
   }
 
   public close() {
-    this.dialog.open(ConfirmModalComponent, {
-      minWidth: 'calc(100vw - 2rem)',
-      minHeight: 'calc(100vh - 2rem)',
-      maxHeight: 'calc(100vh - 2rem)',
-      maxWidth: 'calc(100vw - 2rem)', 
-      data: {
-        text: `Você <b>poderá perder</b> qualquer mudança <b>não salva</b>! Tem certeza que quer continuar?`,
-        positiveCallback: () => {
-          const state = getState();
-
-          if (!this.isEditing) {
-            state['debate'] = {
-              date: new Date(this.debateFormGroup.controls['date'].value).toISOString(),
-              time: this.debateFormGroup.controls['time'].value,
-              style: this.debateFormGroup.controls['style'].value,
-              venue: this.debateFormGroup.controls['venue'].value,
-              motionType: this.showNewMotionTypeFormField() ?
-                this.debateFormGroup.controls['newMotionType'].value :
-                this.debateFormGroup.controls['motionType'].value,
-              motionTheme: this.showNewMotionThemeFormField() ?
-                this.debateFormGroup.controls['newMotionTheme'].value :
-                this.debateFormGroup.controls['motionTheme'].value,
-              motion: this.debateFormGroup.controls['motion'].value,
-              infoSlides: this.infoSlidesFormArray.controls.map((control) => control.value),
-              tournament: this.showNewTournamentFormField() ?
-                this.debateFormGroup.controls['newTournament'].value :
-                this.debateFormGroup.controls['tournament'].value,
-              debaters: this.selectedDebaters,
-              sps: this.spsFormArray.controls.map((control) =>
-                Number(control.value)
-              ),
-              chair: this.getJudgeById(this.judgesFormGroup.controls['chair'].value),
-              wings: this.wingsFormArray.controls.map((control) => this.getJudgeById(control.value)),
-            }
-          }
-
-          setState(state);
-
-          this.dialogRef.close();
+    if (this.isStandalone) {
+      this.saveFormState();
+      this.cancel.emit();
+    } else {
+      this.dialog.open(ConfirmModalComponent, {
+        minWidth: 'calc(100vw - 2rem)',
+        minHeight: 'calc(100vh - 2rem)',
+        maxHeight: 'calc(100vh - 2rem)',
+        maxWidth: 'calc(100vw - 2rem)',
+        data: {
+          text: `Você <b>poderá perder</b> qualquer mudança <b>não salva</b>! Tem certeza que quer continuar?`,
+          positiveCallback: () => {
+            this.saveFormState();
+            this.dialogRef?.close();
+          },
+          negativeCallback: () => {}
         },
-        negativeCallback: () => {}
-      },
-    });
+      });
+    }
+  }
+
+  private saveFormState() {
+    const state = getState();
+
+    if (!this.isEditing) {
+      state['debate'] = {
+        date: new Date(this.debateFormGroup.controls['date'].value).toISOString(),
+        time: this.debateFormGroup.controls['time'].value,
+        style: this.debateFormGroup.controls['style'].value,
+        venue: this.debateFormGroup.controls['venue'].value,
+        motionType: this.showNewMotionTypeFormField() ?
+          this.debateFormGroup.controls['newMotionType'].value :
+          this.debateFormGroup.controls['motionType'].value,
+        motionTheme: this.showNewMotionThemeFormField() ?
+          this.debateFormGroup.controls['newMotionTheme'].value :
+          this.debateFormGroup.controls['motionTheme'].value,
+        motion: this.debateFormGroup.controls['motion'].value,
+        infoSlides: this.infoSlidesFormArray.controls.map((control) => control.value),
+        tournament: this.showNewTournamentFormField() ?
+          this.debateFormGroup.controls['newTournament'].value :
+          this.debateFormGroup.controls['tournament'].value,
+        debaters: this.selectedDebaters,
+        sps: this.spsFormArray.controls.map((control) =>
+          Number(control.value)
+        ),
+        chair: this.getJudgeById(this.judgesFormGroup.controls['chair'].value),
+        wings: this.wingsFormArray.controls.map((control) => this.getJudgeById(control.value)),
+      }
+    }
+
+    setState(state);
   }
 }

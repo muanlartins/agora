@@ -122,10 +122,8 @@ export class MembersTableComponent implements OnInit {
 
   public openCreateMemberModal() {
     this.dialog.open(CreateMemberModalComponent, {
-      minWidth: 'calc(100vw - 2rem)',
-      minHeight: 'calc(100vh - 2rem)',
-      maxHeight: 'calc(100vh - 2rem)',
-      maxWidth: 'calc(100vw - 2rem)',
+      width: '600px',
+      maxWidth: '90vw',
       disableClose: true,
     });
   }
@@ -156,10 +154,8 @@ export class MembersTableComponent implements OnInit {
     event.stopPropagation();
 
     this.dialog.open(CreateMemberModalComponent, {
-      minWidth: 'calc(100vw - 2rem)',
-      minHeight: 'calc(100vh - 2rem)',
-      maxHeight: 'calc(100vh - 2rem)',
-      maxWidth: 'calc(100vw - 2rem)',
+      width: '600px',
+      maxWidth: '90vw',
       data: {
         isEditing: true,
         member: this.members.find((member) => member.id === id),
@@ -174,10 +170,8 @@ export class MembersTableComponent implements OnInit {
     const member = this.members.find((member) => member.id === id)!;
 
     this.dialog.open(ConfirmModalComponent, {
-      minWidth: 'calc(100vw - 2rem)',
-      minHeight: 'calc(100vh - 2rem)',
-      maxHeight: 'calc(100vh - 2rem)',
-      maxWidth: 'calc(100vw - 2rem)',
+      width: '400px',
+      maxWidth: '90vw',
       data: {
         text: `Você tem certeza que quer deletar o membro <b>${member.name} (${member.society})</b>?`,
         positiveCallback: async () => {

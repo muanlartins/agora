@@ -113,8 +113,8 @@
           <span>Inscrito em:</span> {{ getDate(participant.subscribedAt) }}
         </div>
         <div class="page__content__participants__participant__admin" *ngIf="isAdmin()">
-          <img (click)="editParticipant(participant.id)" src="assets/edit-text.png" class="page__content__participants__participant__admin__icon" />
-          <img (click)="deleteParticipant(participant.id)" src="assets/delete.png" class="page__content__participants__participant__admin__icon" />
+          <mat-icon (click)="editParticipant(participant.id)" class="page__content__participants__participant__admin__icon">edit</mat-icon>
+          <mat-icon (click)="deleteParticipant(participant.id)" class="page__content__participants__participant__admin__icon page__content__participants__participant__admin__icon--delete">delete</mat-icon>
         </div>
       </div>
   </div>

@@ -1,97 +1,119 @@
-<form [formGroup]="form" class="form">
-  <div class="form__filter">
-    <mat-form-field class="form__filter__input">
-      <mat-label>Nome ou Sociedade</mat-label>
-      <input matInput formControlName="name" />
-    </mat-form-field>
-    <mat-checkbox
-      class="form__filter__checkbox"
-      color="primary"
-      formControlName="active"
-      >Ativos</mat-checkbox
-    >
-    <mat-checkbox
-      class="form__filter__checkbox"
-      color="primary"
-      formControlName="inactive"
-      >Inativos</mat-checkbox
-    >
-    <mat-checkbox
-      class="form__filter__checkbox"
-      color="primary"
-      formControlName="trainee"
-      >Trainees</mat-checkbox
-    >
-    <mat-form-field class="form__filter__input">
-      <mat-label>Processo Seletivo</mat-label>
-      <mat-select formControlName="selectiveProcess">
-        <mat-option>Nenhuma</mat-option>
-        <mat-option
-          *ngFor="let option of selectiveProcessOptions"
-          [value]="option.value"
-        >
-          {{ option.viewValue }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+<!-- Header -->
+<div class="header">
+  <div class="header__content">
+    <h1 class="header__title">Membros</h1>
+    <span class="header__count">{{ filteredMembers.length }} membros</span>
   </div>
-  <button
-    *ngIf="isAdmin()"
-    class="form__button"
-    mat-flat-button
-    color="primary"
-    (click)="openCreateMemberModal()"
-  >
-    Criar
-  </button>
-</form>
+  <div class="header__actions">
+    <button
+      *ngIf="isAdmin()"
+      mat-flat-button
+      color="primary"
+      (click)="openCreateMemberModal()"
+    >
+      Novo Membro
+    </button>
+  </div>
+</div>
 
-<div class="members">
-  <div class="members__header">
-    <div class="members__header__title">Nome</div>
-    <div class="members__header__title">Sociedade</div>
-    <div class="members__header__title">Debates</div>
-    <div class="members__header__title"></div>
-    <div class="members__header__title"></div>
-    <div class="members__header__title"></div>
+<!-- Filters -->
+<div class="filters" [formGroup]="form">
+  <mat-form-field class="filters__field">
+    <mat-label>Buscar por nome</mat-label>
+    <input matInput formControlName="name" />
+  </mat-form-field>
+
+  <mat-form-field class="filters__field">
+    <mat-label>Processo Seletivo</mat-label>
+    <mat-select formControlName="selectiveProcess">
+      <mat-option>Todos</mat-option>
+      <mat-option
+        *ngFor="let option of selectiveProcessOptions"
+        [value]="option.value"
+      >
+        {{ option.viewValue }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="filters__checkboxes">
+    <mat-checkbox color="primary" formControlName="trainee">Trainees</mat-checkbox>
+    <mat-checkbox color="primary" formControlName="active">Ativos</mat-checkbox>
+    <mat-checkbox color="primary" formControlName="inactive">Inativos</mat-checkbox>
   </div>
-  <div class="members__body">
+</div>
+
+<!-- Members Table -->
+<div class="members-table" *ngIf="filteredMembers?.length; else emptyState">
+  <div class="members-table__header">
+    <div class="members-table__cell members-table__cell--name">Nome</div>
+    <div class="members-table__cell members-table__cell--society">Sociedade</div>
+    <div class="members-table__cell members-table__cell--debates">Debates</div>
+    <div class="members-table__cell members-table__cell--actions"></div>
+  </div>
+  <div class="members-table__body">
     <div
-      class="members__body__row"
+      class="members-table__row"
       *ngFor="let member of filteredMembers"
       (click)="goToMemberPage(member.id)"
     >
-      <div class="members__body__row__value">{{ member.name }}</div>
-      <div class="members__body__row__value">{{ member.society }}</div>
-      <div class="members__body__row__value">
-        {{ debatesParticipations[member.id] }}
+      <div class="members-table__cell members-table__cell--name">
+        <div class="members-table__member-info">
+          <app-pfp [id]="member.id" [hasPfp]="member.hasPfp" [size]="40"></app-pfp>
+          <span class="members-table__name">{{ member.name }}</span>
+          <span class="members-table__trainee-badge" *ngIf="member.isTrainee">Trainee</span>
+        </div>
       </div>
-      <div class="members__body__row__value">
-        <button
-          mat-flat-button
-          color="primary"
-          (click)="copyPrivateUrl(member.id, $event)"
-          class="members__body__row__value__button"
+      <div class="members-table__cell members-table__cell--society">
+        <span class="members-table__society">{{ member.society }}</span>
+      </div>
+      <div class="members-table__cell members-table__cell--debates">
+        <span
+          class="members-table__debates-count"
+          [class.members-table__debates-count--zero]="debatesParticipations[member.id] === 0"
+          [class.members-table__debates-count--active]="debatesParticipations[member.id] > 0"
         >
-          URL Privada
+          {{ debatesParticipations[member.id] }}
+        </span>
+      </div>
+      <div class="members-table__cell members-table__cell--actions">
+        <button
+          class="members-table__action members-table__action--link"
+          (click)="copyPrivateUrl(member.id, $event)"
+          title="Copiar URL Privada"
+          type="button"
+        >
+          <mat-icon>link</mat-icon>
         </button>
-      </div>
-      <div class="members__body__row__value">
-        <img
+        <button
           *ngIf="showEdit()"
+          class="members-table__action"
           (click)="editMember(member.id, $event)"
-          src="assets/edit-text.png"
-          class="members__body__row__value__icon"
-        />
-      </div>
-      <div class="members__body__row__value">
-        <img
+          title="Editar"
+          type="button"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
           *ngIf="showDelete(member.id)"
+          class="members-table__action members-table__action--delete"
           (click)="deleteMember(member.id, $event)"
-          src="assets/delete.png"
-          class="members__body__row__value__icon"
-        />
+          title="Excluir"
+          type="button"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Empty State -->
+<ng-template #emptyState>
+  <div class="empty-state">
+    <div class="empty-state__icon">
+      <mat-icon>group</mat-icon>
+    </div>
+    <p class="empty-state__message">Nenhum membro encontrado.</p>
+  </div>
+</ng-template>

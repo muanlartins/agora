@@ -1,248 +1,621 @@
 @import '/src/variables.scss';
 
-.page {
+// =============================================================================
+// DASHBOARD COMPONENT
+// =============================================================================
+
+.dashboard {
   width: 100%;
-  height: 100vh;
-
-  position: relative;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
+  min-height: 100vh;
+  background: $background-dark;
 
   &__navbar {
     width: 100%;
   }
 
   &__content {
-    &--hide {
-      display: none;
-    }
-
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    gap: $space-8;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: $space-8 $space-6;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    width: calc(100% - 2rem);
-    margin: 0 1rem;
+    flex-wrap: wrap;
+    gap: $space-6;
+  }
 
-    &__header {
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 2rem;
-      margin-bottom: 2rem;
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-4xl;
+    font-weight: $font-weight-semibold;
+    color: $primary;
+    margin: 0;
+    letter-spacing: $letter-spacing-tight;
+  }
+
+  &__summary {
+    display: flex;
+    gap: $space-8;
+  }
+}
+
+// =============================================================================
+// SUMMARY STATS
+// =============================================================================
+
+.summary-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $space-4 $space-6;
+  background: $surface-dark;
+  border: $border-width solid $border-dark;
+  border-radius: $radius-lg;
+  transition: $transition;
+
+  &:hover {
+    border-color: $primary-muted;
+  }
+
+  &__value {
+    font-family: $font-display;
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: $primary;
+    line-height: $line-height-tight;
+  }
+
+  &__label {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-secondary-dark;
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing-wide;
+    margin-top: $space-1;
+  }
+}
+
+// =============================================================================
+// FILTERS CARD
+// =============================================================================
+
+.filters-card {
+  background: $surface-dark;
+  border: $border-width solid $border-dark;
+  border-radius: $radius-lg;
+  padding: $space-6;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $space-6;
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $text-primary-dark;
+    margin: 0;
+  }
+
+  &__clear {
+    background: transparent;
+    border: $border-width solid $primary;
+    border-radius: $radius-md;
+    color: $primary;
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    padding: $space-2 $space-4;
+    cursor: pointer;
+    transition: $transition;
+
+    &:hover {
+      background: $primary;
+      color: $background-dark;
     }
+  }
 
-    &__ranks {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2rem;
+  &__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-4;
+    align-items: center;
+  }
+}
 
-      &__rank {
-        &__title {
-          font-size: 2rem;
-          color: $primary;
-        }
+.filter-field {
+  flex: 1;
+  min-width: 180px;
+  max-width: 250px;
+}
 
-        &__disclaimer {
-          margin-top: 0.5rem;
-          color: $secondary;
-          line-height: 125%;
-        }
+.filter-toggle {
+  display: flex;
+  align-items: center;
+  padding: $space-2 0;
 
-        &__placements {
-          margin-top: 1rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-start;
-          align-items: flex-start;
-          gap: 1.5rem;
-
-          &__placement {
-            &__title {
-              font-size: 1.5rem;
-              color: $white;
-              margin-bottom: 1.5rem;
-
-              &--1 {
-                font-size: 1.375rem;
-              }
-
-              &--2 {
-                font-size: 1.25rem;
-              }
-            }
-
-            &__members {
-              display: grid;
-              grid-template-columns: repeat(2, 1fr);
-              gap: 2rem;
-
-              &__member {
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-start;
-                align-items: center;
-                gap: 1rem;
-
-                &__pfp {
-                  position: relative;
-
-                  &__icon {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 2.5rem;
-
-                    &--1 {
-                      width: 2.25rem;
-                    }
-
-                    &--2 {
-                      width: 2rem;
-                    }
-                  }
-                }
-
-                &__description {
-                  display: flex;
-                  flex-direction: column;
-                  justify-content: flex-start;
-                  align-items: flex-start;
-                  gap: 0.5rem;
-
-                  &__name {
-                    color: $primary;
-                    font-size: 1.5rem;
-
-                    &--1 {
-                      font-size: 1.375rem;
-                    }
-
-                    &--2 {
-                      font-size: 1.25rem;
-                    }
-                  }
-
-                  &__society {
-                    color: $white;
-                    font-size: 1.25rem;
-
-                    &--1 {
-                      font-size: 1.125rem;
-                    }
-
-                    &--2 {
-                      font-size: 1rem;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+  ::ng-deep {
+    .mat-mdc-slide-toggle {
+      .mdc-switch__track {
+        background-color: $border-dark;
       }
-    }
 
-    &__divider {
-      margin: 4rem 0;
-      display: block;
-      width: 100%;
-      border-bottom: 1px solid $secondary;
-    }
+      .mdc-switch--selected .mdc-switch__track {
+        background-color: $primary-muted;
+      }
 
-    &__statistics {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      flex-wrap: wrap;
-      gap: 4rem;
-      margin-bottom: 2rem;
-      width: 100%;
+      .mdc-switch--selected .mdc-switch__handle::after {
+        background-color: $primary;
+      }
 
-      &__statistic {
-        width: 100%;
-
-        &__title {
-          font-size: 2rem;
-          color: $primary;
-          margin-bottom: 2rem;
-        }
-
-        &__fields {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 2rem;
-
-          &__field {
-            &__title {
-              font-size: 1.25rem;
-              color: $white;
-              margin-bottom: 0.5rem;
-              text-align: center;
-            }
-
-            &__description {
-              color: $white;
-            }
-
-            &--full {
-              grid-column: 1 / span 1;
-            }
-          }
-        }
+      .mdc-label {
+        color: $text-secondary-dark;
+        font-family: $font-body;
+        font-size: $font-size-sm;
       }
     }
   }
 }
 
-@media (width <= $small) {
-  .page {
-    &__content {
-      &__header {
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
-        gap: 1rem;
-        margin: 1rem 0 2rem 0;
-      }
+// =============================================================================
+// SECTION STYLES
+// =============================================================================
 
-      &__ranks {
-        grid-template-columns: repeat(1, 1fr);
+.section-title {
+  font-family: $font-display;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  color: $text-primary-dark;
+  margin: 0 0 $space-6 0;
+}
 
-        &__rank {
-          &__placements {
-            &__placement {
-              &__members {
-                grid-template-columns: repeat(1, 1fr);
-              }
-            }
-          }
-        }
-      }
+.section-divider {
+  border: none;
+  border-top: $border-width solid $border-dark;
+  margin: $space-4 0;
+}
 
-      &__statistics {
-        &__statistic {
-          &__fields {
-            grid-template-columns: repeat(1, 1fr);
+// =============================================================================
+// RANKINGS SECTION
+// =============================================================================
 
-            &__field {
-              grid-column: 1 / span 1;
+.rankings-section {
+  display: flex;
+  flex-direction: column;
+}
 
-              &__chart {
-                width: 100%;
-                min-height: 30rem;
-              }
-            }
-          }
-        }
+.rankings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-6;
+}
+
+.ranking-card {
+  background: $surface-dark;
+  border: $border-width solid $border-dark;
+  border-radius: $radius-lg;
+  padding: $space-6;
+  transition: $transition;
+
+  &:hover {
+    border-color: rgba($primary, 0.3);
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $primary;
+    margin: 0 0 $space-2 0;
+    line-height: $line-height-snug;
+  }
+
+  &__disclaimer {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-muted-dark;
+    margin: 0 0 $space-6 0;
+    line-height: $line-height-normal;
+  }
+
+  &__podium {
+    display: flex;
+    flex-direction: column;
+    gap: $space-5;
+  }
+}
+
+// =============================================================================
+// PODIUM PLACES
+// =============================================================================
+
+.podium-place {
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    margin-bottom: $space-4;
+  }
+
+  &__icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+  }
+
+  &__label {
+    font-family: $font-body;
+    font-size: $font-size-base;
+    color: $text-primary-dark;
+    line-height: $line-height-snug;
+  }
+
+  &__members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-4;
+    padding-left: $space-10;
+  }
+
+  // First place styling
+  &--1 {
+    .podium-place__icon {
+      width: 36px;
+      height: 36px;
+    }
+
+    .podium-place__label {
+      font-size: $font-size-lg;
+      color: $primary;
+    }
+
+    .member-item__name {
+      color: $primary;
+      font-size: $font-size-lg;
+    }
+  }
+
+  // Second place styling
+  &--2 {
+    .podium-place__icon {
+      width: 28px;
+      height: 28px;
+    }
+
+    .podium-place__label {
+      font-size: $font-size-base;
+    }
+
+    .member-item__name {
+      font-size: $font-size-base;
+    }
+  }
+
+  // Third place styling
+  &--3 {
+    .podium-place__icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .podium-place__label {
+      font-size: $font-size-sm;
+      color: $text-secondary-dark;
+    }
+
+    .member-item__name {
+      font-size: $font-size-sm;
+    }
+
+    .member-item__society {
+      font-size: $font-size-xs;
+    }
+  }
+}
+
+// =============================================================================
+// MEMBER ITEM
+// =============================================================================
+
+.member-item {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-2;
+  border-radius: $radius-md;
+  transition: $transition;
+
+  &:hover {
+    background: rgba($primary, 0.05);
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    min-width: 0;
+  }
+
+  &__name {
+    font-family: $font-body;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: $text-primary-dark;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__society {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-secondary-dark;
+  }
+
+  // Clickable member item styles
+  &--clickable {
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover {
+      background: rgba($primary, 0.08);
+
+      .member-item__name {
+        color: $primary;
       }
     }
+
+    &:focus-visible {
+      outline: 2px solid $primary;
+      outline-offset: 2px;
+    }
+  }
+}
+
+// =============================================================================
+// STATISTICS SECTION
+// =============================================================================
+
+.statistics-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.statistics-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-8;
+}
+
+.statistic-card {
+  background: $surface-dark;
+  border: $border-width solid $border-dark;
+  border-radius: $radius-lg;
+  padding: $space-6;
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $primary;
+    margin: 0 0 $space-6 0;
+  }
+
+  &__charts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $space-6;
+  }
+}
+
+// =============================================================================
+// CHART WRAPPER
+// =============================================================================
+
+.chart-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  &--full {
+    grid-column: 1 / -1;
+  }
+
+  &__title {
+    font-family: $font-body;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    color: $text-primary-dark;
+    text-align: center;
+    margin: 0 0 $space-4 0;
+  }
+
+  &__description {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-secondary-dark;
+    text-align: center;
+    margin: 0 0 $space-4 0;
+  }
+
+  &__canvas-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+}
+
+// =============================================================================
+// LOADING & EMPTY STATES
+// =============================================================================
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-6;
+  min-height: 300px;
+  padding: $space-12;
+  text-align: center;
+
+  &__message {
+    font-family: $font-body;
+    font-size: $font-size-lg;
+    color: $text-secondary-dark;
+    margin: 0;
+  }
+
+  &__action {
+    background: $primary;
+    border: none;
+    border-radius: $radius-md;
+    color: $background-dark;
+    font-family: $font-body;
+    font-size: $font-size-base;
+    font-weight: $font-weight-medium;
+    padding: $space-3 $space-6;
+    cursor: pointer;
+    transition: $transition;
+
+    &:hover {
+      background: $primary-light;
+      box-shadow: $glow-primary;
+    }
+  }
+}
+
+// =============================================================================
+// RESPONSIVE DESIGN
+// =============================================================================
+
+@media (max-width: $breakpoint-lg) {
+  .dashboard {
+    &__content {
+      padding: $space-6 $space-4;
+    }
+
+    &__header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    &__summary {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+
+  .rankings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .statistic-card__charts {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-wrapper {
+    &--full {
+      grid-column: 1;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .dashboard {
+    &__content {
+      padding: $space-4;
+      gap: $space-6;
+    }
+
+    &__title {
+      font-size: $font-size-3xl;
+    }
+
+    &__summary {
+      flex-direction: column;
+      gap: $space-3;
+    }
+  }
+
+  .summary-stat {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: $space-3 $space-4;
+
+    &__value {
+      font-size: $font-size-2xl;
+    }
+  }
+
+  .filters-card {
+    padding: $space-4;
+
+    &__controls {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  .filter-field {
+    max-width: none;
+  }
+
+  .ranking-card {
+    padding: $space-4;
+  }
+
+  .podium-place__members {
+    padding-left: $space-6;
+    flex-direction: column;
+  }
+
+  .statistic-card {
+    padding: $space-4;
+  }
+
+  .chart-wrapper__canvas-container {
+    height: 250px;
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .dashboard {
+    &__title {
+      font-size: $font-size-2xl;
+    }
+  }
+
+  .section-title {
+    font-size: $font-size-xl;
+  }
+
+  .ranking-card__title,
+  .statistic-card__title {
+    font-size: $font-size-lg;
   }
 }

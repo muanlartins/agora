@@ -1,5 +1,5 @@
-<button class="cancel" mat-flat-button color="primary" (click)="close()">Cancelar</button>
-<form class="form" [formGroup]="form" mat-dialog-content>
+<button *ngIf="!isStandalone" class="cancel" mat-flat-button color="primary" (click)="close()">Cancelar</button>
+<form class="form" [class.form--standalone]="isStandalone" [formGroup]="form">
   <mat-stepper class="form__stepper" [linear]="false" orientation="vertical">
     <mat-step class="form__stepper__step" [stepControl]="debateFormGroup">
       <div class="form__stepper__step__debate" [formGroup]="debateFormGroup">
@@ -143,7 +143,7 @@
     <mat-step class="form__stepper__step">
       <ng-template matStepLabel>Debatedores</ng-template>
       <div class="form__stepper__step__debaters" [formGroup]="debatersFormGroup">
-        <div class="form__stepper__step__debaters__filters" [formGroup]="debatersFilterFormGroup">
+        <div class="form__stepper__step__debaters__filters" [formGroup]="debatersFilterFormGroup" *ngIf="!hasAllDebatersSelected()">
           <mat-form-field class="form__stepper__step__debaters__filters__field">
             <mat-label>Nome</mat-label>
             <input matInput formControlName="name" />
@@ -165,7 +165,7 @@
             Trainees
           </mat-checkbox>
         </div>
-        <div class="form__stepper__step__debaters__all" formArrayName="debaters" >
+        <div class="form__stepper__step__debaters__all" formArrayName="debaters" *ngIf="!hasAllDebatersSelected()">
           <div class="form__stepper__step__debaters__all__label">Selecione os participantes do debate:</div>
           <mat-checkbox
             class="form__stepper__step__debaters__all__checkbox"
@@ -238,6 +238,12 @@
                 class="form__stepper__step__debaters__positions__debater__content__position"
               >{{ getDebatePositionByIndex(index) }}</div>
             </div>
+            <button
+              type="button"
+              class="form__stepper__step__debaters__positions__debater__remove"
+              (click)="removeDebater(index)"
+              title="Remover debatedor"
+            >×</button>
           </div>
         </div>
         <div
@@ -333,4 +339,4 @@
     </mat-step>
   </mat-stepper>
 </form>
-<button class="cancel" mat-flat-button color="primary" (click)="close()">Cancelar</button>
+<button *ngIf="!isStandalone" class="cancel" mat-flat-button color="primary" (click)="close()">Cancelar</button>

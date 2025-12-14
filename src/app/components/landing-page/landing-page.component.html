@@ -1,96 +1,95 @@
-<div class="page">
-  <!-- <app-banner></app-banner> -->
-  <div class="page__navbar">
-    <div class="page__navbar__logo">
-      <img src="assets/agora-logo.png" class="page__navbar__logo__agora" routerLink="/" />
-      <img src="assets/sd-logo.png" class="page__navbar__logo__sd" />
+<div class="landing">
+  <!-- Navigation -->
+  <nav class="nav">
+    <div class="nav__logo">
+      <img src="assets/agora-logo.png" alt="Agora" class="nav__logo-img" routerLink="/" />
     </div>
-    <ul class="page__navbar__menu">
-      <li class="page__navbar__menu__option" routerLink="login">Login</li>
-      <li class="page__navbar__menu__option page__navbar__menu__option--condeb" routerLink="tabby-archive">Tabby Archive</li>
-      <!-- <li class="page__navbar__menu__option">Cadastre-se</li> -->
-    </ul>
-  </div>
-  <div class="page__overview">
-    <div class="page__overview__content">
-      <div class="page__overview__content__title" data-aos="fade-up" data-aos-duration="1000">
-        <p class="page__overview__content__title__text" #title></p>
-      </div>
-      <p data-aos="fade-up" data-aos-delay="200" data-aos-duration="1200" class="page__overview__content__description">
-        Os grandes pensadores gregos podiam até discordar entre si, mas todos concordavam com o valor da discussão no processo de obtenção do conhecimento.
+    <div class="nav__links">
+      <a routerLink="/tabby-archive" class="nav__link nav__link--condeb">Tabby Archive</a>
+      <a routerLink="/login" class="nav__link nav__link--primary">Entrar</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero__content">
+      <p class="hero__eyebrow">Sociedade de Debates UFRJ</p>
+      <h1 class="hero__title">
+        A arte de <span class="hero__title--highlight">argumentar</span>
+      </h1>
+      <p class="hero__subtitle">
+        Plataforma exclusiva para membros. Acompanhe debates,
+        evolua no ranking e participe de torneios.
       </p>
-      <p data-aos="fade-up" data-aos-delay="400" data-aos-duration="1400" class="page__overview__content__caption">
-        Faça como os gregos e venha <b>debater</b>.
-      </p>
-      <!-- <button data-aos="fade-up" data-aos-delay="600" data-aos-duration="1600" mat-flat-button color="primary" class="page__overview__content__button">Cadastre-se</button> -->
+      <a routerLink="/login" class="hero__cta">
+        Acessar plataforma
+        <mat-icon class="hero__cta-icon">arrow_forward</mat-icon>
+      </a>
     </div>
-    <img data-aos="fade-up" data-aos-delay="300" data-aos-duration="1300" src="assets/agora.png" class="page__overview__image" />
-  </div>
-  <div class="page__transition">
-    <img class="page__transition__image" src="assets/transition-block.png" />
-  </div>
-  <div class="page__info">
-    <div class="page__info__title" data-aos="fade-up" data-aos-duration="1000">
-      <img src="assets/ornament-left.png" class="page__info__title__ornament" />
-      <p class="page__info__title__text">Aprenda sobre o <b>mundo dos debates</b></p>
-      <img src="assets/ornament-right.png" class="page__info__title__ornament" />
+    <div class="hero__decoration">
+      <div class="hero__decoration-line"></div>
     </div>
-    <div class="page__info__content">
-      <div class="page__info__content__card" data-aos="fade-up" data-aos-delay="200" data-aos-duration="1200">
-        <img src="assets/bp.png" class="page__info__content__card__icon" />
-        <p class="page__info__content__card__title">O <b>Parlamento Britânico</b></p>
-        <p class="page__info__content__card__description">É um modelo que consiste em quatro casas (compostas por uma dupla de debatedores cada) em que duas se opõem e duas defendem uma moção, isto é, o assunto a ser debatido. As casas são chamadas, na ordem do debate, primeiro governo, primeira oposição, segundo governo e segunda oposição. Cada posição em cada uma das casas também possui seu próprio nome e função única no debate.</p>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="features__header">
+      <h2 class="features__title">O que oferecemos</h2>
+      <div class="features__divider"></div>
+    </div>
+    <div class="features__grid">
+      <article class="feature">
+        <span class="feature__number">01</span>
+        <h3 class="feature__title">Gestão de Debates</h3>
+        <p class="feature__description">
+          Registre e acompanhe todos os debates da sociedade.
+          Analise performances e acompanhe sua evolução.
+        </p>
+      </article>
+      <article class="feature">
+        <span class="feature__number">02</span>
+        <h3 class="feature__title">Rankings</h3>
+        <p class="feature__description">
+          Sistema de pontuação que reconhece os melhores debatedores.
+          Acompanhe sua posição e a dos seus colegas.
+        </p>
+      </article>
+      <article class="feature">
+        <span class="feature__number">03</span>
+        <h3 class="feature__title">Torneios</h3>
+        <p class="feature__description">
+          Participe de competições internas e externas.
+          Gerencie inscrições e acompanhe resultados.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about">
+    <div class="about__content">
+      <span class="about__label">Sobre nós</span>
+      <h2 class="about__title">
+        Os grandes pensadores gregos podiam até discordar entre si,
+        mas todos concordavam com o valor da discussão no processo
+        de obtenção do conhecimento.
+      </h2>
+      <p class="about__cta">Faça como os gregos e venha <strong>debater</strong>.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__content">
+      <div class="footer__brand">
+        <img src="assets/agora-logo.png" alt="Agora" class="footer__logo" />
+        <span class="footer__separator">|</span>
+        <img src="assets/sd-logo.png" alt="SDUFRJ" class="footer__logo footer__logo--sd" />
       </div>
-      <div class="page__info__content__card" data-aos="fade-up" data-aos-delay="400" data-aos-duration="1400">
-        <img src="assets/justice.png" class="page__info__content__card__icon" />
-        <p class="page__info__content__card__title">A <b>justiça prevalece</b></p>
-        <p class="page__info__content__card__description">Os debates sempre são julgados por outros participantes do movimento, normalmente mais experientes e qualificados. Eles fazem o papel de eleitores razoáveis médios, e seu dever como debatedor é persuadí-los a acreditar que as suas propostas são melhores que a das outras casas do debate. As moções são escolhidas pelos juízes do debate de forma a proporcionar um debate justo para ambos os lados.</p>
-      </div>
-      <div class="page__info__content__card" data-aos="fade-up" data-aos-delay="600" data-aos-duration="1600">
-        <img src="assets/sport.png" class="page__info__content__card__icon" />
-        <p class="page__info__content__card__title">Debater é um <b>esporte</b></p>
-        <p class="page__info__content__card__description">Assim como qualquer outro, ele possui regras a serem seguidas, e o ego e as opiniões pessoais ficam na porta. A grande arte dos debates é ser capaz de desenvolver, para qualquer moção e independentemente da sua casa e crenças, um caso mais persuasivo que todos os outros, o que exige diversas competências.</p>
+      <div class="footer__meta">
+        <span class="footer__copyright">© {{ currentYear }} SDUFRJ</span>
+        <span class="footer__credits">por Luan Martins & Camila Caleones</span>
       </div>
     </div>
-  </div>
-  <div class="page__transition">
-    <img class="page__transition__image" src="assets/transition-block.png" />
-  </div>
-  <div class="page__members">
-    <div class="page__members__title" data-aos="fade-up" data-aos-duration="1000">
-      <img src="assets/ornament-left.png" class="page__members__title__ornament" />
-      <p class="page__members__title__text">Conheça os <b>nossos integrantes</b></p>
-      <img src="assets/ornament-right.png" class="page__members__title__ornament" />
-    </div>
-    <div class="page__members__content">
-      <div class="page__members__content__card" data-aos="fade-up" data-aos-delay="200" data-aos-duration="1200">
-        <img src="assets/luis.png" class="page__members__content__card__image" />
-        <div class="page__members__content__card__title">Luís Otávio</div>
-        <div class="page__members__content__card__description">Presidente</div>
-      </div>
-      <div class="page__members__content__card" data-aos="fade-up" data-aos-delay="400" data-aos-duration="1400">
-        <img src="assets/carol.png" class="page__members__content__card__image" />
-        <div class="page__members__content__card__title">Carol Damascena</div>
-        <div class="page__members__content__card__description">Vice-Presidente</div>
-      </div>
-      <div class="page__members__content__card" data-aos="fade-up" data-aos-delay="600" data-aos-duration="1600">
-        <img src="assets/matheus.png" class="page__members__content__card__image" />
-        <div class="page__members__content__card__title">Matheus Siqueira</div>
-        <div class="page__members__content__card__description">Secretário Geral</div>
-      </div>
-    </div>
-  </div>
-  <div class="page__transition">
-    <img class="page__transition__image" src="assets/transition-single.png" />
-  </div>
-  <div class="page__footer">
-    <div class="page__footer__logo">
-      <img src="assets/agora-logo-black.png" class="page__footer__logo__agora" />
-      <img src="assets/sd-logo-black.png" class="page__footer__logo__sd" />
-    </div>
-    <div class="page__footer__credits">
-      <p class="page__footer__credits__copyright">© <b>SDUFRJ</b> 2024</p>
-      <p class="page__footer__credits__author">by <b>Luan Martins</b> & <b>Camila Caleones</b></p>
-    </div>
-  </div>
+  </footer>
 </div>

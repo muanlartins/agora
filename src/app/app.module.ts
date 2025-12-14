@@ -21,6 +21,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/mat
 import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -30,6 +31,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatIconModule } from '@angular/material/icon';
 import { CreateDebateFormComponent } from './components/debates/components/create-debate-form/create-debate-form.component';
 import { CreateMemberFormComponent } from './components/members/components/create-member-form/create-member-form.component';
 import { MembersComponent } from './components/members/members.component';
@@ -49,11 +53,10 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { MarkdownModule } from 'ngx-markdown';
 import { PfpComponent } from './utils/components/pfp/pfp.component';
 import { MarkdownComponent } from './utils/components/markdown/markdown.component';
-import { ArticlesTableComponent } from './components/articles/components/articles-table/articles-table.component';
-import { CreateArticleModalComponent } from './components/articles/components/create-article-modal/create-article-modal.component';
-import { CreateArticleFormComponent } from './components/articles/components/create-article-form/create-article-form.component';
+import { ArticlesGridComponent } from './components/articles/components/articles-grid/articles-grid.component';
+import { ArticleCardComponent } from './components/articles/components/article-card/article-card.component';
+import { ArticleEditorComponent } from './components/articles/components/article-editor/article-editor.component';
 import { ArticleComponent } from './components/articles/components/article/article.component';
-import { ArticleModalComponent } from './components/articles/components/article-modal/article-modal.component';
 import { ReportComponent } from './components/report/report.component';
 import { AdminGuard } from './guards/admin.guard';
 import { CustomErrorHandler } from './handlers/error-handler';
@@ -67,8 +70,13 @@ import { RegisterDuoModalComponent } from './components/tournament/components/re
 import { TabbyArchiveComponent } from './components/tabby-archive/tabby-archive.component';
 import { CreateGoalModalComponent } from './components/goals/components/create-goal-modal/create-goal-modal.component';
 import { CreateGoalFormComponent } from './components/goals/components/create-goal-form/create-goal-form.component';
+import { CircularProgressComponent } from './components/goals/components/circular-progress/circular-progress.component';
+import { GoalCardComponent } from './components/goals/components/goal-card/goal-card.component';
+import { GoalsGridComponent } from './components/goals/components/goals-grid/goals-grid.component';
+import { GoalDetailModalComponent } from './components/goals/components/goal-detail-modal/goal-detail-modal.component';
 import { BannerComponent } from './components/banner/banner.component';
 import { DebateComponent } from './components/debates/components/debate/debate.component';
+import { DebateEditorComponent } from './components/debates/components/debate-editor/debate-editor.component';
 
 registerLocaleData(pt);
 
@@ -93,11 +101,10 @@ registerLocaleData(pt);
     ArticlesComponent,
     PfpComponent,
     MarkdownComponent,
-    ArticlesTableComponent,
-    CreateArticleModalComponent,
-    CreateArticleFormComponent,
+    ArticlesGridComponent,
+    ArticleCardComponent,
+    ArticleEditorComponent,
     ArticleComponent,
-    ArticleModalComponent,
     ReportComponent,
     TournamentComponent,
     CreateParticipantModalComponent,
@@ -106,8 +113,13 @@ registerLocaleData(pt);
     TabbyArchiveComponent,
     CreateGoalModalComponent,
     CreateGoalFormComponent,
+    CircularProgressComponent,
+    GoalCardComponent,
+    GoalsGridComponent,
+    GoalDetailModalComponent,
     BannerComponent,
     DebateComponent,
+    DebateEditorComponent,
   ],
   imports: [
     BrowserModule,
@@ -122,6 +134,7 @@ registerLocaleData(pt);
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
+    MatAutocompleteModule,
     MatButtonToggleModule,
     MatStepperModule,
     MatCheckboxModule,
@@ -132,6 +145,9 @@ registerLocaleData(pt);
     MatTabsModule,
     MatDialogModule,
     MatProgressBarModule,
+    MatExpansionModule,
+    MatSlideToggleModule,
+    MatIconModule,
     NzAvatarModule,
     NzIconModule,
     NzToolTipModule,

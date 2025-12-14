@@ -1,36 +1,75 @@
-<div class="article" *ngIf="article && member">
-  <button
-    *ngIf="isUser()"
-    class="article__button"
-    mat-raised-button
-    color="primary"
-    type="submit"
-    (click)="goToArticlesPage()"
-  >Voltar</button>
-  <div class="article__details">
-    <div class="article__details__detail">
-      <div class="article__details__detail__title">Criado em</div>
-      <div class="article__details__detail__value">{{ getDate(article.createdAt) }}</div>
+<div class="article-page" *ngIf="!loading && article && member">
+  <header class="article-nav">
+    <button
+      *ngIf="isUser()"
+      class="article-nav__back"
+      (click)="goToArticlesPage()"
+    >
+      <span class="article-nav__back-icon">&larr;</span>
+      Voltar
+    </button>
+    <div class="article-nav__spacer" *ngIf="!isUser()"></div>
+
+    <div class="article-nav__actions">
+      <button
+        class="article-nav__action"
+        [class.article-nav__action--active]="linkCopied"
+        (click)="copyLink()"
+        [title]="linkCopied ? 'Link copiado!' : 'Copiar link'"
+      >
+        <span *ngIf="!linkCopied">Copiar Link</span>
+        <span *ngIf="linkCopied">Copiado!</span>
+      </button>
+      <button
+        class="article-nav__action article-nav__action--primary"
+        [disabled]="generatingPdf"
+        (click)="downloadPdf()"
+        title="Baixar PDF"
+      >
+        {{ generatingPdf ? 'Gerando...' : 'Baixar PDF' }}
+      </button>
     </div>
-    <div class="article__details__detail">
-      <div class="article__details__detail__title">Autor</div>
-      <div class="article__details__detail__value">
-        <app-pfp [id]="article.authorId" [hasPfp]="member.hasPfp" [size]="32"></app-pfp>
-        {{ member.name }}
+  </header>
+
+  <article class="article-showcase">
+    <header class="article-showcase__header">
+      <span class="article-showcase__tag">{{ article.tag }}</span>
+      <h1 class="article-showcase__title">{{ article.title }}</h1>
+
+      <div class="article-showcase__meta">
+        <div class="article-showcase__author">
+          <app-pfp
+            [id]="article.authorId"
+            [hasPfp]="member.hasPfp"
+            [size]="48"
+          ></app-pfp>
+          <div class="article-showcase__author-info">
+            <span class="article-showcase__author-name">{{ member.name }}</span>
+            <span class="article-showcase__author-label">Autor</span>
+          </div>
+        </div>
+
+        <div class="article-showcase__dates">
+          <div class="article-showcase__date">
+            <span class="article-showcase__date-label">Publicado</span>
+            <span class="article-showcase__date-value">{{ formattedCreatedDate }}</span>
+          </div>
+          <div class="article-showcase__date" *ngIf="showUpdatedDate">
+            <span class="article-showcase__date-label">Atualizado</span>
+            <span class="article-showcase__date-value">{{ formattedUpdatedDate }}</span>
+          </div>
+        </div>
       </div>
+    </header>
+
+    <div class="article-showcase__divider"></div>
+
+    <div class="article-showcase__content" id="article-content">
+      <app-markdown [data]="article.content"></app-markdown>
     </div>
-    <div class="article__details__detail">
-      <div class="article__details__detail__title">Tag</div>
-      <div class="article__details__detail__value">{{ article.tag }}</div>
-    </div>
-    <div class="article__details__detail">
-      <div class="article__details__detail__title">Atualizado pela última vez em</div>
-      <div class="article__details__detail__value">{{ getDate(article.updatedAt) }}</div>
-    </div>
-  </div>
-  <div class="article__title">{{ article.title }}</div>
-  <app-markdown
-    class="article__content"
-    [data]="article.content"
-  ></app-markdown>
+  </article>
+</div>
+
+<div class="loading-state" *ngIf="loading">
+  <app-spinner></app-spinner>
 </div>

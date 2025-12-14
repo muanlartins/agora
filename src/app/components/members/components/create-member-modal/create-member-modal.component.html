@@ -1,1 +1,11 @@
-<app-create-member-form [member]="member" [isEditing]="isEditing"></app-create-member-form>
+<div class="modal">
+  <div class="modal__header">
+    <h2 class="modal__title">{{ isEditing ? 'Editar Membro' : 'Novo Membro' }}</h2>
+    <button class="modal__close" type="button" (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <div class="modal__content">
+    <app-create-member-form [member]="member" [isEditing]="isEditing"></app-create-member-form>
+  </div>
+</div>

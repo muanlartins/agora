@@ -1,88 +1,20 @@
-@import './src/variables.scss';
+@import 'variables';
 
-.goals {
-  width: 100%;
+.goals-page {
   min-height: 100vh;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
+  background: $background-dark;
 
   &__navbar {
     width: 100%;
   }
 
-  &__button {
-    align-self: flex-start;
-    width: calc(100% - 2rem);
-    margin: 1rem;
-  }
+  &__content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: $space-8 $space-6;
 
-  &__container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    width: calc(100% - 2rem);
-    margin: 0 1rem;
-
-    &--hide {
-      display: none;
-    }
-
-    &__tabs {
-      width: 100%;
-
-      &__tab {
-        padding: 1rem 0;
-
-        &__goals {
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-start;
-          gap: 0.5rem;
-          padding: 1rem 0;
-
-          &__goal {
-            &__info {
-              display: flex;
-              flex-direction: row;
-              justify-content: flex-start;
-              align-items: center;
-
-              &__title {
-                display: flex;
-                justify-content: row;
-                align-items: center;
-                gap: 0.5rem;
-
-                &__text {
-                  font-size: 1rem;
-                  color: $white;
-                }
-
-                &__counter {
-                  font-size: 0.875rem;
-                  color: $primary;
-                }
-              }
-
-              &__icon {
-                cursor: pointer;
-                filter: $filter;
-                width: 1.5rem;
-                height: 1.5rem;
-                margin-left: 1.5rem;
-              }
-            }
-
-            &__progress {
-              margin-bottom: 1rem;
-            }
-          }
-        }
-      }
+    @media (max-width: $breakpoint-md) {
+      padding: $space-6 $space-4;
     }
   }
 }

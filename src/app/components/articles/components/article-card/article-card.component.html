@@ -1,0 +1,29 @@
+<article class="article-card" (click)="goToArticle()">
+  <header class="article-card__header">
+    <span class="article-card__tag">{{ article.tag }}</span>
+    <div class="article-card__actions" *ngIf="showActions">
+      <button class="article-card__action" (click)="onEdit($event)" title="Editar">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button class="article-card__action article-card__action--delete" (click)="onDelete($event)" title="Excluir">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <h3 class="article-card__title">{{ article.title }}</h3>
+  <p class="article-card__excerpt">{{ excerpt }}</p>
+
+  <footer class="article-card__footer">
+    <div class="article-card__author">
+      <app-pfp
+        *ngIf="author"
+        [id]="author.id"
+        [hasPfp]="authorHasPfp"
+        [size]="32"
+      ></app-pfp>
+      <span class="article-card__author-name">{{ authorName }}</span>
+    </div>
+    <time class="article-card__date">{{ formattedDate }}</time>
+  </footer>
+</article>

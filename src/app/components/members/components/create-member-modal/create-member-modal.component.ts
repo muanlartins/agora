@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Member } from 'src/app/models/types/member';
 
 @Component({
@@ -12,7 +12,10 @@ export class CreateMemberModalComponent implements OnInit {
 
   public member: Member;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { isEditing: boolean, member: Member }) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: { isEditing: boolean, member: Member },
+    private dialogRef: MatDialogRef<CreateMemberModalComponent>
+  ) {
     if (data) {
       this.isEditing = data.isEditing;
       this.member = data.member;
@@ -22,4 +25,7 @@ export class CreateMemberModalComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  close(): void {
+    this.dialogRef.close();
+  }
 }

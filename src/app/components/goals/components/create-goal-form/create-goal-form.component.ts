@@ -20,10 +20,10 @@ export class CreateGoalFormComponent implements OnInit {
   public goal: Goal;
 
   public form: FormGroup;
+  public showPreview: boolean = false;
 
   public get description() {
     if (this.form.controls['description']) return this.form.controls['description'].value;
-
     return '';
   }
 
@@ -41,8 +41,8 @@ export class CreateGoalFormComponent implements OnInit {
   public initForm() {
     this.form = this.formBuilder.group({
       title: ['', Validators.required],
-      currentCount: ['', Validators.required],
-      totalCount: ['', Validators.required],
+      currentCount: [0, [Validators.required, Validators.min(0)]],
+      totalCount: [1, [Validators.required, Validators.min(1)]],
       type: ['', Validators.required],
       description: ['']
     });
@@ -135,7 +135,6 @@ export class CreateGoalFormComponent implements OnInit {
 
   public getButtonText(): string {
     if (this.isEditing) return 'Atualizar';
-
     return 'Criar';
   }
 }

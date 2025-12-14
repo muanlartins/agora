@@ -1,372 +1,504 @@
 @import 'src/variables.scss';
 
-.page {
-  background: $black;
+// ==========================================================================
+// LANDING PAGE
+// Aesthetic: Private Club Elegance
+// ==========================================================================
+
+.landing {
+  min-height: 100vh;
+  background-color: var(--color-background);
   overflow-x: hidden;
+}
 
-  &__banner {
-    height: 4rem;
-    background: $primary;
-    width: 100%;
+// -----------------------------------------------------------------------------
+// NAVIGATION
+// -----------------------------------------------------------------------------
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $space-6 $space-8;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  &__logo {
+    &-img {
+      height: 2.5rem;
+      cursor: pointer;
+      opacity: 0.9;
+      transition: opacity $transition-fast;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__links {
     display: flex;
-    justify-content: center;
     align-items: center;
-
-    &__text {
-      color: black;
-      font-size: 1.5rem;
-
-      &__link {
-        color: $link;
-      }
-    }
+    gap: $space-8;
   }
 
-  &__navbar {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2rem 1rem;
+  &__link {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-wide;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color $transition-fast, opacity $transition-fast;
 
-    &__logo {
-      display: flex;
-      justify-content: flex-start;
-      align-items: flex-end;
-      gap: 1rem;
+    &--secondary {
+      color: var(--color-text-muted);
 
-      &__agora {
-        padding-bottom: 0.5rem;
-        height: 3rem;
-        cursor: pointer;
-      }
-
-      &__sd {
-        width: 2rem;
-        height: 2rem;
-        padding: 0.5rem 0 0.625rem 1rem;
-        border-left: 1px solid $secondary;
+      &:hover {
+        color: var(--color-text-secondary);
       }
     }
 
-    &__menu {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      list-style: none;
+    &--primary {
+      color: var(--color-primary);
+      position: relative;
 
-      &__option {
-        color: $primary;
-        font-size: 1rem;
-        line-height: 100%;
-        padding: 0.5rem 1rem;
-        border-right: 1px solid $secondary;
-        cursor: pointer;
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background-color: var(--color-primary);
+        transition: width $transition-base;
+      }
 
-        transition: $transition;
+      &:hover {
+        color: var(--color-primary);
 
-        &:hover {
-          text-shadow: 0 0 0.75rem $primary, 0 0 1.5rem $primary;
+        &::after {
+          width: 100%;
         }
+      }
+    }
 
-        &--condeb {
-          color: $condebsecondary;
+    &--condeb {
+      color: #5CBCB9;
+      position: relative;
 
-          &:hover {
-            text-shadow: 0 0 0.75rem $condebsecondary, 0 0 1.5rem $condebsecondary;
-          }
-        }
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background-color: #5CBCB9;
+        transition: width $transition-base;
+      }
 
-        &:first-child {
-          padding-left: 0;
-        }
+      &:hover {
+        color: #5CBCB9;
 
-        &:last-child {
-          border-right: none;
-          padding-right: 0;
+        &::after {
+          width: 100%;
         }
       }
     }
   }
+}
 
-  &__overview {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2rem 1rem;
-    gap: 2rem;
+// -----------------------------------------------------------------------------
+// HERO SECTION
+// -----------------------------------------------------------------------------
 
-    &__content {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 2rem;
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 100px);
+  padding: $space-16 $space-8;
+  text-align: center;
+  position: relative;
 
-      &__title {
-        display: flex;
-
-        &__text {
-          font-size: 2rem;
-          line-height: 100%;
-          color: $primary;
-        }
-      }
-
-      &__description {
-        font-size: 1.5rem;
-        line-height: 125%;
-        color: $white;
-      }
-
-      &__caption {
-        font-size: 1.125rem;
-        line-height: 100%;
-        color: $white;
-      }
-    }
-
-    &__image {
-      height: 20rem;
-    }
-  }
-
-  &__transition {
-    width: 100%;
-    line-height: 0;
-
-    &__image {
-      width: 100%;
-    }
-  }
-
-  &__info {
+  &__content {
+    max-width: 800px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     align-items: center;
-    width: 100%;
-    padding: 2rem 0;
-    gap: 2rem;
+    gap: $space-6;
+  }
 
-    &__title {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      gap: 1rem;
-      padding: 0 1rem;
+  &__eyebrow {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-wider;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin-bottom: $space-4;
+  }
 
-      &__text {
-        font-size: 2rem;
-        line-height: 100%;
-        color: $primary;
-        text-align: center;
-      }
-    }
+  &__title {
+    font-family: $font-display;
+    font-size: clamp(3rem, 8vw, $font-size-6xl);
+    font-weight: $font-weight-normal;
+    line-height: $line-height-tight;
+    letter-spacing: $letter-spacing-tight;
+    color: var(--color-text-primary);
+    margin: 0;
 
-    &__content {
-      padding: 2rem 1rem;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      gap: 2rem;
-
-      &__card {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-start;
-        gap: 2rem;
-        width: 100%;
-
-        &__icon {
-          height: 6rem;
-        }
-
-        &__title {
-          font-size: 1.5rem;
-          color: $primary;
-          line-height: 100%;
-        }
-
-        &__description {
-          font-size: 1.125rem;
-          color: $white;
-          line-height: 125%;
-          text-align: justify;
-        }
-      }
+    &--highlight {
+      color: var(--color-primary);
+      font-style: italic;
     }
   }
 
-  &__members {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+  &__subtitle {
+    font-family: $font-body;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-normal;
+    line-height: $line-height-relaxed;
+    color: var(--color-text-secondary);
+    max-width: 500px;
+    margin-top: $space-4;
+  }
+
+  &__cta {
+    display: inline-flex;
     align-items: center;
-    width: 100%;
-    padding: 2rem 0;
-    gap: 2rem;
+    gap: $space-3;
+    margin-top: $space-8;
+    padding: $space-4 $space-8;
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-wide;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-background);
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    transition: transform $transition-fast, box-shadow $transition-fast, background-color $transition-fast;
 
-    &__title {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      gap: 1rem;
-      padding: 0 1rem;
-
-      &__text {
-        font-size: 2rem;
-        line-height: 100%;
-        color: $primary;
-        text-align: center;
-      }
+    &:hover {
+      color: var(--color-background);
+      background-color: var(--color-primary-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(212, 165, 55, 0.25);
     }
 
-    &__content {
-      padding: 2rem 1rem;
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      gap: 2rem;
-
-      &__card {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 2rem;
-
-        &__image {
-          width: 20rem;
-        }
-
-        &__title {
-          font-size: 1.5rem;
-          color: $primary;
-          line-height: 100%;
-        }
-
-        &__description {
-          font-size: 1.125rem;
-          color: $white;
-          line-height: 125%;
-        }
-      }
+    &:active {
+      transform: translateY(0);
     }
   }
 
-  &__footer {
+  &__cta-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    transition: transform $transition-fast;
+
+    .hero__cta:hover & {
+      transform: translateX(4px);
+    }
+  }
+
+  &__decoration {
+    position: absolute;
+    bottom: $space-16;
+    left: 50%;
+    transform: translateX(-50%);
+
+    &-line {
+      width: 1px;
+      height: 80px;
+      background: linear-gradient(
+        to bottom,
+        transparent,
+        var(--color-border) 50%,
+        transparent
+      );
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// FEATURES SECTION
+// -----------------------------------------------------------------------------
+
+.features {
+  padding: $space-24 $space-8;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  &__header {
     display: flex;
-    flex-direction: row;
+    align-items: center;
+    gap: $space-6;
+    margin-bottom: $space-16;
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-normal;
+    letter-spacing: $letter-spacing-wide;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  &__divider {
+    flex: 1;
+    height: 1px;
+    background-color: var(--color-border);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $space-12;
+  }
+}
+
+.feature {
+  padding: $space-8;
+  border: 1px solid var(--color-border);
+  border-radius: $radius-md;
+  transition: border-color $transition-base, transform $transition-base;
+
+  &:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-4px);
+  }
+
+  &__number {
+    display: block;
+    font-family: $font-display;
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-normal;
+    color: var(--color-primary);
+    margin-bottom: $space-6;
+    opacity: 0.6;
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-primary);
+    margin-bottom: $space-4;
+    line-height: $line-height-snug;
+  }
+
+  &__description {
+    font-family: $font-body;
+    font-size: $font-size-base;
+    font-weight: $font-weight-normal;
+    line-height: $line-height-relaxed;
+    color: var(--color-text-secondary);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// ABOUT SECTION
+// -----------------------------------------------------------------------------
+
+.about {
+  padding: $space-24 $space-8;
+  background-color: var(--color-surface);
+
+  &__content {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  &__label {
+    display: inline-block;
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    letter-spacing: $letter-spacing-wider;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    margin-bottom: $space-8;
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: clamp($font-size-xl, 3vw, $font-size-2xl);
+    font-weight: $font-weight-normal;
+    font-style: italic;
+    line-height: $line-height-relaxed;
+    color: var(--color-text-secondary);
+    margin: 0 0 $space-8;
+  }
+
+  &__cta {
+    font-family: $font-body;
+    font-size: $font-size-lg;
+    color: var(--color-text-primary);
+
+    strong {
+      color: var(--color-primary);
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// FOOTER
+// -----------------------------------------------------------------------------
+
+.footer {
+  padding: $space-8;
+  border-top: 1px solid var(--color-border);
+
+  &__content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2rem 1rem;
-    background: $secondary;
+  }
 
-    &__logo {
-      display: flex;
-      justify-content: flex-start;
-      align-items: flex-end;
-      gap: 1.5rem;
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+  }
 
-      &__agora {
-        padding-bottom: 0.5rem;
-        height: 3rem;
-        cursor: pointer;
-      }
+  &__logo {
+    height: 1.5rem;
+    opacity: 0.6;
 
-      &__sd {
-        width: 2rem;
-        height: 2rem;
-        padding: 0.5rem 0 0.625rem 1rem;
-        border-left: 1px solid $black;
-      }
+    &--sd {
+      height: 1.25rem;
     }
+  }
 
-    &__credits {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-end;
-      gap: 1rem;
+  &__separator {
+    color: var(--color-border);
+    font-weight: $font-weight-normal;
+  }
 
-      &__copyright {
-        font-size: 1.125rem;
-        color: $black;
-        line-height: 100%;
-      }
+  &__org {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--color-text-muted);
+    letter-spacing: $letter-spacing-wide;
+  }
 
-      &__author {
-        font-size: 0.875rem;
-        color: $black;
-        line-height: 100%;
-      }
-    }
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $space-6;
+  }
+
+  &__copyright {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: var(--color-text-muted);
+  }
+
+  &__credits {
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+    opacity: 0.7;
   }
 }
 
-::ng-deep .typed-cursor {
-  font-size: 2rem;
-  line-height: 100%;
-  color: $primary;
+// -----------------------------------------------------------------------------
+// RESPONSIVE
+// -----------------------------------------------------------------------------
+
+@media (max-width: $breakpoint-lg) {
+  .features__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-::ng-deep .typed-cursor--blink {
-  animation: typedjsBlink 1.2s infinite !important;
-}
+@media (max-width: $breakpoint-md) {
+  .nav {
+    padding: $space-4 $space-6;
 
-@media (width <= $medium) {
-  .page {
-    &__overview {
+    &__links {
+      gap: $space-6;
+    }
+
+    &__link {
+      font-size: $font-size-xs;
+    }
+  }
+
+  .hero {
+    padding: $space-12 $space-6;
+    min-height: calc(100vh - 80px);
+
+    &__subtitle {
+      font-size: $font-size-base;
+    }
+
+    &__cta {
+      padding: $space-3 $space-6;
+      font-size: $font-size-xs;
+    }
+
+    &__decoration {
+      display: none;
+    }
+  }
+
+  .features {
+    padding: $space-16 $space-6;
+
+    &__grid {
+      grid-template-columns: 1fr;
+      gap: $space-6;
+    }
+
+    &__header {
+      margin-bottom: $space-10;
+    }
+  }
+
+  .feature {
+    padding: $space-6;
+
+    &__number {
+      font-size: $font-size-2xl;
+      margin-bottom: $space-4;
+    }
+  }
+
+  .about {
+    padding: $space-16 $space-6;
+
+    &__title {
+      font-size: $font-size-lg;
+    }
+  }
+
+  .footer {
+    padding: $space-6;
+
+    &__content {
       flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-
-      &__content {
-        align-items: center;
-
-        &__description {
-          text-align: justify;
-        }
-      }
+      gap: $space-4;
+      text-align: center;
     }
-  
-    &__info {
-      &__content {
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
 
-        &__card {
-          align-items: center;
-        }
-      }
-    }
-  
-    &__members {
-      &__content {
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-      }
-    }
-  
-    &__footer {
+    &__meta {
       flex-direction: column;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 1rem;
-
-      &__credits {
-        align-items: center;
-      }
+      gap: $space-2;
     }
   }
 }

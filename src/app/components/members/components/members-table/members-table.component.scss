@@ -1,79 +1,378 @@
-@import '/src/variables';
+@import 'variables';
 
-.form {
+// =============================================================================
+// MEMBERS TABLE - Modern Design
+// =============================================================================
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// -----------------------------------------------------------------------------
+// Header Section
+// -----------------------------------------------------------------------------
+.header {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
   justify-content: space-between;
-  margin: 1rem 0;
-  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: $space-8;
 
-  &__filter {
+  &__content {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 0.5rem;
+    gap: $space-1;
+  }
 
-    &__input {
-      width: 100%;
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: $text-primary-dark;
+    margin: 0;
+    letter-spacing: $letter-spacing-tight;
+  }
+
+  &__count {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-muted-dark;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Filters Section
+// -----------------------------------------------------------------------------
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-4;
+  padding: $space-4;
+  margin-bottom: $space-6;
+  background: $surface-dark;
+  border: 1px solid $border-dark;
+  border-radius: $radius-lg;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column;
+    gap: $space-3;
+  }
+
+  &__field {
+    flex: 1;
+    min-width: 200px;
+
+    @media (max-width: $breakpoint-md) {
+      min-width: 100%;
+    }
+  }
+
+  &__checkboxes {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+    flex-wrap: wrap;
+
+    @media (max-width: $breakpoint-md) {
+      gap: $space-3;
+    }
+  }
+
+  ::ng-deep .mat-mdc-checkbox {
+    .mdc-checkbox {
+      --mdc-checkbox-selected-checkmark-color: #{$background-dark};
+      --mdc-checkbox-selected-focus-icon-color: #{$primary};
+      --mdc-checkbox-selected-hover-icon-color: #{$primary-light};
+      --mdc-checkbox-selected-icon-color: #{$primary};
+      --mdc-checkbox-selected-pressed-icon-color: #{$primary};
+    }
+    .mdc-label {
+      color: $text-secondary-dark;
+      font-family: $font-body;
+      font-size: $font-size-sm;
     }
   }
 }
 
-.members {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  margin: 2rem 0;
+// -----------------------------------------------------------------------------
+// Members Table
+// -----------------------------------------------------------------------------
+.members-table {
+  background: $surface-dark;
+  border: 1px solid $border-dark;
+  border-radius: $radius-lg;
+  overflow: hidden;
 
   &__header {
     display: grid;
-    grid-template-columns: 2fr 2fr 1fr 6rem 2.5rem 2.5rem;
-    gap: 1rem;
-    padding-bottom: 1rem;
+    grid-template-columns: 1fr 150px 100px 120px;
+    gap: $space-4;
+    padding: $space-4 $space-5;
+    background: $surface-elevated-dark;
+    border-bottom: 1px solid $border-dark;
 
-    &__title {
-      color: $primary;
+    @media (max-width: $breakpoint-lg) {
+      display: none;
+    }
+  }
+
+  &__cell {
+    font-family: $font-body;
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    min-width: 0;
+
+    // Header cells
+    .members-table__header & {
+      color: $text-muted-dark;
+      font-size: $font-size-xs;
+      text-transform: uppercase;
+      letter-spacing: $letter-spacing-wider;
+      font-weight: $font-weight-semibold;
+    }
+
+    // Body cells
+    .members-table__row & {
+      color: $text-primary-dark;
+      font-size: $font-size-sm;
+    }
+
+    &--name {
+      overflow: hidden;
+    }
+
+    &--society {
+      @media (max-width: $breakpoint-lg) {
+        justify-content: flex-start;
+      }
+    }
+
+    &--debates {
+      @media (max-width: $breakpoint-lg) {
+        justify-content: flex-start;
+      }
+    }
+
+    &--actions {
+      justify-content: flex-end;
+      gap: $space-1;
     }
   }
 
   &__body {
-    &__row {
-      padding: 0.5rem 0;
-      display: grid;
-      grid-template-columns: 2fr 2fr 1fr 6rem 2.5rem 2.5rem;
-      gap: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
 
-      border-top: 1px solid $secondary;
-      cursor: pointer;
-      transition: $transition;
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 150px 100px 120px;
+    gap: $space-4;
+    padding: $space-3 $space-5;
+    border-bottom: 1px solid $border-dark;
+    cursor: pointer;
+    transition: background $transition-fast;
 
-      &:last-child {
-        border-bottom: 1px solid $secondary;
-      }
+    &:last-child {
+      border-bottom: none;
+    }
 
-      &:hover {
-        background: $brown;
-      }
+    &:hover {
+      background: $surface-elevated-dark;
 
-      &__value {
-        color: $white;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        line-height: 125%;
-
-        &__button {
-          font-size: 1rem;
-        }
-
-        &__icon {
-          filter: $filter;
-          width: 1.5rem;
-          height: 1.5rem;
-        }
+      .members-table__action {
+        opacity: 1;
       }
     }
+
+    @media (max-width: $breakpoint-lg) {
+      display: flex;
+      flex-direction: column;
+      gap: $space-3;
+      padding: $space-4;
+    }
+  }
+
+  &__member-info {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    overflow: hidden;
+  }
+
+  &__name {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $text-primary-dark;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__trainee-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    padding: 2px $space-2;
+    border-radius: $radius-sm;
+    color: $warning;
+    background: rgba($warning, 0.15);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  &__society {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: $font-body;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    padding: $space-1 $space-2;
+    border-radius: $radius-sm;
+    color: $text-secondary-dark;
+    background: $surface-elevated-dark;
+    border: 1px solid $border-dark;
+    white-space: nowrap;
+  }
+
+  &__debates-count {
+    font-family: $font-body;
+    font-size: $font-size-sm;
+    color: $text-secondary-dark;
+
+    &--zero {
+      color: $text-muted-dark;
+    }
+
+    &--active {
+      color: $primary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  &__action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity $transition-fast, background $transition-fast, color $transition-fast;
+    color: $text-muted-dark;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    &:hover {
+      background: $border-dark;
+      color: $text-primary-dark;
+    }
+
+    &--link {
+      opacity: 1;
+
+      &:hover {
+        background: rgba($primary, 0.15);
+        color: $primary;
+      }
+    }
+
+    &--delete:hover {
+      background: rgba($danger, 0.15);
+      color: $danger;
+    }
+
+    @media (max-width: $breakpoint-lg) {
+      opacity: 1;
+    }
+  }
+}
+
+// Responsive: mobile layout
+@media (max-width: $breakpoint-lg) {
+  .members-table__row {
+    position: relative;
+
+    .members-table__cell--actions {
+      position: absolute;
+      top: $space-4;
+      right: $space-4;
+    }
+  }
+
+  .members-table__cell {
+    &--name {
+      order: 1;
+      padding-right: 100px;
+    }
+
+    &--society {
+      order: 2;
+    }
+
+    &--debates {
+      order: 3;
+
+      &::before {
+        content: 'Debates: ';
+        color: $text-muted-dark;
+      }
+    }
+
+    &--actions {
+      order: 4;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Empty State
+// -----------------------------------------------------------------------------
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $space-16 $space-6;
+  background: $surface-dark;
+  border: 1px solid $border-dark;
+  border-radius: $radius-lg;
+
+  &__icon {
+    color: $text-muted-dark;
+    margin-bottom: $space-4;
+
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  &__message {
+    font-family: $font-body;
+    font-size: $font-size-lg;
+    color: $text-secondary-dark;
+    margin: 0;
   }
 }

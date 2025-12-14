@@ -1,10 +1,24 @@
-<div class="page">
-  <app-navbar class="page__navbar" (checkbox)="onNavbarHamburgerChange($event)"></app-navbar>
-  <div class="page__content" [ngClass]="{ 'page__content--hide': isNavbarHamburgerActive }">
-    <div class="page__content__form">
-      <div></div>
-      <button *ngIf="isAdmin()" class="form__button" mat-flat-button color="primary" (click)="openCreateDebateModal()">Criar</button>
-    </div>
-    <app-debates-table class="page__content__table" [debates]="debates"></app-debates-table>
+<div class="debates-page">
+  <app-navbar class="debates-page__navbar"></app-navbar>
+  <div class="debates-page__content">
+    <header class="debates-header">
+      <div class="debates-header__left">
+        <h1 class="debates-header__title">Debates</h1>
+        <span class="debates-header__count">{{ debateCount }} {{ debateCount === 1 ? 'debate' : 'debates' }}</span>
+      </div>
+      <div class="debates-header__right">
+        <button
+          *ngIf="isAdmin()"
+          class="debates-header__create"
+          mat-flat-button
+          color="primary"
+          (click)="navigateToCreateDebate()"
+        >
+          <span class="debates-header__create-icon">+</span>
+          Novo Debate
+        </button>
+      </div>
+    </header>
+    <app-debates-table [debates]="debates"></app-debates-table>
   </div>
 </div>

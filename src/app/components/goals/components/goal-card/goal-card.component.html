@@ -1,0 +1,42 @@
+<article class="goal-card" [class.goal-card--achieved]="isAchieved" (click)="onCardClick()">
+  <header class="goal-card__header">
+    <span
+      class="goal-card__badge"
+      [class.goal-card__badge--management]="goal.type === 'management'"
+    >
+      {{ typeBadgeText }}
+    </span>
+
+    <div class="goal-card__actions" *ngIf="showActions">
+      <button
+        class="goal-card__action"
+        (click)="onEdit($event)"
+        title="Editar"
+        type="button"
+      >
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button
+        class="goal-card__action goal-card__action--delete"
+        (click)="onDelete($event)"
+        title="Excluir"
+        type="button"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <h3 class="goal-card__title">{{ goal.title }}</h3>
+
+  <div class="goal-card__progress">
+    <app-circular-progress
+      [current]="goal.currentCount"
+      [total]="goal.totalCount"
+      [size]="100"
+      [strokeWidth]="8"
+    ></app-circular-progress>
+  </div>
+
+  <span class="goal-card__hint">Clique para ver detalhes</span>
+</article>

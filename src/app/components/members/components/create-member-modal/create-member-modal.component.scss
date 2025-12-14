@@ -1,0 +1,54 @@
+@import 'variables';
+
+.modal {
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $space-4 $space-6;
+    border-bottom: 1px solid $border-dark;
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: $font-size-xl;
+    font-weight: $font-weight-semibold;
+    color: $text-primary-dark;
+    margin: 0;
+  }
+
+  &__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    border-radius: $radius-sm;
+    color: $text-muted-dark;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover {
+      background: $surface-elevated-dark;
+      color: $text-primary-dark;
+    }
+  }
+
+  &__content {
+    padding: $space-6;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+}
